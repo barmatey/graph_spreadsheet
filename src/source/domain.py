@@ -11,11 +11,12 @@ class SourceNode(Node):
     uuid: UUID = Field(default_factory=uuid4)
     events: list[Event] = Field(default_factory=list)
 
-    def on_pub_updated(self, old_value: 'Node', new_value: 'Node'):
-        self._notify()
+    def update(self, old_value: 'Node', new_value: 'Node'):
+        self._on_updated()
 
-    def on_subscribed(self, pubs: set['Node']):
-        self._notify()
+    def follow(self, pubs: set['Node']):
+        self._on_updated()
+        self._on_subscribed(pubs)
 
 
 class CreateSourceNode(Command):

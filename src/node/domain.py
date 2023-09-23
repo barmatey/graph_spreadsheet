@@ -23,15 +23,18 @@ class Node(Model):
         return self.__class__.__name__
 
     @abstractmethod
-    def on_pub_updated(self, old_value: 'Node', new_value: 'Node'):
+    def update(self, old_value: 'Node', new_value: 'Node'):
         raise NotImplemented
 
     @abstractmethod
-    def on_subscribed(self, pubs: set['Node']):
+    def follow(self, pubs: set['Node']):
         raise NotImplemented
 
-    def _notify(self):
+    def _on_updated(self):
         self.events.append(NodeUpdated(old_value=self.model_copy(deep=True), new_value=self))
+
+    def _on_subscribed(self, pubs: set['Node']):
+        self.events.append(NodeSubscribed(sub=self, pubs=pubs))
 
     def set_node_fields(self, data: dict):
         old_value = self.model_copy(deep=True)
@@ -49,3 +52,10 @@ class NodeUpdated(Event):
     old_value: Node
     new_value: Node
     uuid: UUID = Field(default_factory=uuid4)
+
+
+class NodeSubscribed(Event):
+    pubs: set[Node]
+    sub: Node
+    uuid: UUID = Field(default_factory=uuid4)
+

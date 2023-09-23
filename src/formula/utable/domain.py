@@ -14,7 +14,7 @@ class UtableNode(Node):
     uuid: UUID = Field(default_factory=uuid4)
     events: list[Event] = Field(default_factory=list)
 
-    def on_subscribed(self, pubs: set['Node']):
+    def follow(self, pubs: set['Node']):
         for wire in pubs:
             if not (wire, WireNode):
                 raise TypeError(f"invalid type: {type(wire)}")
@@ -25,9 +25,10 @@ class UtableNode(Node):
                 self.uniques[key] = 1
             else:
                 self.uniques[key] += 1
-        self._notify()
+        self._on_updated()
+        self._on_subscribed(pubs)
 
-    def on_pub_updated(self, old_value: 'Node', new_value: 'Node'):
+    def update(self, old_value: 'Node', new_value: 'Node'):
         if not isinstance(old_value, WireNode):
             raise TypeError(f"Expected type is SourceNode but real type is {type(old_value.old_value)}")
         if not isinstance(new_value, WireNode):
@@ -54,7 +55,7 @@ class UtableNode(Node):
         self.uniques[new_key] = 1
         utable.append(new_row)
 
-        self._notify()
+        self._on_updated()
 
 
 class CreateUtableNode(Command):

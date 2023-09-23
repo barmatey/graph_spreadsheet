@@ -22,11 +22,11 @@ class WireNode(Node):
     uuid: UUID = Field(default_factory=uuid4)
     events: list[Event] = Field(default_factory=list)
 
-    def on_pub_updated(self, old_value: 'Node', new_value: 'Node'):
+    def update(self, old_value: 'Node', new_value: 'Node'):
         logger.warning("WireNode parent was updated?")
         self.events.append(NodeUpdated(old_value=self.model_copy(deep=True), new_value=self))
 
-    def on_subscribed(self, pubs: set['Node']):
+    def follow(self, pubs: set['Node']):
         raise NotImplemented
 
 

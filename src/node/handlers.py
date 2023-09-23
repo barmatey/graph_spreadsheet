@@ -50,12 +50,21 @@ class NodeUpdatedHandler(EventHandler):
         # Update subscribers
         subs = self._repo.get_node_children(event.new_value.uuid)
         for sub in subs:
-            sub.on_pub_updated(event.old_value, event.new_value)
+            sub.update(event.old_value, event.new_value)
             self.extend_events(sub.parse_events())
 
         logger.debug(f"{event.new_value.__class__.__name__}UpdatedHandler => update: {subs}")
 
 
+class NodeSubscribedHandler(EventHandler):
+    def handle(self, event: domain.NodeSubscribed):
+        self._repo.append_node_parents(event.sub, event.pubs)
+        for pub in event.pubs:
+            self._repo.append_node_children(pub, {event.sub})
+        logger.debug(f"NodeSubscribedHandler(sub: {event.sub.__class__.__name__}, pubs: {event.pubs})")
+
+
 COMMON_EVENT_HANDLERS = {
     domain.NodeUpdated: NodeUpdatedHandler,
+    domain.NodeSubscribed: NodeSubscribedHandler,
 }

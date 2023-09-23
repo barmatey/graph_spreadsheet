@@ -14,9 +14,7 @@ class CreateWireNodeHandler(CommandHandler):
 
         # Subscribe source
         source_node = self._repo.get_by_id(cmd.source_id)
-        source_node.on_subscribed({wire_node})
-        self._repo.append_node_parents(source_node, {wire_node})
-        self._repo.append_node_children(wire_node, {source_node})
+        source_node.follow({wire_node})
 
         self.extend_events(wire_node.parse_events())
         self.extend_events(source_node.parse_events())
