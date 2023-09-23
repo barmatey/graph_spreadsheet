@@ -11,10 +11,10 @@ class SourceNode(Node):
     uuid: UUID = Field(default_factory=uuid4)
     events: list[Event] = Field(default_factory=list)
 
-    def on_parent_updated(self, old_value: 'Node', new_value: 'Node'):
+    def on_pub_updated(self, old_value: 'Node', new_value: 'Node'):
         self._notify()
 
-    def on_append_parents(self, pubs: set['Node']):
+    def on_subscribed(self, pubs: set['Node']):
         self._notify()
 
 

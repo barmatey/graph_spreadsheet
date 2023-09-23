@@ -5,6 +5,7 @@ from src.messagebus.msgbus import Msgbus
 from src.node.repository import GraphRepoFake
 from src.source import domain as source_domain
 from src.wire import domain as wire_domain
+from src.formula.utable import domain as utable_domain
 
 bus = Msgbus()
 repo = GraphRepoFake()
@@ -30,12 +31,15 @@ def print_hi():
     wire2 = execute(cmd_wire2)
     wire3 = execute(cmd_wire3)
 
+    # Utable
+    cmd_utable = utable_domain.CreateUtableNode(source_id=source.uuid, ccols=["sender", "sub1"])
+    utable = execute(cmd_utable)
+
     # Wire update
-    cmd_wire_update = wire_domain.UpdateWire(uuid=wire1.uuid, sender=330)
+    cmd_wire_update = wire_domain.UpdateWire(uuid=wire1.uuid, sender=33)
     execute(cmd_wire_update)
 
-    logger.success(source)
-    logger.success(repo.get_by_id(wire1.uuid).sender)
+    logger.success(utable.utable)
 
 
 if __name__ == '__main__':

@@ -23,11 +23,11 @@ class Node(Model):
         return self.__class__.__name__
 
     @abstractmethod
-    def on_parent_updated(self, old_value: 'Node', new_value: 'Node'):
+    def on_pub_updated(self, old_value: 'Node', new_value: 'Node'):
         raise NotImplemented
 
     @abstractmethod
-    def on_append_parents(self, pubs: set['Node']):
+    def on_subscribed(self, pubs: set['Node']):
         raise NotImplemented
 
     def _notify(self):
