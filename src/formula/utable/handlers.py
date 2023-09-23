@@ -1,5 +1,3 @@
-from collections import deque
-
 from loguru import logger
 
 from src.node.handlers import CommandHandler

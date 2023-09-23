@@ -53,7 +53,7 @@ class NodeUpdatedHandler(EventHandler):
             sub.update(event.old_value, event.new_value)
             self.extend_events(sub.parse_events())
 
-        logger.debug(f"{event.new_value.__class__.__name__}UpdatedHandler => update: {subs}")
+        logger.debug(f"{event.new_value.__class__.__name__}UpdatedHandler => updated: {subs}")
 
 
 class NodeSubscribedHandler(EventHandler):
