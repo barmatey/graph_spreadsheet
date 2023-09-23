@@ -6,6 +6,7 @@ from src.node.repository import GraphRepoFake
 from src.source import domain as source_domain
 from src.wire import domain as wire_domain
 from src.formula.utable import domain as utable_domain
+from src.formula.mapper import domain as mapper_domain
 
 bus = Msgbus()
 repo = GraphRepoFake()
@@ -24,7 +25,7 @@ def print_hi():
 
     # Wire
     cmd_wire1 = wire_domain.CreateWireNode(sender=1, receiver=2, amount=333, source_id=source.uuid)
-    cmd_wire2 = wire_domain.CreateWireNode(sender=1, receiver=2, amount=333, source_id=source.uuid)
+    cmd_wire2 = wire_domain.CreateWireNode(sender=122, receiver=2, amount=333, source_id=source.uuid)
     cmd_wire3 = wire_domain.CreateWireNode(sender=1, receiver=2, amount=333, source_id=source.uuid)
 
     wire1 = execute(cmd_wire1)
@@ -35,11 +36,18 @@ def print_hi():
     cmd_utable = utable_domain.CreateUtableNode(source_id=source.uuid, ccols=["sender", "sub1"])
     utable = execute(cmd_utable)
 
+    # Mapper
+    cmd_mapper0 = mapper_domain.CreateMapperNode(utable_id=utable.uuid, row_index=0)
+    cmd_mapper1 = mapper_domain.CreateMapperNode(utable_id=utable.uuid, row_index=1)
+
+    mapper0 = execute(cmd_mapper0)
+    mapper1 = execute(cmd_mapper1)
+
     # Wire update
     cmd_wire_update = wire_domain.UpdateWire(uuid=wire1.uuid, sender=33)
     execute(cmd_wire_update)
 
-    logger.success(utable.utable)
+    logger.success(mapper1)
 
 
 if __name__ == '__main__':
