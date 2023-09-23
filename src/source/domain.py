@@ -15,8 +15,8 @@ class SourceNode(Node):
         self._on_updated()
 
     def follow(self, pubs: set['Node']):
-        self._on_updated()
         self._on_subscribed(pubs)
+        self._on_updated()
 
 
 class CreateSourceNode(Command):

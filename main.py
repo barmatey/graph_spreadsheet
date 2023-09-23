@@ -7,6 +7,7 @@ from src.source import domain as source_domain
 from src.wire import domain as wire_domain
 from src.formula.utable import domain as utable_domain
 from src.formula.mapper import domain as mapper_domain
+from src.formula.profit_cell import domain as pf_domain
 
 bus = Msgbus()
 repo = GraphRepoFake()
@@ -43,11 +44,13 @@ def print_hi():
     mapper0 = execute(cmd_mapper0)
     mapper1 = execute(cmd_mapper1)
 
+    # ProfitCell
+    cmd_pf = pf_domain.CreateProfitCellNode(mapper_node_id=mapper0.uuid, source_node_id=source.uuid)
+    execute(cmd_pf)
+
     # Wire update
     cmd_wire_update = wire_domain.UpdateWire(uuid=wire1.uuid, sender=33)
     execute(cmd_wire_update)
-
-    logger.success(mapper1)
 
 
 if __name__ == '__main__':
