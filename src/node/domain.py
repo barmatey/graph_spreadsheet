@@ -19,6 +19,9 @@ class Node(Model):
     uuid: UUID
     events: list[Event]
 
+    def __repr__(self):
+        return self.__class__.__name__
+
     @abstractmethod
     def on_parent_updated(self, old_value: 'Node', new_value: 'Node'):
         raise NotImplemented

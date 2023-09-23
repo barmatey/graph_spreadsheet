@@ -22,15 +22,20 @@ def print_hi():
     source = execute(cmd_source)
 
     # Wire
-    cmd_wire = wire_domain.CreateWireNode(sender=1, receiver=2, amount=333, source_id=source.uuid)
-    wire = execute(cmd_wire)
+    cmd_wire1 = wire_domain.CreateWireNode(sender=1, receiver=2, amount=333, source_id=source.uuid)
+    cmd_wire2 = wire_domain.CreateWireNode(sender=1, receiver=2, amount=333, source_id=source.uuid)
+    cmd_wire3 = wire_domain.CreateWireNode(sender=1, receiver=2, amount=333, source_id=source.uuid)
+
+    wire1 = execute(cmd_wire1)
+    wire2 = execute(cmd_wire2)
+    wire3 = execute(cmd_wire3)
 
     # Wire update
-    cmd_wire_update = wire_domain.UpdateWire(uuid=wire.uuid, sender=330)
+    cmd_wire_update = wire_domain.UpdateWire(uuid=wire1.uuid, sender=330)
     execute(cmd_wire_update)
 
     logger.success(source)
-    logger.success(repo.get_by_id(wire.uuid).sender)
+    logger.success(repo.get_by_id(wire1.uuid).sender)
 
 
 if __name__ == '__main__':
