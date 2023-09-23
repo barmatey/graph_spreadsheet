@@ -16,7 +16,7 @@ class UtableNode(Node):
 
     def follow(self, pubs: set['Node']):
         for wire in pubs:
-            if not (wire, WireNode):
+            if not isinstance(wire, WireNode):
                 raise TypeError(f"invalid type: {type(wire)}")
             row = [wire.__getattribute__(ccol) for ccol in self.ccols]
             key = str(row)

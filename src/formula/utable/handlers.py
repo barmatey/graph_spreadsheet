@@ -20,8 +20,9 @@ class CreateUtableNodeHandler(CommandHandler):
         all_parents = self._repo.get_node_parents(source)
         wires = set(filter(lambda x: isinstance(x, wire_domain.WireNode), all_parents))
 
-        # Subscribing on wires
-        utable_node.follow(wires)
+        # Subscribing
+        pubs = wires.union({source})
+        utable_node.follow(pubs)
 
         self.extend_events(utable_node.parse_events())
         return utable_node
