@@ -1,5 +1,6 @@
 from uuid import UUID, uuid4
 
+from loguru import logger
 from pydantic import Field
 
 from src.node.domain import Node, Command, Event
@@ -8,7 +9,7 @@ from src.wire import domain as wire_domain
 
 
 class ProfitCellNode(Node):
-    sum: float
+    value: float
     mapper: mapper_domain.MapperNode | None = None
     uuid: UUID = Field(default_factory=uuid4)
     events: list[Event] = Field(default_factory=list)
@@ -17,7 +18,7 @@ class ProfitCellNode(Node):
         for pub in pubs:
             if isinstance(pub, wire_domain.WireNode):
                 if self.mapper.is_filtred(pub):
-                    self.sum += pub.amount
+                    self.value += pub.amount
             elif isinstance(pub, mapper_domain.MapperNode):
                 self.mapper = pub
                 self.events.append(ProfitCellMapperUpdated(node=self))
@@ -28,13 +29,20 @@ class ProfitCellNode(Node):
 
     def update(self, old_value: 'Node', new_value: 'Node'):
         if isinstance(old_value, wire_domain.WireNode) and isinstance(new_value, wire_domain.WireNode):
-            self.sum -= old_value.amount
+            self.value -= old_value.amount
             if self.mapper.is_filtred(new_value):
-                self.sum += new_value.amount
+                self.value += new_value.amount
         elif isinstance(new_value, mapper_domain.MapperNode):
             self.events.append(ProfitCellMapperUpdated(node=self))
         else:
             raise TypeError(f"real type is {type(old_value)}, {type(new_value)}")
+        self._on_updated()
+
+    def recalculate(self, wires: set[wire_domain.WireNode]):
+        self.value = 0
+        for wire in wires:
+            if self.mapper.is_filtred(wire):
+                self.value += wire.amount
         self._on_updated()
 
 

@@ -24,9 +24,9 @@ def print_hi():
     source = execute(cmd_source)
 
     # Wire
-    cmd_wire1 = wire_domain.CreateWireNode(sender=1, receiver=2, amount=333, source_id=source.uuid)
-    cmd_wire2 = wire_domain.CreateWireNode(sender=122, receiver=2, amount=333, source_id=source.uuid)
-    cmd_wire3 = wire_domain.CreateWireNode(sender=1, receiver=2, amount=333, source_id=source.uuid)
+    cmd_wire1 = wire_domain.CreateWireNode(sender=1, receiver=2, amount=1, source_id=source.uuid)
+    cmd_wire2 = wire_domain.CreateWireNode(sender=2, receiver=2, amount=1, source_id=source.uuid)
+    cmd_wire3 = wire_domain.CreateWireNode(sender=3, receiver=2, amount=1, source_id=source.uuid)
 
     wire1 = execute(cmd_wire1)
     wire2 = execute(cmd_wire2)
@@ -41,14 +41,14 @@ def print_hi():
     cmd_mapper1 = mapper_domain.CreateMapperNode(utable_id=utable.uuid, row_index=1)
 
     mapper0 = execute(cmd_mapper0)
-    mapper1 = execute(cmd_mapper1)
+    # mapper1 = execute(cmd_mapper1)
 
     # ProfitCell
     cmd_pf = pf_domain.CreateProfitCellNode(mapper_node_id=mapper0.uuid, source_node_id=source.uuid)
-    execute(cmd_pf)
+    profit_cell = execute(cmd_pf)
 
     # Wire update
-    cmd_wire_update = wire_domain.UpdateWire(uuid=wire1.uuid, sender=33)
+    cmd_wire_update = wire_domain.UpdateWire(uuid=wire3.uuid, sender=1)
     execute(cmd_wire_update)
 
 
