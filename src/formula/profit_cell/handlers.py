@@ -8,14 +8,19 @@ from . import domain as pf_domain
 class CreateProfitCellNodeHandler(CommandHandler):
     def execute(self, cmd: pf_domain.CreateProfitCellNode) -> pf_domain.ProfitCellNode:
         logger.error(f"CreateProfitSumNode.execute()")
+
+        # Get parents
         mapper = self._repo.get_by_id(cmd.mapper_node_id)
+        period = self._repo.get_by_id(cmd.period_node_id)
         source = self._repo.get_by_id(cmd.source_node_id)
         wires = set(filter(lambda x: isinstance(x, wire_domain.WireNode), self._repo.get_node_parents(source)))
+
+        # Create node
         profit_cell_node = pf_domain.ProfitCellNode(value=0)
         self._repo.add(profit_cell_node)
 
         # Subscribing
-        profit_cell_node.follow({mapper})
+        profit_cell_node.follow({mapper, period})
         self.extend_events(profit_cell_node.parse_events()[1:2])
         profit_cell_node.follow(wires)
         self.extend_events(profit_cell_node.parse_events())
@@ -23,7 +28,7 @@ class CreateProfitCellNodeHandler(CommandHandler):
 
 
 class ProfitCellMapperUpdatedHandler(EventHandler):
-    def handle(self, event: pf_domain.ProfitCellMapperUpdated):
+    def handle(self, event: pf_domain.ProfitCellRecalculateRequested):
         profit_cell = event.node
         wires = set(filter(lambda x: isinstance(x, wire_domain.WireNode), self._repo.get_node_parents(profit_cell)))
         profit_cell.recalculate(wires)
@@ -32,7 +37,7 @@ class ProfitCellMapperUpdatedHandler(EventHandler):
 
 
 PROFIT_CELL_EVENT_HANDLERS = {
-    pf_domain.ProfitCellMapperUpdated: ProfitCellMapperUpdatedHandler,
+    pf_domain.ProfitCellRecalculateRequested: ProfitCellMapperUpdatedHandler,
 }
 
 PROFIT_CELL_COMMAND_HANDLERS = {

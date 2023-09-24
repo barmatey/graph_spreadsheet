@@ -13,5 +13,5 @@ class CreatePeriodNodeHandler(CommandHandler):
 
 
 PERIOD_COMMAND_HANDLERS = {
-    period_domain.CreatePeriodNode: period_domain.CreatePeriodNode,
+    period_domain.CreatePeriodNode: CreatePeriodNodeHandler,
 }

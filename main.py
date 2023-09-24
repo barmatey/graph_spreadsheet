@@ -7,6 +7,8 @@ from src.wire import domain as wire_domain
 from src.formula.utable import domain as utable_domain
 from src.formula.mapper import domain as mapper_domain
 from src.formula.profit_cell import domain as pf_domain
+from src.formula.period import domain as period_domain
+from datetime import datetime
 
 bus = Msgbus()
 repo = GraphRepoFake()
@@ -39,12 +41,15 @@ def print_hi():
     # Mapper
     cmd_mapper0 = mapper_domain.CreateMapperNode(utable_id=utable.uuid, row_index=0)
     cmd_mapper1 = mapper_domain.CreateMapperNode(utable_id=utable.uuid, row_index=1)
-
     mapper0 = execute(cmd_mapper0)
     # mapper1 = execute(cmd_mapper1)
 
+    # Period
+    cmd_period = period_domain.CreatePeriodNode(from_date=datetime(2020, 1, 1), to_date=datetime(2222, 1, 1))
+    period = execute(cmd_period)
+
     # ProfitCell
-    cmd_pf = pf_domain.CreateProfitCellNode(mapper_node_id=mapper0.uuid, source_node_id=source.uuid)
+    cmd_pf = pf_domain.CreateProfitCellNode(mapper_node_id=mapper0.uuid, source_node_id=source.uuid, period_node_id=period.uuid)
     profit_cell = execute(cmd_pf)
 
     # Wire update
