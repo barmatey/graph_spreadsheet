@@ -1,6 +1,5 @@
 from uuid import UUID, uuid4
 
-from loguru import logger
 from pydantic import Field
 
 from src.node.domain import Node, Command, Event
@@ -17,7 +16,6 @@ class ProfitCellNode(Node):
     def follow(self, pubs: set['Node']):
         for pub in pubs:
             if isinstance(pub, wire_domain.WireNode):
-                logger.warning(f"on_subscribe, is_filtred={self.mapper.is_filtred(pub)}")
                 if self.mapper.is_filtred(pub):
                     self.sum += pub.amount
             elif isinstance(pub, mapper_domain.MapperNode):
@@ -30,14 +28,14 @@ class ProfitCellNode(Node):
 
     def update(self, old_value: 'Node', new_value: 'Node'):
         if isinstance(old_value, wire_domain.WireNode) and isinstance(new_value, wire_domain.WireNode):
-            self.value.sum -= old_value.amount
-            if self._report_filter.is_filtred(new_value):
-                self.value.sum += new_value.value.amount
-            return
-        if isinstance(new_value, mapper_domain.MapperNode):
+            self.sum -= old_value.amount
+            if self.mapper.is_filtred(new_value):
+                self.sum += new_value.amount
+        elif isinstance(new_value, mapper_domain.MapperNode):
             self.events.append(ProfitCellMapperUpdated(node=self))
-            return
-        raise TypeError(f"real type is {type(old_value)}, {type(new_value)}")
+        else:
+            raise TypeError(f"real type is {type(old_value)}, {type(new_value)}")
+        self._on_updated()
 
 
 class CreateProfitCellNode(Command):
