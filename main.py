@@ -1,5 +1,4 @@
 from loguru import logger
-from pydantic import BaseModel
 
 from src.messagebus.msgbus import Msgbus
 from src.node.repository import GraphRepoFake
@@ -49,8 +48,8 @@ def print_hi():
     execute(cmd_pf)
 
     # Wire update
-    cmd_wire_update = wire_domain.UpdateWire(uuid=wire1.uuid, sender=33)
-    execute(cmd_wire_update)
+    # cmd_wire_update = wire_domain.UpdateWire(uuid=wire1.uuid, sender=33)
+    # execute(cmd_wire_update)
 
 
 if __name__ == '__main__':

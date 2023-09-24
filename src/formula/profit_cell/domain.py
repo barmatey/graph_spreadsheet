@@ -17,11 +17,12 @@ class ProfitCellNode(Node):
     def follow(self, pubs: set['Node']):
         for pub in pubs:
             if isinstance(pub, wire_domain.WireNode):
-                logger.warning(f"on_subscribe, is_filtred={self.value.report_filter.is_filtred(pub)}")
+                logger.warning(f"on_subscribe, is_filtred={self.mapper.is_filtred(pub)}")
                 if self.mapper.is_filtred(pub):
                     self.sum += pub.amount
             elif isinstance(pub, mapper_domain.MapperNode):
                 self.mapper = pub
+                self.events.append(ProfitCellMapperUpdated(node=self))
             else:
                 raise TypeError(f"real type is {type(pub)}")
         self._on_subscribed(pubs)
