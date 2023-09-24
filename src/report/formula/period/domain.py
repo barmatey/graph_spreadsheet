@@ -4,7 +4,7 @@ from uuid import UUID, uuid4
 from pydantic import Field
 
 from src.node.domain import Node, Command
-from src.wire import domain as wire_domain
+from src.report.wire import domain as wire_domain
 
 
 class PeriodNode(Node):

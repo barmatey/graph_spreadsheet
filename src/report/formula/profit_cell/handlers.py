@@ -1,7 +1,7 @@
 from loguru import logger
 
 from src.node.handlers import CommandHandler, EventHandler
-from src.wire import domain as wire_domain
+from src.report.wire import domain as wire_domain
 from . import domain as pf_domain
 
 

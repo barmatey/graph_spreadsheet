@@ -5,8 +5,8 @@ from pydantic import Field
 
 from src.core.cell import CellTable
 from src.node.domain import Node, Command, Event
-from src.source.domain import SourceNode
-from src.wire.domain import Ccol, WireNode
+from src.report.source.domain import SourceNode
+from src.report.wire.domain import Ccol, WireNode
 
 
 class UtableNode(Node):

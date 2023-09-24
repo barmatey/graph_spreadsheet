@@ -3,8 +3,8 @@ from uuid import UUID, uuid4
 from pydantic import Field
 
 from src.node.domain import Node, Command, Event
-from src.wire import domain as wire_domain
-from src.formula.utable import domain as utable_domain
+from src.report.wire import domain as wire_domain
+from src.report.formula.utable import domain as utable_domain
 
 
 class MapperNode(Node):
