@@ -2,7 +2,7 @@ from uuid import UUID, uuid4
 
 from pydantic import Field
 
-from src.core.cell import CellValue
+from src.core.cell import CellValue, CellTable
 from src.node.domain import Node, Event
 
 
@@ -18,7 +18,11 @@ class CellNode(Node):
         for pub in pubs:
             if not hasattr(pub, "value"):
                 raise Exception
-            self.value = pub.value
+            if isinstance(pub.value, CellValue):
+                self.value = pub.value
+            elif isinstance(pub.value, list):
+                self.value = pub.value[self.index[0]][self.index[1]]
+
         self._on_subscribed(pubs)
         self._on_updated()
 

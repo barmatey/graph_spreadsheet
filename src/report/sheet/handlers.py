@@ -28,7 +28,8 @@ class CreateGroupSheetNodeHandler(CommandHandler):
             for j in range(0, len(utable.value[0])):
                 cell = cell_domain.CellNode(index=(i, j), value=utable.value[i][j])
                 self._repo.add(cell)
-
+                cell.follow({utable})
+                self.extend_events(cell.parse_events())
         return group
 
 
