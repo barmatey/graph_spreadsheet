@@ -20,8 +20,11 @@ class PlanItems(Model):
 class GroupSheetNode(sheet_domain.SheetNode):
     plan_items: PlanItems
     uuid: UUID = Field(default_factory=uuid4)
-    table: CellTable = Field(default_factory=list)
     events: list[Event] = Field(default_factory=list)
+
+    @property
+    def value(self) -> CellTable:
+        return self.plan_items.value
 
     def __follow_wire(self, pub: WireNode):
         row = [pub.__getattribute__(ccol) for ccol in self.plan_items.ccols]

@@ -7,7 +7,6 @@ from src.node.domain import Node, Event
 
 
 class SheetNode(Node):
-    table: CellTable = Field(default_factory=list)
     events: list[Event] = Field(default_factory=list)
     uuid: UUID = Field(default_factory=uuid4)
 
