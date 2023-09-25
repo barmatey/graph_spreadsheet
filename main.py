@@ -10,6 +10,7 @@ from src.report.formula.mapper import domain as mapper_domain
 from src.report.formula.profit_cell import domain as pf_domain
 from src.report.formula.period import domain as period_domain
 from src.report.group_sheet import domain as group_domain
+from src.report.finrep_sheet import domain as report_domain
 from datetime import datetime
 
 bus = Msgbus()
@@ -54,6 +55,17 @@ def foo():
 
     cmd_group = group_domain.CreateGroupSheetNode(title="Hello", source_id=source.uuid, ccols=["sender", "sub1"])
     group_sheet = execute(cmd_group)
+
+    cmd_profit = report_domain.CreateProfitSheetNode(
+        source_id=source.uuid,
+        group_id=group_sheet.uuid,
+        start_date=datetime(2020, 1, 1),
+        end_date=datetime(2023, 1, 1),
+        period_year=0,
+        period_month=3,
+        period_day=1,
+    )
+    profit_node = execute(cmd_profit)
 
     for row in group_sheet.table:
         print(row)

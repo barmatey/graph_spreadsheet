@@ -2,7 +2,6 @@ from loguru import logger
 
 from src.node.handlers import CommandHandler
 from src.report.wire import domain as wire_domain
-from src.report.formula.mapper import domain as mapper_domain
 from src.spreadsheet.cell import domain as cell_domain
 from . import domain as group_sheet_domain
 
@@ -29,17 +28,14 @@ class CreateGroupSheetNodeHandler(CommandHandler):
 
         for i in range(0, len(group.plan_items.value)):
             row = []
-            mapper = mapper_domain.MapperNode(ccols=cmd.ccols)
-            self._repo.add(mapper)
             for j in range(0, len(group.plan_items.value[0])):
                 cell = cell_domain.CellNode(index=(i, j), value=group.plan_items.value[i][j])
                 self._repo.add(cell)
                 cell.follow({group})
                 self.extend_events(cell.parse_events())
                 row.append(cell)
-                mapper.follow({cell})
-            self.extend_events(mapper.parse_events())
             group.table.append(row)
+        group.set_node_fields({"size": (len(group.table), len(group.table[0]))})
 
         return group
 

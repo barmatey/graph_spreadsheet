@@ -14,6 +14,9 @@ class MapperNode(Node):
     uuid: UUID = Field(default_factory=uuid4)
     events: list[Event] = Field(default_factory=list)
 
+    def __str__(self):
+        return f"MapperNode(filter_by={self.filter_by})"
+
     def is_filtred(self, wire: wire_domain.WireNode) -> bool:
         return all([wire.__getattribute__(key) == value for key, value in self.filter_by.items()])
 

@@ -8,9 +8,13 @@ from src.spreadsheet.cell.domain import CellNode
 
 
 class SheetNode(Node):
+    size: tuple[int, int] = Field(default_factory=tuple)
     table: list[list[CellNode]] = Field(default_factory=list)
     events: list[Event] = Field(default_factory=list)
     uuid: UUID = Field(default_factory=uuid4)
+
+    def __str__(self):
+        return f"SheetNode(size={self.size})"
 
     def follow(self, pubs: set['Node']):
         raise NotImplemented

@@ -7,6 +7,7 @@ from src.report.formula.mapper.handlers import MAPPER_COMMAND_HANDLERS
 from src.report.formula.profit_cell.handlers import PROFIT_CELL_COMMAND_HANDLERS
 from src.report.formula.period.handlers import PERIOD_COMMAND_HANDLERS
 from src.report.group_sheet.handlers import GROUP_COMMAND_HANDLERS
+from src.report.finrep_sheet.handlers import FINREP_COMMAND_HANDLERS
 
 COMMAND_HANDLERS = (
         WIRE_COMMAND_HANDLERS
@@ -16,6 +17,7 @@ COMMAND_HANDLERS = (
         | PROFIT_CELL_COMMAND_HANDLERS
         | PERIOD_COMMAND_HANDLERS
         | GROUP_COMMAND_HANDLERS
+        | FINREP_COMMAND_HANDLERS
 )
 
 
