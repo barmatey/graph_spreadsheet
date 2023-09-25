@@ -26,7 +26,7 @@ class MapperNode(Node):
     def follow(self, pubs: set['Node']):
         for pub in pubs:
             if not isinstance(pub, utable_domain.UtableNode):
-                raise TypeError
+                raise TypeError(f"real type is {type(pub)}")
             index = self.index
             filter_by = {}
             for j, ccol in enumerate(pub.ccols):

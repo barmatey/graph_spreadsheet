@@ -6,6 +6,7 @@ from src.report.formula.utable import domain as utable_domain
 from src.report.formula.mapper import domain as mapper_domain
 from src.report.formula.profit_cell import domain as pf_domain
 from src.report.formula.period import domain as period_domain
+from src.report.sheet import domain as group_domain
 from datetime import datetime
 
 bus = Msgbus()
@@ -16,6 +17,23 @@ def execute(cmd):
     bus.push_command(cmd)
     bus.run()
     return bus.results[cmd.uuid]
+
+
+def foo():
+    # Source
+    cmd_source = source_domain.CreateSourceNode(title="Hello")
+    source = execute(cmd_source)
+
+    # Wire
+    cmd_wire1 = wire_domain.CreateWireNode(sender=1, receiver=2, amount=1, source_id=source.uuid)
+    cmd_wire2 = wire_domain.CreateWireNode(sender=2, receiver=2, amount=1, source_id=source.uuid)
+    cmd_wire3 = wire_domain.CreateWireNode(sender=3, receiver=2, amount=1, source_id=source.uuid)
+    execute(cmd_wire1)
+    execute(cmd_wire2)
+    execute(cmd_wire3)
+
+    cmd_group = group_domain.CreateGroupSheetNode(title="Hello", source_id=source.uuid, ccols=["sender", "sub1"])
+    execute(cmd_group)
 
 
 def print_hi():
@@ -56,4 +74,4 @@ def print_hi():
 
 
 if __name__ == '__main__':
-    print_hi()
+    foo()

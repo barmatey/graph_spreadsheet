@@ -19,7 +19,7 @@ class NodeRepoFake(Base):
 
     def update(self, node: Node):
         if self._node_data.get(node.uuid) is None:
-            raise LookupError
+            raise LookupError(f"node: {node}")
         self._node_data[node.uuid] = node
 
     def get_by_id(self, uuid: UUID) -> Node:
