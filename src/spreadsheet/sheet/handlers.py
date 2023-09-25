@@ -2,8 +2,8 @@ from loguru import logger
 
 from src.node.handlers import CommandHandler
 from src.report.wire import domain as wire_domain
-from src.sheet.formula.utable import domain as utable_domain
-from src.sheet.cell import domain as cell_domain
+from src.spreadsheet.formula.utable import domain as utable_domain
+from src.spreadsheet.cell import domain as cell_domain
 from . import domain as group_domain
 
 

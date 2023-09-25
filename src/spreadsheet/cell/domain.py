@@ -2,7 +2,7 @@ from uuid import UUID, uuid4
 
 from pydantic import Field
 
-from src.core.cell import CellValue, CellTable
+from src.core.cell import CellValue
 from src.node.domain import Node, Event
 
 
@@ -22,12 +22,18 @@ class CellNode(Node):
                 self.value = pub.value
             elif isinstance(pub.value, list):
                 self.value = pub.value[self.index[0]][self.index[1]]
-
+            else:
+                raise TypeError(f"real type is: {type(pub)}")
         self._on_subscribed(pubs)
         self._on_updated()
 
     def update(self, old_value: 'Node', new_value: 'Node'):
         if not hasattr(new_value, "value"):
             raise Exception
-        self.value = new_value.value
+        if isinstance(new_value.value, CellValue):
+            self.value = new_value.value
+        elif isinstance(new_value.value, list):
+            self.value = new_value.value[self.index[0]][self.index[1]]
+        else:
+            raise TypeError(f"real type is: {type(new_value)}")
         self._on_updated()
