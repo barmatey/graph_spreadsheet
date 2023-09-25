@@ -2,7 +2,7 @@ from src.node.domain import Command
 from src.node.handlers import CommandHandler
 from src.report.source.handlers import SOURCE_COMMAND_HANDLERS
 from src.report.wire.handlers import WIRE_COMMAND_HANDLERS
-from src.report.formula.utable.handlers import UTABLE_COMMAND_HANDLERS
+from src.sheet.formula.utable.handlers import UTABLE_COMMAND_HANDLERS
 from src.report.formula.mapper.handlers import MAPPER_COMMAND_HANDLERS
 from src.report.formula.profit_cell.handlers import PROFIT_CELL_COMMAND_HANDLERS
 from src.report.formula.period.handlers import PERIOD_COMMAND_HANDLERS

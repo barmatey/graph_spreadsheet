@@ -12,7 +12,7 @@ from src.report.wire.domain import Ccol, WireNode
 class UtableNode(Node):
     ccols: list[Ccol]
     uniques: dict[str, int] = Field(default_factory=dict)
-    utable: CellTable = Field(default_factory=list)
+    value: CellTable = Field(default_factory=list)
     uuid: UUID = Field(default_factory=uuid4)
     events: list[Event] = Field(default_factory=list)
 
@@ -22,7 +22,7 @@ class UtableNode(Node):
                 row = [pub.__getattribute__(ccol) for ccol in self.ccols]
                 key = str(row)
                 if self.uniques.get(key) is None:
-                    self.utable.append(row)
+                    self.value.append(row)
                     self.uniques[key] = 1
                 else:
                     self.uniques[key] += 1
@@ -47,7 +47,7 @@ class UtableNode(Node):
             new_key = str(new_row)
 
             # Drop old value
-            utable = self.utable
+            utable = self.value
             self.uniques[old_key] -= 1
             if self.uniques[old_key] == 0:
                 del self.uniques[old_key]

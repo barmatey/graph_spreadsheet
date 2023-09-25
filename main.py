@@ -2,7 +2,7 @@ from src.messagebus.msgbus import Msgbus
 from src.node.repository import GraphRepoFake
 from src.report.source import domain as source_domain
 from src.report.wire import domain as wire_domain
-from src.report.formula.utable import domain as utable_domain
+from src.sheet.formula.utable import domain as utable_domain
 from src.report.formula.mapper import domain as mapper_domain
 from src.report.formula.profit_cell import domain as pf_domain
 from src.report.formula.period import domain as period_domain
