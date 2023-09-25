@@ -5,7 +5,6 @@ from pydantic import Field
 from src.node.domain import Node, Command, Event
 from src.report.wire import domain as wire_domain
 from src.report.wire.domain import Ccol
-from src.spreadsheet.formula.utable import domain as utable_domain
 from src.spreadsheet.cell import domain as cell_domain
 
 
