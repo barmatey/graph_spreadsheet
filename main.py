@@ -6,7 +6,7 @@ from src.report.formula.utable import domain as utable_domain
 from src.report.formula.mapper import domain as mapper_domain
 from src.report.formula.profit_cell import domain as pf_domain
 from src.report.formula.period import domain as period_domain
-from src.spreadsheet.sheet import domain as group_domain
+from src.report.group_sheet import domain as group_domain
 from datetime import datetime
 
 bus = Msgbus()
