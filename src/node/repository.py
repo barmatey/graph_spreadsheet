@@ -63,8 +63,8 @@ class GraphRepoFake(NodeRepoFake, ParentRepoFake, ChildrenRepoFake):
         children = set(x.uuid for x in children)
         super().append_node_children(node, children)
 
-    def get_node_children(self, uuid: UUID) -> set[Node]:
-        ids = super().get_node_children(uuid)
+    def get_node_children(self, node: Node) -> set[Node]:
+        ids = super().get_node_children(node.uuid)
         nodes = set(self.get_by_id(x) for x in ids)
         return nodes
 

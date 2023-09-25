@@ -1,4 +1,7 @@
+from loguru import logger
+
 from src.messagebus.msgbus import Msgbus
+from src.node.domain import Node
 from src.node.repository import GraphRepoFake
 from src.report.source import domain as source_domain
 from src.report.wire import domain as wire_domain
@@ -11,6 +14,23 @@ from datetime import datetime
 
 bus = Msgbus()
 repo = GraphRepoFake()
+
+
+def print_graph(node: Node):
+    level = 0
+    string = "\n"
+
+    def print_node(n: Node):
+        nonlocal level
+        nonlocal string
+        string = string + "-" * level + f"{n}\n"
+        for sub in repo.get_node_children(n):
+            level += 1
+            print_node(sub)
+            level -= 1
+
+    print_node(node)
+    print(string)
 
 
 def execute(cmd):
@@ -37,6 +57,8 @@ def foo():
 
     for row in group_sheet.table:
         print(row)
+
+    print_graph(group_sheet)
 
 
 def print_hi():
@@ -68,7 +90,8 @@ def print_hi():
     period = execute(cmd_period)
 
     # ProfitCell
-    cmd_pf = pf_domain.CreateProfitCellNode(mapper_node_id=mapper0.uuid, source_node_id=source.uuid, period_node_id=period.uuid)
+    cmd_pf = pf_domain.CreateProfitCellNode(mapper_node_id=mapper0.uuid, source_node_id=source.uuid,
+                                            period_node_id=period.uuid)
     profit_cell = execute(cmd_pf)
 
     # Wire update

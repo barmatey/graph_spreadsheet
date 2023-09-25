@@ -38,7 +38,6 @@ class CreateGroupSheetNodeHandler(CommandHandler):
                 self.extend_events(cell.parse_events())
                 row.append(cell)
                 mapper.follow({cell})
-            logger.success(mapper.filter_by)
             self.extend_events(mapper.parse_events())
             group.table.append(row)
 

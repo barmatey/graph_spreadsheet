@@ -48,7 +48,7 @@ class NodeUpdatedHandler(EventHandler):
         self._repo.update(event.new_value)
 
         # Update subscribers
-        subs = self._repo.get_node_children(event.new_value.uuid)
+        subs = self._repo.get_node_children(event.new_value)
         for sub in subs:
             sub.update(event.old_value, event.new_value)
             self.extend_events(sub.parse_events())

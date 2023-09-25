@@ -1,7 +1,5 @@
 from abc import abstractmethod
 from uuid import UUID, uuid4
-
-from loguru import logger
 from pydantic import Field
 
 from src.core.pydantic_model import Model
@@ -20,6 +18,9 @@ class Node(Model):
     events: list[Event]
 
     def __repr__(self):
+        return self.__class__.__name__
+
+    def __str__(self):
         return self.__class__.__name__
 
     @abstractmethod
