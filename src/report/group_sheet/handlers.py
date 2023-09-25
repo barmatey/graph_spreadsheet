@@ -22,7 +22,6 @@ class CreateGroupSheetNodeHandler(CommandHandler):
         wires = set(filter(lambda x: isinstance(x, wire_domain.WireNode), self._repo.get_node_parents(source)))
 
         # Create
-
         utable = utable_domain.UtableNode(ccols=cmd.ccols)
         self._repo.add(utable)
         utable.follow(wires)
