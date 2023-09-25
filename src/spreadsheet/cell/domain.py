@@ -12,6 +12,9 @@ class CellNode(Node):
     uuid: UUID = Field(default_factory=uuid4)
     events: list[Event] = Field(default_factory=list)
 
+    def __repr__(self):
+        return f"Cell(index={self.index}, value={self.value})"
+
     def follow(self, pubs: set['Node']):
         if len(pubs) != 1:
             raise Exception

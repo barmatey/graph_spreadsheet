@@ -35,7 +35,7 @@ class CreateGroupSheetNodeHandler(CommandHandler):
                 cell = cell_domain.CellNode(index=(i, j), value=group.plan_items.value[i][j])
                 self._repo.add(cell)
                 cell.follow({group})
-                row.append(cell.value)
+                row.append(cell)
                 self.extend_events(cell.parse_events())
                 mapper.follow({cell})
             logger.success(mapper.filter_by)
