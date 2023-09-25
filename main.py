@@ -25,15 +25,18 @@ def foo():
     source = execute(cmd_source)
 
     # Wire
-    cmd_wire1 = wire_domain.CreateWireNode(sender=1, receiver=2, amount=1, source_id=source.uuid)
-    cmd_wire2 = wire_domain.CreateWireNode(sender=2, receiver=2, amount=1, source_id=source.uuid)
-    cmd_wire3 = wire_domain.CreateWireNode(sender=3, receiver=2, amount=1, source_id=source.uuid)
+    cmd_wire1 = wire_domain.CreateWireNode(sender=1, receiver=2, amount=1, sub1="Hello", source_id=source.uuid)
+    cmd_wire2 = wire_domain.CreateWireNode(sender=2, receiver=2, amount=1, sub1="World", source_id=source.uuid)
+    cmd_wire3 = wire_domain.CreateWireNode(sender=3, receiver=2, amount=1, sub1="Anna!", source_id=source.uuid)
     execute(cmd_wire1)
     execute(cmd_wire2)
     execute(cmd_wire3)
 
     cmd_group = group_domain.CreateGroupSheetNode(title="Hello", source_id=source.uuid, ccols=["sender", "sub1"])
-    execute(cmd_group)
+    group_sheet = execute(cmd_group)
+
+    for row in group_sheet.table:
+        print(row)
 
 
 def print_hi():
