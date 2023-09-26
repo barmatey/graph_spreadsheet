@@ -6,6 +6,7 @@ from src.node.domain import Node, Command, Event
 from src.report.formula.mapper import domain as mapper_domain
 from src.report.formula.period import domain as period_domain
 from src.report.wire import domain as wire_domain
+from src.report.source import domain as source_domain
 
 
 class ProfitCellNode(Node):
@@ -16,8 +17,14 @@ class ProfitCellNode(Node):
     events: list[Event] = Field(default_factory=list)
 
     def follow(self, pubs: set['Node']):
+        followed = pubs.copy()
         for pub in pubs:
-            if isinstance(pub, wire_domain.WireNode):
+            if isinstance(pub, source_domain.SourceNode):
+                for w in pub.wires:
+                    followed.add(w)
+                    if self.mapper.is_filtred(w) and self.period.is_filtred(w):
+                        self.value += w.amount
+            elif isinstance(pub, wire_domain.WireNode):
                 if self.mapper.is_filtred(pub) and self.period.is_filtred(pub):
                     self.value += pub.amount
             elif isinstance(pub, mapper_domain.MapperNode):
@@ -28,7 +35,7 @@ class ProfitCellNode(Node):
                 self.events.append(ProfitCellRecalculateRequested(node=self))
             else:
                 raise TypeError(f"real type is {type(pub)}")
-        self._on_subscribed(pubs)
+        self._on_subscribed(followed)
         self._on_updated()
 
     def update(self, old_value: 'Node', new_value: 'Node'):

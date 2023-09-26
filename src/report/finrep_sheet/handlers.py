@@ -2,7 +2,6 @@ from loguru import logger
 import pandas as pd
 
 from src.node.handlers import CommandHandler
-from src.report.wire import domain as wire_domain
 from src.report.formula.mapper import domain as mapper_domain
 from src.report.formula.period import domain as period_domain
 from src.report.formula.profit_cell import domain as pf_domain
@@ -16,8 +15,6 @@ class CreateProfitSheetNodeHandler(CommandHandler):
         logger.info(f"CreateProfitSheetNode.execute()")
         # Get data
         source = self._repo.get_by_id(cmd.source_id)
-        wires = set(filter(lambda x: isinstance(x, wire_domain.WireNode), self._repo.get_node_parents(source)))
-
         group_sheet: group_domain.GroupSheetNode = self._repo.get_by_id(cmd.group_id)
 
         profit_sheet = finrep_domain.FinrepSheet()
@@ -54,7 +51,7 @@ class CreateProfitSheetNodeHandler(CommandHandler):
             for j, period in enumerate(periods):
                 profit_cell = pf_domain.ProfitCellNode(value=0)
                 profit_cell.follow({mapper, period})
-                profit_cell.follow(wires)
+                profit_cell.follow({source})
 
                 sheet_cell = cell_domain.CellNode(index=(i, j + 1), value=None)
                 sheet_cell.follow({profit_cell})
