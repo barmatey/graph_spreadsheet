@@ -6,6 +6,7 @@ from src.node.domain import Node, Command, Event
 from src.report.wire import domain as wire_domain
 from src.report.wire.domain import Ccol
 from src.spreadsheet.cell import domain as cell_domain
+from src.spreadsheet.sheet import domain as sheet_domain
 
 
 class MapperNode(Node):
@@ -30,11 +31,15 @@ class MapperNode(Node):
 
     def follow(self, pubs: set['Node']):
         for pub in pubs:
-            if not isinstance(pub, cell_domain.CellNode):
+            if isinstance(pub, cell_domain.CellNode):
+                key = self.ccols[pub.index[1]]
+                value = pub.value
+                self.filter_by[key] = value
+            elif isinstance(pub, sheet_domain.SheetNode):
+                pass
+            else:
                 raise TypeError(f"invalid type: {type(pub)}")
-            key = self.ccols[pub.index[1]]
-            value = pub.value
-            self.filter_by[key] = value
+
         self._on_subscribed(pubs)
         self._on_updated()
 

@@ -68,7 +68,7 @@ def foo():
 
     print_graph(group_sheet)
     print()
-    # print_graph(profit_node)
+    print_graph(profit_node)
 
 
 def print_hi():

@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from loguru import logger
 import pandas as pd
 
@@ -11,41 +13,61 @@ from . import domain as finrep_domain
 
 
 class CreateProfitSheetNodeHandler(CommandHandler):
-    def execute(self, cmd: finrep_domain.CreateProfitSheetNode) -> finrep_domain.FinrepSheet:
-        logger.info(f"CreateProfitSheetNode.execute()")
-        # Get data
-        source = self._repo.get_by_id(cmd.source_id)
-        group_sheet: group_domain.GroupSheetNode = self._repo.get_by_id(cmd.group_id)
 
-        profit_sheet = finrep_domain.FinrepSheet()
-        self._repo.add(profit_sheet)
-
-        # Create mappers
+    def __create_mappers(self, group_id: UUID,
+                         parent_sheet: finrep_domain.FinrepSheet) -> list[mapper_domain.MapperNode]:
+        group_sheet: group_domain.GroupSheetNode = self._repo.get_by_id(group_id)
         mappers = []
         for i in range(0, group_sheet.size[0]):
             mapper = mapper_domain.MapperNode(ccols=group_sheet.plan_items.ccols)
-            self._repo.add(mapper)
-            pubs = set()
+            pubs = {parent_sheet}
             for j in range(group_sheet.size[1]):
                 cell = group_sheet.table[i][j]
                 pubs.add(cell)
             mapper.follow(pubs)
             self.extend_events(mapper.parse_events())
+            self._repo.add(mapper)
             mappers.append(mapper)
+        return mappers
 
-        # Create periods:
-        date_range = pd.date_range(cmd.start_date, cmd.end_date, freq=f"{cmd.period}{cmd.freq}")
-        periods = [period_domain.PeriodNode(from_date=start, to_date=end)
-                   for start, end in zip(date_range[:-1], date_range[1:])]
+    def __create_periods(self, start_date, end_date, period, freq,
+                         parent_sheet: finrep_domain.FinrepSheet) -> list[period_domain.PeriodNode]:
+        date_range = pd.date_range(start_date, end_date, freq=f"{period}{freq}")
+        periods = []
+        for start, end in zip(date_range[:-1], date_range[1:]):
+            period = period_domain.PeriodNode(from_date=start, to_date=end)
+            period.follow({parent_sheet})
+
+            self._repo.add(period)
+            self.extend_events(period.parse_events())
+        return periods
+
+    def execute(self, cmd: finrep_domain.CreateProfitSheetNode) -> finrep_domain.FinrepSheet:
+        logger.info(f"CreateProfitSheetNode.execute()")
+
+        # Result sheet
+        profit_sheet = finrep_domain.FinrepSheet()
+        self._repo.add(profit_sheet)
+
+        # Parent data
+        source = self._repo.get_by_id(cmd.source_id)
+        mappers = self.__create_mappers(group_id=cmd.group_id, parent_sheet=profit_sheet)
+        periods = self.__create_periods(cmd.start_date, cmd.end_date, cmd.period, cmd.freq, parent_sheet=profit_sheet)
 
         # Create sheet
         table = []
         row = []
+
+        # Create first row (no calculating, follow value only)
         for j, period in enumerate(periods):
-            sheet_cell = cell_domain.CellNode(index=(0, j), value=str(period.to_date))
+            sheet_cell = cell_domain.CellNode(index=(0, j), value=None)
+            sheet_cell.follow({period})
+            self.extend_events(sheet_cell.parse_events())
+            self._repo.add(sheet_cell)
             row.append(sheet_cell.value)
         table.append(row)
 
+        # mapper is a row filter, period is a col filter
         for i, mapper in enumerate(mappers):
             row = []
             for j, period in enumerate(periods):
