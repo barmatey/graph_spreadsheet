@@ -46,17 +46,17 @@ def foo():
     cmd_wire2 = wire_domain.CreateWireNode(sender=2, receiver=2, amount=1, sub1="World", source_id=source.uuid)
     cmd_wire3 = wire_domain.CreateWireNode(sender=3, receiver=2, amount=1, sub1="Anna!", source_id=source.uuid)
     execute(cmd_wire1)
-    execute(cmd_wire2)
-    execute(cmd_wire3)
+    # execute(cmd_wire2)
+    # execute(cmd_wire3)
 
-    cmd_group = group_domain.CreateGroupSheetNode(title="Hello", source_id=source.uuid, ccols=["sender", "sub1"])
+    cmd_group = group_domain.CreateGroupSheetNode(title="Hello", source_id=source.uuid, ccols=["sender"])
     group_sheet = execute(cmd_group)
 
     cmd_profit = report_domain.CreateProfitSheetNode(
         source_id=source.uuid,
         group_id=group_sheet.uuid,
-        start_date=datetime(2020, 1, 1),
-        end_date=datetime(2025, 1, 1),
+        start_date=datetime(2022, 1, 1),
+        end_date=datetime(2024, 1, 1),
         freq='M',
         period=12,
     )

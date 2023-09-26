@@ -55,10 +55,6 @@ class CreateProfitSheetNodeHandler(CommandHandler):
         mappers = self.__create_mappers(group_id=cmd.group_id, parent_sheet=profit_sheet)
         periods = self.__create_periods(cmd.start_date, cmd.end_date, cmd.period, cmd.freq, parent_sheet=profit_sheet)
 
-        # Create sheet
-        table = []
-        row = []
-
         # Create first row (no calculating, follow value only)
         for j, period in enumerate(periods):
             sheet_cell = cell_domain.CellNode(index=(0, j), value=None)
@@ -66,25 +62,20 @@ class CreateProfitSheetNodeHandler(CommandHandler):
             self.extend_events(sheet_cell.parse_events())
             self._repo.add(sheet_cell)
 
-            row.append(sheet_cell.value)
-        table.append(row)
-
         # mapper is a row filter, period is a col filter
         for i, mapper in enumerate(mappers):
-            row = []
             for j, period in enumerate(periods):
                 profit_cell = pf_domain.ProfitCellNode(value=0)
                 profit_cell.follow({mapper, period})
                 profit_cell.follow({source})
+                profit_cell.as_child({profit_sheet})
+                self._repo.add(profit_cell)
+                self.extend_events(profit_cell.parse_events())
 
                 sheet_cell = cell_domain.CellNode(index=(i, j + 1), value=None)
                 sheet_cell.follow({profit_cell})
-
-                row.append(sheet_cell.value)
-            table.append(row)
-
-        for row in table:
-            logger.success(row)
+                self._repo.add(sheet_cell)
+                self.extend_events(sheet_cell.parse_events())
 
         return profit_sheet
 

@@ -31,6 +31,10 @@ class Node(Model):
     def follow(self, pubs: set['Node']):
         raise NotImplemented
 
+    def as_child(self, pubs: set['Node']):
+        """Subscribe on publishers without typechecking and without changing state"""
+        self._on_subscribed(pubs)
+
     def _on_updated(self):
         self.events.append(NodeUpdated(old_value=self.model_copy(deep=True), new_value=self))
 
