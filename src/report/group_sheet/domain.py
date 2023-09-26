@@ -62,17 +62,20 @@ class GroupSheetNode(sheet_domain.SheetNode):
         return
 
     def follow(self, pubs: set['Node']):
+        subscribed = pubs.copy()
         for pub in pubs:
             if isinstance(pub, WireNode):
                 self.__follow_wire(pub)
             elif isinstance(pub, SourceNode):
+                # Subscribing on source is equal of subscribing on source and all children wires
                 for w in pub.wires:
                     self.__follow_wire(w)
+                    subscribed.add(w)
             else:
                 raise TypeError(f"invalid type: {type(pub)}")
 
         self._on_updated()
-        self._on_subscribed(pubs)
+        self._on_subscribed(subscribed)
 
     def update(self, old_value: 'Node', new_value: 'Node'):
         if isinstance(old_value, WireNode) and isinstance(new_value, WireNode):
