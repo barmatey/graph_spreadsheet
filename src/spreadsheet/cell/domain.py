@@ -36,6 +36,9 @@ class CellNode(Node):
     def update(self, old_value: 'Node', new_value: 'Node'):
         if not hasattr(new_value, "value"):
             raise Exception
+        if old_value.value == new_value.value:
+            return
+
         if isinstance(new_value.value, CellValue):
             self.value = new_value.value
         elif isinstance(new_value.value, list):

@@ -63,4 +63,3 @@ class NodeSubscribed(Event):
     pubs: set[Node]
     sub: Node
     uuid: UUID = Field(default_factory=uuid4)
-

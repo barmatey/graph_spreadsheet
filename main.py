@@ -1,3 +1,6 @@
+from copy import deepcopy
+
+import pandas as pd
 from loguru import logger
 
 from src.messagebus.msgbus import Msgbus
@@ -56,35 +59,31 @@ def foo():
         source_id=source.uuid,
         group_id=group_sheet.uuid,
         start_date=datetime(2022, 1, 1),
-        end_date=datetime(2024, 1, 1),
+        end_date=datetime(2025, 1, 1),
         freq='M',
         period=12,
     )
-    profit_node = execute(cmd_profit)
+    profit_sheet = execute(cmd_profit)
 
-    print_graph(group_sheet)
     print()
-    print_graph(profit_node)
+    print_table(profit_sheet.table)
+    print()
+
+    # print_graph(group_sheet)
+    # print()
+    # print_graph(profit_node)
 
 
-def print_hi():
-    # Source
-    cmd_source = source_domain.CreateSourceNode(title="Hello")
-    source = execute(cmd_source)
-
-    # Wire
-    cmd_wire1 = wire_domain.CreateWireNode(sender=1, receiver=2, amount=1, source_id=source.uuid)
-    cmd_wire2 = wire_domain.CreateWireNode(sender=2, receiver=2, amount=1, source_id=source.uuid)
-    cmd_wire3 = wire_domain.CreateWireNode(sender=3, receiver=2, amount=1, source_id=source.uuid)
-
-    wire1 = execute(cmd_wire1)
-    wire2 = execute(cmd_wire2)
-    wire3 = execute(cmd_wire3)
-
-
-    # Wire update
-    cmd_wire_update = wire_domain.UpdateWire(uuid=wire3.uuid, sender=1)
-    execute(cmd_wire_update)
+def print_table(table: list[list]):
+    table = deepcopy(table)
+    result = []
+    for row in table:
+        r = []
+        for cell in row:
+            r.append(cell.value)
+        result.append(r)
+    df = pd.DataFrame(result)
+    print(df)
 
 
 if __name__ == '__main__':

@@ -56,14 +56,18 @@ class CreateProfitSheetNodeHandler(CommandHandler):
         periods = self.__create_periods(cmd.start_date, cmd.end_date, cmd.period, cmd.freq, parent_sheet=profit_sheet)
 
         # Create first row (no calculating, follow value only)
+        row = []
         for j, period in enumerate(periods):
             sheet_cell = cell_domain.CellNode(index=(0, j), value=None)
             sheet_cell.follow({period})
             self.extend_events(sheet_cell.parse_events())
             self._repo.add(sheet_cell)
+            row.append(sheet_cell)
+        profit_sheet.append_row(row)
 
         # mapper is a row filter, period is a col filter
         for i, mapper in enumerate(mappers):
+            row = []
             for j, period in enumerate(periods):
                 profit_cell = pf_domain.ProfitCellNode(value=0)
                 profit_cell.follow({mapper, period})
@@ -76,6 +80,8 @@ class CreateProfitSheetNodeHandler(CommandHandler):
                 sheet_cell.follow({profit_cell})
                 self._repo.add(sheet_cell)
                 self.extend_events(sheet_cell.parse_events())
+                row.append(sheet_cell)
+            profit_sheet.append_row(row)
 
         return profit_sheet
 

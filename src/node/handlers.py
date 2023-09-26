@@ -61,7 +61,7 @@ class NodeSubscribedHandler(EventHandler):
         self._repo.append_node_parents(event.sub, event.pubs)
         for pub in event.pubs:
             self._repo.append_node_children(pub, {event.sub})
-        logger.debug(f"NodeSubscribedHandler(sub: {event.sub.__class__.__name__}, pubs: {event.pubs})")
+        # logger.debug(f"NodeSubscribedHandler(sub: {event.sub.__class__.__name__}, pubs: {event.pubs})")
 
 
 COMMON_EVENT_HANDLERS = {
