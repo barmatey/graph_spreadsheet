@@ -14,7 +14,7 @@ class SheetNode(Node):
     uuid: UUID = Field(default_factory=uuid4)
 
     def __str__(self):
-        return f"SheetNode(size={self.size})"
+        return f"{self.__class__.__name__}(size={self.size})"
 
     def follow(self, pubs: set['Node']):
         raise NotImplemented

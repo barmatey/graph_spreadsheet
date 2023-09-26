@@ -20,24 +20,24 @@ class CreateGroupSheetNodeHandler(CommandHandler):
         wires = set(filter(lambda x: isinstance(x, wire_domain.WireNode), self._repo.get_node_parents(source)))
 
         # Create
-        group = group_sheet_domain.GroupSheetNode(plan_items=group_sheet_domain.PlanItems(ccols=cmd.ccols))
-        self._repo.add(group)
+        group_sheet = group_sheet_domain.GroupSheetNode(plan_items=group_sheet_domain.PlanItems(ccols=cmd.ccols))
+        self._repo.add(group_sheet)
 
-        group.follow(wires)
-        self.extend_events(group.parse_events())
+        group_sheet.follow(wires)
+        self.extend_events(group_sheet.parse_events())
 
-        for i in range(0, len(group.plan_items.value)):
+        for i in range(0, len(group_sheet.plan_items.value)):
             row = []
-            for j in range(0, len(group.plan_items.value[0])):
-                cell = cell_domain.CellNode(index=(i, j), value=group.plan_items.value[i][j])
+            for j in range(0, len(group_sheet.plan_items.value[0])):
+                cell = cell_domain.CellNode(index=(i, j), value=group_sheet.plan_items.value[i][j])
                 self._repo.add(cell)
-                cell.follow({group})
+                cell.follow({group_sheet})
                 self.extend_events(cell.parse_events())
                 row.append(cell)
-            group.table.append(row)
-        group.set_node_fields({"size": (len(group.table), len(group.table[0]))})
+            group_sheet.table.append(row)
+        group_sheet.set_node_fields({"size": (len(group_sheet.table), len(group_sheet.table[0]))})
 
-        return group
+        return group_sheet
 
 
 GROUP_COMMAND_HANDLERS = {

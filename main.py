@@ -70,7 +70,7 @@ def foo():
     for row in group_sheet.table:
         print(row)
 
-    print_graph(group_sheet)
+    print_graph(profit_node)
 
 
 def print_hi():
