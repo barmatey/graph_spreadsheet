@@ -17,13 +17,12 @@ class CreateGroupSheetNodeHandler(CommandHandler):
 
         # Get wires
         source = self._repo.get_by_id(cmd.source_id)
-        wires = set(filter(lambda x: isinstance(x, wire_domain.WireNode), self._repo.get_node_parents(source)))
 
         # Create
         group_sheet = group_sheet_domain.GroupSheetNode(plan_items=group_sheet_domain.PlanItems(ccols=cmd.ccols))
         self._repo.add(group_sheet)
 
-        group_sheet.follow(wires)
+        group_sheet.follow({source})
         self.extend_events(group_sheet.parse_events())
 
         for i in range(0, len(group_sheet.plan_items.value)):

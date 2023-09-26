@@ -56,22 +56,19 @@ def foo():
     cmd_group = group_domain.CreateGroupSheetNode(title="Hello", source_id=source.uuid, ccols=["sender", "sub1"])
     group_sheet = execute(cmd_group)
 
-    cmd_profit = report_domain.CreateProfitSheetNode(
-        source_id=source.uuid,
-        group_id=group_sheet.uuid,
-        start_date=datetime(2020, 1, 1),
-        end_date=datetime(2025, 1, 1),
-        freq='M',
-        period=12,
-    )
-    profit_node = execute(cmd_profit)
-
-    for row in group_sheet.table:
-        print(row)
+    # cmd_profit = report_domain.CreateProfitSheetNode(
+    #     source_id=source.uuid,
+    #     group_id=group_sheet.uuid,
+    #     start_date=datetime(2020, 1, 1),
+    #     end_date=datetime(2025, 1, 1),
+    #     freq='M',
+    #     period=12,
+    # )
+    # profit_node = execute(cmd_profit)
 
     print_graph(group_sheet)
     print()
-    print_graph(profit_node)
+    # print_graph(profit_node)
 
 
 def print_hi():

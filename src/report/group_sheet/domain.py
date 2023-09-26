@@ -5,6 +5,7 @@ from pydantic import Field
 from src.core.cell import CellTable
 from src.core.pydantic_model import Model
 from src.node.domain import Command, Node, Event
+from src.report.source.domain import SourceNode
 from src.report.wire.domain import Ccol, WireNode
 from src.spreadsheet.sheet import domain as sheet_domain
 
@@ -64,6 +65,9 @@ class GroupSheetNode(sheet_domain.SheetNode):
         for pub in pubs:
             if isinstance(pub, WireNode):
                 self.__follow_wire(pub)
+            elif isinstance(pub, SourceNode):
+                for w in pub.wires:
+                    self.__follow_wire(w)
             else:
                 raise TypeError(f"invalid type: {type(pub)}")
 

@@ -1,7 +1,8 @@
 from loguru import logger
 
-from src.node.handlers import NodeUpdatedHandler, CommandHandler
+from src.node.handlers import CommandHandler
 from . import domain as wire_domain
+from src.report.source import domain as source_domain
 
 
 class CreateWireNodeHandler(CommandHandler):
@@ -12,9 +13,9 @@ class CreateWireNodeHandler(CommandHandler):
         wire_node = wire_domain.WireNode(**cmd.model_dump(exclude={"source_id"}))
         self._repo.add(wire_node)
 
-        # Subscribe source
-        source_node = self._repo.get_by_id(cmd.source_id)
-        source_node.follow({wire_node})
+        # Append wire to source
+        source_node: source_domain.SourceNode = self._repo.get_by_id(cmd.source_id)
+        source_node.append_wires([wire_node])
 
         self.extend_events(wire_node.parse_events())
         self.extend_events(source_node.parse_events())
