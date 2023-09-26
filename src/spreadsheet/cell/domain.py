@@ -15,6 +15,9 @@ class CellNode(Node):
     def __repr__(self):
         return f"Cell(index={self.index}, value={self.value})"
 
+    def __str__(self):
+        return f"Cell(index={self.index}, value={self.value})"
+
     def follow(self, pubs: set['Node']):
         if len(pubs) != 1:
             raise Exception

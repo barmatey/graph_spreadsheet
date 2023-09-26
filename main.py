@@ -60,16 +60,17 @@ def foo():
         source_id=source.uuid,
         group_id=group_sheet.uuid,
         start_date=datetime(2020, 1, 1),
-        end_date=datetime(2023, 1, 1),
-        period_year=0,
-        period_month=3,
-        period_day=1,
+        end_date=datetime(2025, 1, 1),
+        freq='M',
+        period=12,
     )
     profit_node = execute(cmd_profit)
 
     for row in group_sheet.table:
         print(row)
 
+    print_graph(group_sheet)
+    print()
     print_graph(profit_node)
 
 

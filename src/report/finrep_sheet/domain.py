@@ -1,3 +1,4 @@
+from typing import Literal
 from uuid import UUID, uuid4
 from datetime import datetime
 from pydantic import Field
@@ -16,7 +17,6 @@ class CreateProfitSheetNode(Command):
     group_id: UUID
     start_date: datetime
     end_date: datetime
-    period_year: int
-    period_month: int
-    period_day: int
+    period: int = 3
+    freq: Literal['H', 'D', 'M', 'Y'] = 'M'
     uuid: UUID = Field(default_factory=uuid4)

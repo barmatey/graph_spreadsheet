@@ -13,6 +13,12 @@ class PeriodNode(Node):
     events: list = Field(default_factory=list)
     uuid: UUID = Field(default_factory=uuid4)
 
+    def __repr__(self):
+        return self.__str__()
+
+    def __str__(self):
+        return f"PeriodNode(from_date={self.from_date}, to_date={self.to_date})"
+
     def is_filtred(self, wire: wire_domain.WireNode) -> bool:
         return self.from_date < wire.date <= self.to_date
 
