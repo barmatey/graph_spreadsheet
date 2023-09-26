@@ -40,6 +40,7 @@ class CreateProfitSheetNodeHandler(CommandHandler):
 
             self._repo.add(period)
             self.extend_events(period.parse_events())
+            periods.append(period)
         return periods
 
     def execute(self, cmd: finrep_domain.CreateProfitSheetNode) -> finrep_domain.FinrepSheet:
@@ -64,6 +65,7 @@ class CreateProfitSheetNodeHandler(CommandHandler):
             sheet_cell.follow({period})
             self.extend_events(sheet_cell.parse_events())
             self._repo.add(sheet_cell)
+
             row.append(sheet_cell.value)
         table.append(row)
 
