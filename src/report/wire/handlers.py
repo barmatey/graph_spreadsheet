@@ -1,6 +1,6 @@
 from loguru import logger
 
-from src.node.handlers import CommandHandler
+from src.node.handlers import CommandHandler, EventHandler
 from . import domain as wire_domain
 from src.report.source import domain as source_domain
 
@@ -15,10 +15,8 @@ class CreateWireNodeHandler(CommandHandler):
 
         # Append wire to source
         source_node: source_domain.SourceNode = self._repo.get_by_id(cmd.source_id)
-        source_node.append_wires([wire_node])
-        source_node.follow({wire_node})
+        source_node.follow_wires({wire_node})
 
-        self.extend_events(wire_node.parse_events())
         self.extend_events(source_node.parse_events())
 
         return wire_node
@@ -35,7 +33,25 @@ class UpdateWireHandler(CommandHandler):
         return wire_node
 
 
+class WireUpdatedHandler(EventHandler):
+    def handle(self, event: wire_domain.WireUpdated):
+        # Save
+        self._repo.update(event.new_value)
+
+        # Update subscribers
+        subs: set[wire_domain.WireSubscriber] = self._repo.get_node_children(event.new_value)
+        for sub in subs:
+            sub.update_wire(event.old_value, event.new_value)
+            self.extend_events(sub.parse_events())
+
+        logger.debug(f"{event.new_value.__class__.__name__}UpdatedHandler => updated: {subs}")
+
+
 WIRE_COMMAND_HANDLERS = {
     wire_domain.CreateWireNode: CreateWireNodeHandler,
     wire_domain.UpdateWire: UpdateWireHandler,
+}
+
+WIRE_EVENT_HANDLERS = {
+    wire_domain.WireUpdated: WireUpdatedHandler,
 }

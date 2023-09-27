@@ -13,7 +13,6 @@ class CreateProfitCellNodeHandler(CommandHandler):
         mapper = self._repo.get_by_id(cmd.mapper_node_id)
         period = self._repo.get_by_id(cmd.period_node_id)
         source = self._repo.get_by_id(cmd.source_node_id)
-        wires = set(filter(lambda x: isinstance(x, wire_domain.WireNode), self._repo.get_node_parents(source)))
 
         # Create node
         profit_cell_node = pf_domain.ProfitCellNode(value=0)
@@ -22,7 +21,7 @@ class CreateProfitCellNodeHandler(CommandHandler):
         # Subscribing
         profit_cell_node.follow({mapper, period})
         self.extend_events(profit_cell_node.parse_events())
-        profit_cell_node.follow(wires)
+        profit_cell_node.follow({source})
         self.extend_events(profit_cell_node.parse_events())
         return profit_cell_node
 

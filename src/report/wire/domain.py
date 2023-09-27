@@ -1,4 +1,5 @@
 import typing
+from abc import ABC, abstractmethod
 from datetime import datetime
 from uuid import UUID, uuid4
 
@@ -23,9 +24,19 @@ class WireNode(Node):
 
     def update(self, old_value: 'Node', new_value: 'Node'):
         logger.warning("WireNode parent was updated?")
-        self._events.append_node_updated_event(NodeUpdated(old_value=self.model_copy(deep=True), new_value=self))
+        self._events.append_node_updated_event(WireUpdated(old_value=self.model_copy(deep=True), new_value=self))
 
     def follow(self, pubs: set['Node']):
+        raise NotImplemented
+
+
+class WireSubscriber(ABC):
+    @abstractmethod
+    def follow_wires(self, wires: set[WireNode]):
+        raise NotImplemented
+
+    @abstractmethod
+    def update_wire(self, old_value: WireNode, new_value: WireNode):
         raise NotImplemented
 
 
@@ -52,3 +63,9 @@ class UpdateWire(Command):
     comment: typing.Optional[str] = None
     currency: typing.Optional[str] = None
     date: typing.Optional[datetime] = None
+
+
+class WireUpdated(NodeUpdated):
+    old_value: WireNode
+    new_value: WireNode
+    uuid: UUID= Field(default_factory=uuid4)

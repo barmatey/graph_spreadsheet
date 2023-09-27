@@ -1,5 +1,4 @@
 from uuid import UUID, uuid4
-
 from pydantic import Field
 
 from src.node.domain import Node, Command, Event
@@ -7,6 +6,10 @@ from src.report.formula.mapper import domain as mapper_domain
 from src.report.formula.period import domain as period_domain
 from src.report.source.domain import SourceSubscriber, SourceNode
 from src.report.wire import domain as wire_domain
+from src.report.wire.domain import WireNode
+
+
+# todo Source processing
 
 
 class ProfitCellNode(Node, SourceSubscriber):
@@ -15,14 +18,18 @@ class ProfitCellNode(Node, SourceSubscriber):
     period: period_domain.PeriodNode | None = None
     uuid: UUID = Field(default_factory=uuid4)
 
-    def follow_source(self, source:  SourceNode):
-        pubs = {source}
+    def follow_source(self, source: SourceNode):
         for w in source.wires:
-            pubs.add(w)
             if self.mapper.is_filtred(w) and self.period.is_filtred(w):
                 self.value += w.amount
-        self._on_subscribed(pubs)
+        self._on_subscribed({source})
         self._on_updated()
+
+    def wires_appended(self, wire: list[WireNode]):
+        raise NotImplemented
+
+    def wire_updated(self, old_value: WireNode, new_value: WireNode):
+        raise NotImplemented
 
     def follow(self, pubs: set['Node']):
         followed = pubs.copy()

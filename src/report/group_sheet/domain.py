@@ -4,7 +4,7 @@ from pydantic import Field
 
 from src.core.cell import CellTable
 from src.core.pydantic_model import Model
-from src.node.domain import Command, Node, Event
+from src.node.domain import Command, Node
 from src.report.source.domain import SourceSubscriber, SourceNode
 from src.report.wire.domain import Ccol, WireNode
 from src.spreadsheet.sheet import domain as sheet_domain
@@ -21,27 +21,23 @@ class GroupSheetNode(sheet_domain.SheetNode, SourceSubscriber):
     plan_items: PlanItems
     uuid: UUID = Field(default_factory=uuid4)
 
-    def follow_source(self, source:  SourceNode):
-        # Subscribing on source is equal of subscribing on source and all children wires
-        for w in source.wires:
-            self.__follow_wire(w)
+    def follow_source(self, source: SourceNode):
+        self.wires_appended(source.wires)
         self._on_updated()
-        self._on_subscribed(source.wires)
+        self._on_subscribed({source})
 
-    @property
-    def value(self) -> CellTable:
-        return self.plan_items.value
+    def wires_appended(self, wires: list[WireNode]):
+        for wire in wires:
+            row = [wire.__getattribute__(ccol) for ccol in self.plan_items.ccols]
+            key = str(row)
+            if self.plan_items.uniques.get(key) is None:
+                self.plan_items.value.append(row)
+                self.plan_items.uniques[key] = 1
+            else:
+                self.plan_items.uniques[key] += 1
+        self._on_updated()
 
-    def __follow_wire(self, pub: WireNode):
-        row = [pub.__getattribute__(ccol) for ccol in self.plan_items.ccols]
-        key = str(row)
-        if self.plan_items.uniques.get(key) is None:
-            self.plan_items.value.append(row)
-            self.plan_items.uniques[key] = 1
-        else:
-            self.plan_items.uniques[key] += 1
-
-    def __update_wire(self, old_value: WireNode, new_value: WireNode):
+    def wire_updated(self, old_value: WireNode, new_value: WireNode):
         old_row = [old_value.__getattribute__(ccol) for ccol in self.plan_items.ccols]
         old_key = str(old_row)
 
@@ -66,24 +62,15 @@ class GroupSheetNode(sheet_domain.SheetNode, SourceSubscriber):
         self._on_updated()
         return
 
-    def follow(self, pubs: set['Node']):
-        subscribed = pubs.copy()
-        for pub in pubs:
-            if isinstance(pub, WireNode):
-                self.__follow_wire(pub)
-            else:
-                raise TypeError(f"invalid type: {type(pub)}")
+    @property
+    def value(self) -> CellTable:
+        return self.plan_items.value
 
-        self._on_updated()
-        self._on_subscribed(subscribed)
+    def follow(self, pubs: set['Node']):
+        raise Exception
 
     def update(self, old_value: 'Node', new_value: 'Node'):
-        if isinstance(old_value, WireNode) and isinstance(new_value, WireNode):
-            self.__update_wire(old_value, new_value)
-        elif isinstance(old_value, SourceNode) and isinstance(new_value, SourceNode):
-            pass
-        else:
-            raise TypeError(f"Expected type is WireNode but real type is {type(new_value)}")
+        raise Exception
 
 
 class CreateGroupSheetNode(Command):

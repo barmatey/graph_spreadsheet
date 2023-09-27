@@ -22,8 +22,7 @@ def test_create_group_sheet(repo):
 
 def test_created_group_sheet_has_properly_parents(repo):
     group_sheet = repo.get_by_id(group_sheet_uuid)
-    expected_parents = {repo.get_by_id(source_uuid), repo.get_by_id(wire1_uuid), repo.get_by_id(wire2_uuid),
-                        repo.get_by_id(wire3_uuid)}
+    expected_parents = {repo.get_by_id(source_uuid)}
     real_parents = repo.get_node_parents(group_sheet)
     assert real_parents == expected_parents
 
@@ -47,7 +46,7 @@ def test_plan_items_value_react_on_wire_change(repo):
         [2.0, "Updated"]
     ]
     real = repo.get_by_id(group_sheet_uuid).plan_items.value
-    assert str(expected) == str(real)
+    assert str(real) == str(expected)
 
 
 def test_plan_items_uniques_react_on_wire_change(repo):
@@ -57,4 +56,4 @@ def test_plan_items_uniques_react_on_wire_change(repo):
         "[2.0, 'Updated']": 1,
     }
     real = repo.get_by_id(group_sheet_uuid).plan_items.uniques
-    assert expected == real
+    assert real == expected

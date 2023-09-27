@@ -65,6 +65,5 @@ class NodeSubscribedHandler(EventHandler):
 
 
 COMMON_EVENT_HANDLERS = {
-    domain.NodeUpdated: NodeUpdatedHandler,
     domain.NodeSubscribed: NodeSubscribedHandler,
 }
