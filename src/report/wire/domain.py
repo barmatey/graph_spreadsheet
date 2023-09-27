@@ -23,7 +23,7 @@ class WireNode(Node):
 
     def update(self, old_value: 'Node', new_value: 'Node'):
         logger.warning("WireNode parent was updated?")
-        self._events.append(NodeUpdated(old_value=self.model_copy(deep=True), new_value=self))
+        self._events.append_node_updated_event(NodeUpdated(old_value=self.model_copy(deep=True), new_value=self))
 
     def follow(self, pubs: set['Node']):
         raise NotImplemented

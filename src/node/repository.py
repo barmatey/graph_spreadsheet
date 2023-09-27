@@ -46,8 +46,12 @@ class ParentRepoFake(Base):
         self._parent_data[uuid] = self._parent_data[uuid].union(parents)
 
 
+class GraphRepo(NodeRepoFake, ParentRepoFake, ChildrenRepoFake):
+    pass
+
+
 @singleton
-class GraphRepoFake(NodeRepoFake, ParentRepoFake, ChildrenRepoFake):
+class GraphRepoFake(GraphRepo):
     def add(self, node: Node):
         super().add(node)
         self.append_node_parents(node, set())
