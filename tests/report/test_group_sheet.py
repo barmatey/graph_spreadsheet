@@ -39,7 +39,7 @@ def load_data():
     execute(cmd_wire3)
 
 
-@pytest.fixture()
+@pytest.fixture(scope="module")
 def repo():
     repo = GraphRepoFake()
     load_data()
@@ -59,3 +59,13 @@ def test_created_group_sheet_has_properly_parents(repo):
                         repo.get_by_id(wire3_uuid)}
     real_parents = repo.get_node_parents(group_sheet)
     assert expected_parents == real_parents
+
+
+def test_created_group_sheet_has_properly_plan_items_table(repo):
+    expected = [
+        [1.0, "Hello"],
+        [2.0, "World"],
+        [3.0, "Anna!"]
+    ]
+    real: group_domain.GroupSheetNode = repo.get_by_id(group_sheet_uuid).plan_items.value
+    assert str(expected) == str(real)
