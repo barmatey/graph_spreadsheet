@@ -25,7 +25,7 @@ def test_created_group_sheet_has_properly_parents(repo):
     expected_parents = {repo.get_by_id(source_uuid), repo.get_by_id(wire1_uuid), repo.get_by_id(wire2_uuid),
                         repo.get_by_id(wire3_uuid)}
     real_parents = repo.get_node_parents(group_sheet)
-    assert expected_parents == real_parents
+    assert real_parents == expected_parents
 
 
 def test_created_group_sheet_has_properly_plan_items_table(repo):

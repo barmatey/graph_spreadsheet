@@ -7,7 +7,6 @@ from src.report.formula.mapper import domain as mapper_domain
 from src.report.formula.period import domain as period_domain
 from src.report.source.domain import SourceSubscriber, SourceNode
 from src.report.wire import domain as wire_domain
-from src.report.source import domain as source_domain
 
 
 class ProfitCellNode(Node, SourceSubscriber):
@@ -17,10 +16,12 @@ class ProfitCellNode(Node, SourceSubscriber):
     uuid: UUID = Field(default_factory=uuid4)
 
     def follow_source(self, source:  SourceNode):
+        pubs = {source}
         for w in source.wires:
+            pubs.add(w)
             if self.mapper.is_filtred(w) and self.period.is_filtred(w):
                 self.value += w.amount
-        self._on_subscribed({source})
+        self._on_subscribed(pubs)
         self._on_updated()
 
     def follow(self, pubs: set['Node']):

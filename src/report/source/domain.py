@@ -5,7 +5,7 @@ from loguru import logger
 from pydantic import Field
 
 from src.node.domain import Node, Event, Command
-from src.report.wire import  domain as wire_domain
+from src.report.wire import domain as wire_domain
 
 
 class SourceNode(Node):
@@ -27,7 +27,7 @@ class SourceNode(Node):
 
 class SourceSubscriber(ABC):
     @abstractmethod
-    def follow_source(self, source:  SourceNode):
+    def follow_source(self, source: SourceNode):
         raise NotImplemented
 
 

@@ -23,7 +23,7 @@ class CreateGroupSheetNodeHandler(CommandHandler):
                                                         plan_items=group_sheet_domain.PlanItems(ccols=cmd.ccols))
         self._repo.add(group_sheet)
 
-        group_sheet.follow({source})
+        group_sheet.follow_source(source)
         self.extend_events(group_sheet.parse_events())
 
         for i in range(0, len(group_sheet.plan_items.value)):

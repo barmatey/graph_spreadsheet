@@ -5,7 +5,7 @@ from pydantic import Field
 from src.core.cell import CellTable
 from src.core.pydantic_model import Model
 from src.node.domain import Command, Node, Event
-from src.report.source.domain import SourceNode
+from src.report.source.domain import SourceSubscriber, SourceNode
 from src.report.wire.domain import Ccol, WireNode
 from src.spreadsheet.sheet import domain as sheet_domain
 
@@ -17,9 +17,16 @@ class PlanItems(Model):
     uuid: UUID = Field(default_factory=uuid4)
 
 
-class GroupSheetNode(sheet_domain.SheetNode):
+class GroupSheetNode(sheet_domain.SheetNode, SourceSubscriber):
     plan_items: PlanItems
     uuid: UUID = Field(default_factory=uuid4)
+
+    def follow_source(self, source:  SourceNode):
+        # Subscribing on source is equal of subscribing on source and all children wires
+        for w in source.wires:
+            self.__follow_wire(w)
+        self._on_updated()
+        self._on_subscribed(source.wires)
 
     @property
     def value(self) -> CellTable:
@@ -64,11 +71,6 @@ class GroupSheetNode(sheet_domain.SheetNode):
         for pub in pubs:
             if isinstance(pub, WireNode):
                 self.__follow_wire(pub)
-            elif isinstance(pub, SourceNode):
-                # Subscribing on source is equal of subscribing on source and all children wires
-                for w in pub.wires:
-                    self.__follow_wire(w)
-                    subscribed.add(w)
             else:
                 raise TypeError(f"invalid type: {type(pub)}")
 
