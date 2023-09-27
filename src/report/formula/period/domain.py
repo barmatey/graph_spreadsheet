@@ -11,7 +11,6 @@ from src.spreadsheet.sheet import domain as sheet_domain
 class PeriodNode(Node):
     from_date: datetime
     to_date: datetime
-    events: list = Field(default_factory=list)
     uuid: UUID = Field(default_factory=uuid4)
 
     def __repr__(self):

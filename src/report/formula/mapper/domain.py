@@ -2,7 +2,7 @@ from uuid import UUID, uuid4
 
 from pydantic import Field
 
-from src.node.domain import Node, Command, Event
+from src.node.domain import Node, Command
 from src.report.wire import domain as wire_domain
 from src.report.wire.domain import Ccol
 from src.spreadsheet.cell import domain as cell_domain
@@ -13,7 +13,6 @@ class MapperNode(Node):
     ccols: list[Ccol]
     filter_by: dict = Field(default_factory=dict)
     uuid: UUID = Field(default_factory=uuid4)
-    events: list[Event] = Field(default_factory=list)
 
     def __str__(self):
         return f"MapperNode(filter_by={self.filter_by})"

@@ -20,7 +20,6 @@ class WireNode(Node):
     sub2: str
     comment: str
     uuid: UUID = Field(default_factory=uuid4)
-    events: list[Event] = Field(default_factory=list)
 
     def update(self, old_value: 'Node', new_value: 'Node'):
         logger.warning("WireNode parent was updated?")

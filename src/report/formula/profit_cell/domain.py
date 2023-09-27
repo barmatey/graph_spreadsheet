@@ -14,7 +14,6 @@ class ProfitCellNode(Node):
     mapper: mapper_domain.MapperNode | None = None
     period: period_domain.PeriodNode | None = None
     uuid: UUID = Field(default_factory=uuid4)
-    events: list[Event] = Field(default_factory=list)
 
     def follow(self, pubs: set['Node']):
         followed = pubs.copy()
@@ -29,10 +28,10 @@ class ProfitCellNode(Node):
                     self.value += pub.amount
             elif isinstance(pub, mapper_domain.MapperNode):
                 self.mapper = pub
-                self.events.append(ProfitCellRecalculateRequested(node=self))
+                self._events.append(ProfitCellRecalculateRequested(node=self))
             elif isinstance(pub, period_domain.PeriodNode):
                 self.period = pub
-                self.events.append(ProfitCellRecalculateRequested(node=self))
+                self._events.append(ProfitCellRecalculateRequested(node=self))
             else:
                 raise TypeError(f"real type is {type(pub)}")
         self._on_subscribed(followed)
@@ -45,10 +44,10 @@ class ProfitCellNode(Node):
                 self.value += new_value.amount
         elif isinstance(old_value, mapper_domain.MapperNode) and isinstance(new_value, mapper_domain.MapperNode):
             self.mapper = new_value
-            self.events.append(ProfitCellRecalculateRequested(node=self))
+            self._events.append(ProfitCellRecalculateRequested(node=self))
         elif isinstance(old_value, period_domain.PeriodNode) and isinstance(new_value, period_domain.PeriodNode):
             self.period = new_value
-            self.events.append(ProfitCellRecalculateRequested(node=self))
+            self._events.append(ProfitCellRecalculateRequested(node=self))
         else:
             raise TypeError(f"real type is {type(old_value)}, {type(new_value)}")
         self._on_updated()

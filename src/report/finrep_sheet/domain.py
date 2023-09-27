@@ -9,7 +9,6 @@ from src.spreadsheet.sheet import domain as sheet_domain
 
 class FinrepSheet(sheet_domain.SheetNode):
     uuid: UUID = Field(default_factory=uuid4)
-    events: list[Event] = Field(default_factory=list)
 
 
 class CreateProfitSheetNode(Command):

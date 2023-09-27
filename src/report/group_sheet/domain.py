@@ -15,13 +15,11 @@ class PlanItems(Model):
     uniques: dict[str, int] = Field(default_factory=dict)
     value: CellTable = Field(default_factory=list)
     uuid: UUID = Field(default_factory=uuid4)
-    events: list[Event] = Field(default_factory=list)
 
 
 class GroupSheetNode(sheet_domain.SheetNode):
     plan_items: PlanItems
     uuid: UUID = Field(default_factory=uuid4)
-    events: list[Event] = Field(default_factory=list)
 
     @property
     def value(self) -> CellTable:

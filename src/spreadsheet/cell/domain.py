@@ -10,7 +10,6 @@ class CellNode(Node):
     index: tuple[int, int]
     value: CellValue
     uuid: UUID = Field(default_factory=uuid4)
-    events: list[Event] = Field(default_factory=list)
 
     def __repr__(self):
         return f"Cell(index={self.index}, value={self.value})"
