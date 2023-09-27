@@ -32,7 +32,7 @@ class CreateProfitSheetNodeHandler(CommandHandler):
 
     def __create_periods(self, start_date, end_date, period, freq,
                          parent_sheet: finrep_domain.FinrepSheet) -> list[period_domain.PeriodNode]:
-        date_range = pd.date_range(start_date, end_date, freq=f"{period}{freq}")
+        date_range = [x.to_pydatetime() for x in pd.date_range(start_date, end_date, freq=f"{period}{freq}")]
         periods = []
         for start, end in zip(date_range[:-1], date_range[1:]):
             period = period_domain.PeriodNode(from_date=start, to_date=end)

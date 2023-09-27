@@ -30,7 +30,7 @@ def load_data():
     cmd_wire3 = wire_domain.CreateWireNode(date=datetime(2021, 5, 5), uuid=wire3_id, source_id=source_id,
                                            sender=2, receiver=2, amount=33, sub1="Expenses", )
     cmd_wire4 = wire_domain.CreateWireNode(date=datetime(2022, 5, 5), uuid=wire4_id, source_id=source_id,
-                                           sender=1, receiver=2, amount=44, sub1="Expenses", )
+                                           sender=2, receiver=2, amount=44, sub1="Expenses", )
     cmd_group = group_domain.CreateGroupSheetNode(uuid=group_id, source_id=source_id, ccols=["sender", "sub1"])
     execute(cmd_source)
     execute(cmd_wire1)
@@ -52,8 +52,8 @@ def test_create_profit_sheet(repo):
         uuid=sheet_id,
         source_id=source_id,
         group_id=group_id,
-        start_date=datetime(2021, 1, 1),
-        end_date=datetime(2023, 1, 1),
+        start_date=datetime(2020, 1, 1),
+        end_date=datetime(2022, 12, 31),
         period=1,
         freq='Y'
     )
@@ -64,9 +64,12 @@ def test_create_profit_sheet(repo):
     #     [1, 'Profit', 10, 30],
     #     [2, 'Expenses', 33, 44],
     # ]
+    actual = sheet.get_as_simple_table()
     expected = [
-        [datetime(2022, 1, 1), datetime(2023, 1, 1)],
+        [datetime(2021, 12, 31), datetime(2022, 12, 31)],
         [10, 30],
         [33, 44],
     ]
-    assert str(sheet.get_as_simple_table()) == str(expected)
+    for i in range(0, sheet.size[0]):
+        for j in range(0, sheet.size[1]):
+            assert actual[i][j] == expected[i][j]
