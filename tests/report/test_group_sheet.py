@@ -69,3 +69,25 @@ def test_created_group_sheet_has_properly_plan_items_table(repo):
     ]
     real: group_domain.GroupSheetNode = repo.get_by_id(group_sheet_uuid).plan_items.value
     assert str(expected) == str(real)
+
+
+def test_plan_items_value_react_on_wire_change(repo):
+    cmd = wire_domain.UpdateWire(uuid=wire2_uuid, sub1="Updated")
+    execute(cmd)
+    expected = [
+        [1.0, "Hello"],
+        [3.0, "Anna!"],
+        [2.0, "Updated"]
+    ]
+    real = repo.get_by_id(group_sheet_uuid).plan_items.value
+    assert str(expected) == str(real)
+
+
+def test_plan_items_uniques_react_on_wire_change(repo):
+    expected = {
+        "[1.0, 'Hello']": 1,
+        "[3.0, 'Anna!']": 1,
+        "[2.0, 'Updated']": 1,
+    }
+    real = repo.get_by_id(group_sheet_uuid).plan_items.uniques
+    assert expected == real

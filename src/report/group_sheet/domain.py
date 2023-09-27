@@ -78,8 +78,10 @@ class GroupSheetNode(sheet_domain.SheetNode):
     def update(self, old_value: 'Node', new_value: 'Node'):
         if isinstance(old_value, WireNode) and isinstance(new_value, WireNode):
             self.__update_wire(old_value, new_value)
+        elif isinstance(old_value, SourceNode) and isinstance(new_value, SourceNode):
+            pass
         else:
-            raise TypeError(f"Expected type is SourceNode but real type is {type(new_value)}")
+            raise TypeError(f"Expected type is WireNode but real type is {type(new_value)}")
 
 
 class CreateGroupSheetNode(Command):
