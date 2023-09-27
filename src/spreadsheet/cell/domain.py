@@ -45,3 +45,6 @@ class CellNode(Node):
         else:
             raise TypeError(f"real type is: {type(new_value)}")
         self._on_updated()
+
+    def _on_updated(self):
+        pass

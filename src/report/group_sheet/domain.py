@@ -72,6 +72,9 @@ class GroupSheetNode(sheet_domain.SheetNode, SourceSubscriber):
     def update(self, old_value: 'Node', new_value: 'Node'):
         raise Exception
 
+    def _on_updated(self):
+        pass
+
 
 class CreateGroupSheetNode(Command):
     source_id: UUID
