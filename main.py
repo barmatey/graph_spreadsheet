@@ -49,8 +49,8 @@ def foo():
     cmd_wire2 = wire_domain.CreateWireNode(sender=2, receiver=2, amount=3, sub1="World", source_id=source.uuid)
     cmd_wire3 = wire_domain.CreateWireNode(sender=3, receiver=2, amount=12, sub1="Anna!", source_id=source.uuid)
     execute(cmd_wire1)
-    # execute(cmd_wire2)
-    # execute(cmd_wire3)
+    execute(cmd_wire2)
+    execute(cmd_wire3)
 
     cmd_group = group_domain.CreateGroupSheetNode(title="Hello", source_id=source.uuid, ccols=["sender"])
     group_sheet = execute(cmd_group)

@@ -21,7 +21,7 @@ class CreateProfitCellNodeHandler(CommandHandler):
 
         # Subscribing
         profit_cell_node.follow({mapper, period})
-        self.extend_events(profit_cell_node.parse_events()[1:2])
+        self.extend_events(profit_cell_node.parse_events())
         profit_cell_node.follow(wires)
         self.extend_events(profit_cell_node.parse_events())
         return profit_cell_node
@@ -33,7 +33,7 @@ class ProfitCellRecalculateRequestedHandler(EventHandler):
         wires = set(filter(lambda x: isinstance(x, wire_domain.WireNode), self._repo.get_node_parents(profit_cell)))
         profit_cell.recalculate(wires)
         self.extend_events(profit_cell.parse_events())
-        logger.debug(f"ProfitCellRecalculateRequestedHandler")
+        logger.debug(f"ProfitCellRecalculateRequested.handle()")
 
 
 PROFIT_CELL_EVENT_HANDLERS = {
