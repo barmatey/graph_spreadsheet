@@ -27,7 +27,7 @@ class SourceNode(Node):
 
 class SourceSubscriber(ABC):
     @abstractmethod
-    def follow_sources(self, sources: set[SourceNode]):
+    def follow_source(self, source:  SourceNode):
         raise NotImplemented
 
 
