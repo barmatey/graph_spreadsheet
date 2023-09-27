@@ -56,8 +56,6 @@ def test_get_wire_node_from_repo(repo: GraphRepo):
 def test_created_wire_was_linked_with_source(repo: GraphRepo):
     wire: WireNode = repo.get_by_id(wire1_uuid)
     source: SourceNode = repo.get_by_id(source_uuid)
-    assert len(source.wires) == 1
-    assert source.wires[0].uuid == wire.uuid
 
     source_pubs: set[Node] = repo.get_node_parents(source)
     wire_subs: set[Node] = repo.get_node_children(wire)

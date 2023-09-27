@@ -83,7 +83,6 @@ class GroupSheetNode(sheet_domain.SheetNode):
 
 
 class CreateGroupSheetNode(Command):
-    title: str
     source_id: UUID
     ccols: list[Ccol]
     uuid: UUID = Field(default_factory=uuid4)

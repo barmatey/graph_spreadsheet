@@ -19,7 +19,8 @@ class CreateGroupSheetNodeHandler(CommandHandler):
         source = self._repo.get_by_id(cmd.source_id)
 
         # Create
-        group_sheet = group_sheet_domain.GroupSheetNode(plan_items=group_sheet_domain.PlanItems(ccols=cmd.ccols))
+        group_sheet = group_sheet_domain.GroupSheetNode(uuid=cmd.uuid,
+                                                        plan_items=group_sheet_domain.PlanItems(ccols=cmd.ccols))
         self._repo.add(group_sheet)
 
         group_sheet.follow({source})
