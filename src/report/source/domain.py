@@ -14,7 +14,7 @@ class SourceNode(Node):
 
     def append_wires(self, wires: list[wire_domain.WireNode]):
         self.wires.extend(wires)
-        self._events.append(WireNodesAppended(wire_nodes=wires, source_node=self))
+        self._events.append_event(WireNodesAppended(wire_nodes=wires, source_node=self))
 
     def update(self, old_value: 'Node', new_value: 'Node'):
         self._on_updated()

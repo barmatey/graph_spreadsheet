@@ -28,10 +28,10 @@ class ProfitCellNode(Node):
                     self.value += pub.amount
             elif isinstance(pub, mapper_domain.MapperNode):
                 self.mapper = pub
-                self._events.append(ProfitCellRecalculateRequested(node=self))
+                self._events.append_unique_event(ProfitCellRecalculateRequested(node=self))
             elif isinstance(pub, period_domain.PeriodNode):
                 self.period = pub
-                self._events.append(ProfitCellRecalculateRequested(node=self))
+                self._events.append_unique_event(ProfitCellRecalculateRequested(node=self))
             else:
                 raise TypeError(f"real type is {type(pub)}")
         self._on_subscribed(followed)
@@ -44,10 +44,10 @@ class ProfitCellNode(Node):
                 self.value += new_value.amount
         elif isinstance(old_value, mapper_domain.MapperNode) and isinstance(new_value, mapper_domain.MapperNode):
             self.mapper = new_value
-            self._events.append(ProfitCellRecalculateRequested(node=self))
+            self._events.append_unique_event(ProfitCellRecalculateRequested(node=self))
         elif isinstance(old_value, period_domain.PeriodNode) and isinstance(new_value, period_domain.PeriodNode):
             self.period = new_value
-            self._events.append(ProfitCellRecalculateRequested(node=self))
+            self._events.append_unique_event(ProfitCellRecalculateRequested(node=self))
         else:
             raise TypeError(f"real type is {type(old_value)}, {type(new_value)}")
         self._on_updated()
