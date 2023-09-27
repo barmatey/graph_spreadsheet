@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from uuid import UUID, uuid4
 
 from loguru import logger
@@ -22,6 +23,12 @@ class SourceNode(Node):
     def follow(self, pubs: set['Node']):
         self._on_subscribed(pubs)
         self._on_updated()
+
+
+class SourceSubscriber(ABC):
+    @abstractmethod
+    def follow_sources(self, sources: set[SourceNode]):
+        raise NotImplemented
 
 
 class CreateSourceNode(Command):
