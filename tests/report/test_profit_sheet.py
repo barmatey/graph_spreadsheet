@@ -67,5 +67,7 @@ def test_create_profit_sheet(repo):
     ]
 
     for i in range(0, sheet.size[0]):
+        assert len(actual[i]) == len(expected[i])
         for j in range(0, sheet.size[1]):
+            assert len(actual[i][j]) == expected[i][j]
             assert actual[i][j] == expected[i][j]
