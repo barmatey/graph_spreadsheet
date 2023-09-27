@@ -71,7 +71,7 @@ class CreateProfitSheetNodeHandler(CommandHandler):
             for j, period in enumerate(periods):
                 profit_cell = pf_domain.ProfitCellNode(value=0)
                 profit_cell.follow({mapper, period})
-                profit_cell.follow({source})
+                profit_cell.follow_source(source)
                 profit_cell.as_child({profit_sheet})
                 self._repo.add(profit_cell)
                 self.extend_events(profit_cell.parse_events())

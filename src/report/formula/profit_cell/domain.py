@@ -5,25 +5,28 @@ from pydantic import Field
 from src.node.domain import Node, Command, Event
 from src.report.formula.mapper import domain as mapper_domain
 from src.report.formula.period import domain as period_domain
+from src.report.source.domain import SourceSubscriber, SourceNode
 from src.report.wire import domain as wire_domain
 from src.report.source import domain as source_domain
 
 
-class ProfitCellNode(Node):
+class ProfitCellNode(Node, SourceSubscriber):
     value: float
     mapper: mapper_domain.MapperNode | None = None
     period: period_domain.PeriodNode | None = None
     uuid: UUID = Field(default_factory=uuid4)
 
+    def follow_source(self, source:  SourceNode):
+        for w in source.wires:
+            if self.mapper.is_filtred(w) and self.period.is_filtred(w):
+                self.value += w.amount
+        self._on_subscribed({source})
+        self._on_updated()
+
     def follow(self, pubs: set['Node']):
         followed = pubs.copy()
         for pub in pubs:
-            if isinstance(pub, source_domain.SourceNode):
-                for w in pub.wires:
-                    followed.add(w)
-                    if self.mapper.is_filtred(w) and self.period.is_filtred(w):
-                        self.value += w.amount
-            elif isinstance(pub, wire_domain.WireNode):
+            if isinstance(pub, wire_domain.WireNode):
                 if self.mapper.is_filtred(pub) and self.period.is_filtred(pub):
                     self.value += pub.amount
             elif isinstance(pub, mapper_domain.MapperNode):
