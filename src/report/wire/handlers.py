@@ -21,10 +21,6 @@ class CreateWireNodeHandler(CommandHandler):
         self.extend_events(wire_node.parse_events())
         self.extend_events(source_node.parse_events())
 
-        logger.info("")
-        logger.info(f"{self._events}")
-        logger.info("")
-
         return wire_node
 
 
