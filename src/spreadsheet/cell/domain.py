@@ -20,17 +20,19 @@ class CellTablePublisher(ABC):
         raise NotImplemented
 
 
-class CellSubscriber(ABC):
+class CellValueSubscriber(ABC):
     @abstractmethod
     def follow_cell_value_publisher(self, pub: CellValuePublisher):
         raise NotImplemented
 
     @abstractmethod
-    def follow_cell_table_publisher(self, pub: CellTablePublisher):
+    def on_updated_value(self, old_value: CellValue, new_value: CellValue):
         raise NotImplemented
 
+
+class CellTableSubscriber(ABC):
     @abstractmethod
-    def on_updated_value(self, old_value: CellValue, new_value: CellValue):
+    def follow_cell_table_publisher(self, pub: CellTablePublisher):
         raise NotImplemented
 
     @abstractmethod
@@ -38,7 +40,7 @@ class CellSubscriber(ABC):
         raise NotImplemented
 
 
-class Cell(Node, CellSubscriber, CellValuePublisher):
+class Cell(Node, CellValueSubscriber, CellTableSubscriber, CellValuePublisher):
     index: tuple[int, int]
     value: CellValue
     uuid: UUID = Field(default_factory=uuid4)
