@@ -7,7 +7,7 @@ from src.core.pydantic_model import Model
 from src.node.domain import Command, Node
 from src.report.source.domain import SourceSubscriber, SourceNode
 from src.report.wire.domain import Ccol, WireNode
-from src.spreadsheet.cell.domain import CellTablePublisher
+from src.spreadsheet.cell.domain import CellTablePublisher, SheetCell
 from src.spreadsheet.sheet import domain as sheet_domain
 
 
@@ -30,8 +30,9 @@ class GroupSheetNode(sheet_domain.SheetNode, SourceSubscriber, CellTablePublishe
         for wire in wires:
             row = [wire.__getattribute__(ccol) for ccol in self.plan_items.ccols]
             key = str(row)
+            row = [SheetCell(index=(self.size[0], j), value=value) for j, value in enumerate(row)]
             if self.plan_items.uniques.get(key) is None:
-                self.plan_items.value.append(row)
+                self.append_row(row)
                 self.plan_items.uniques[key] = 1
             else:
                 self.plan_items.uniques[key] += 1

@@ -27,17 +27,17 @@ def test_created_group_sheet_has_properly_parents(repo):
     assert real_parents == expected_parents
 
 
-def test_created_group_sheet_has_properly_plan_items_table(repo):
+def test_created_group_sheet_has_properly_table(repo):
     expected = [
         [1.0, "Hello"],
         [2.0, "World"],
         [3.0, "Anna!"]
     ]
-    real: group_domain.GroupSheetNode = repo.get_by_id(group_sheet_uuid).plan_items.value
-    assert str(expected) == str(real)
+    real: group_domain.GroupSheetNode = repo.get_by_id(group_sheet_uuid).get_as_simple_table()
+    assert str(real) == str(expected)
 
 
-def test_plan_items_value_react_on_wire_change(repo):
+def test_group_sheet_cells_react_on_wire_change(repo):
     cmd = wire_domain.UpdateWire(uuid=wire2_uuid, sub1="Updated")
     execute(cmd)
     expected = [
@@ -45,7 +45,7 @@ def test_plan_items_value_react_on_wire_change(repo):
         [3.0, "Anna!"],
         [2.0, "Updated"]
     ]
-    real = repo.get_by_id(group_sheet_uuid).plan_items.value
+    real = repo.get_by_id(group_sheet_uuid).get_as_simple_table()
     assert str(real) == str(expected)
 
 
