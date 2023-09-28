@@ -1,9 +1,31 @@
+from abc import ABC, abstractmethod
 from uuid import UUID, uuid4
-
 from pydantic import Field
 
-from src.core.cell import CellValue
+from src.core.cell import CellValue, CellTable
 from src.node.domain import Node, Event
+
+
+class CellValuePublisher(ABC):
+    @abstractmethod
+    def get_cell_value(self) -> CellValue:
+        raise NotImplemented
+
+
+class CellTablePublisher(ABC):
+    @abstractmethod
+    def get_cell_table(self) -> CellTable:
+        raise NotImplemented
+
+
+class CellSubscriber(ABC):
+    @abstractmethod
+    def on_updated_value(self, old_value: CellValue, new_value: CellValue):
+        raise NotImplemented
+
+    @abstractmethod
+    def on_updated_table(self, old_table: CellTable, new_table: CellTable):
+        raise NotImplemented
 
 
 class Cell(Node):
