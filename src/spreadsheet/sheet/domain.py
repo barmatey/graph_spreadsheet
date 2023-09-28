@@ -36,6 +36,25 @@ class SheetNode(Node):
             self.size = (self.size[0] + 1, len(row))
         self._events.append_event(RowsAppended(sheet=self, rows=rows))
 
+    def delete_rows(self, indexes: list[int]):
+        hashes = {index: 1 for index in indexes}
+        deleted_rows = []
+        new_table = []
+        for i, row in enumerate(self.table):
+            if hashes.get(i) is None:
+                new_table.append(self.table[i])
+            else:
+                deleted_rows.append(self.table[i])
+        self.table = new_table
+        self.size = (len(new_table), self.size[1] if len(new_table) else 0)
+        self.reindex()
+        self._events.append_event(RowsDeleted(sheet=self, rows=deleted_rows))
+
+    def reindex(self):
+        for i in range(0, self.size[0]):
+            for j in range(0, self.size[1]):
+                self.table[i][j].index = (i, j)
+
 
 class SheetSubscriber(ABC):
     @abstractmethod
@@ -44,6 +63,12 @@ class SheetSubscriber(ABC):
 
 
 class RowsAppended(Event):
+    sheet: SheetNode
+    rows: list[list[SheetCell]]
+    uuid: UUID = Field(default_factory=uuid4)
+
+
+class RowsDeleted(Event):
     sheet: SheetNode
     rows: list[list[SheetCell]]
     uuid: UUID = Field(default_factory=uuid4)

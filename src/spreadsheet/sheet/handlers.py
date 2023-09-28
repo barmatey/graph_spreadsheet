@@ -13,6 +13,16 @@ class RowsAppendedHandler(EventHandler):
         self._repo.update(event.sheet)
 
 
+class RowsDeletedHandler(EventHandler):
+    def handle(self, event: sheet_domain.RowsDeleted):
+        logger.debug("RowsDeleted.handle()")
+        for row in event.sheet.table:
+            for cell in row:
+                self._repo.update(cell)
+        self._repo.update(event.sheet)
+
+
 SHEET_EVENT_HANDLERS = {
     sheet_domain.RowsAppended: RowsAppendedHandler,
+    sheet_domain.RowsDeleted: RowsDeletedHandler,
 }
