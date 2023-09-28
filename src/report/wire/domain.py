@@ -22,13 +22,6 @@ class WireNode(Node):
     comment: str
     uuid: UUID = Field(default_factory=uuid4)
 
-    def update(self, old_value: 'Node', new_value: 'Node'):
-        logger.warning("WireNode parent was updated?")
-        raise Exception
-
-    def follow(self, pubs: set['Node']):
-        raise NotImplemented
-
     def set_node_fields(self, data: dict):
         old_value = self.model_copy(deep=True)
         super().set_node_fields(data)

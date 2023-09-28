@@ -21,12 +21,6 @@ class SourceNode(Node, WireSubscriber):
     def on_wire_updated(self, old_value: WireNode, new_value: WireNode):
         self._events.append_node_updated_event(WireUpdated(source=self, old_value=old_value, new_value=new_value))
 
-    def update(self, old_value: 'Node', new_value: 'Node'):
-        raise Exception
-
-    def follow(self, pubs: set['Node']):
-        raise Exception
-
 
 class SourceSubscriber(ABC):
     @abstractmethod

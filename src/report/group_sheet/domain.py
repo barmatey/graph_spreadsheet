@@ -61,15 +61,6 @@ class GroupSheetNode(sheet_domain.SheetNode, SourceSubscriber):
     def value(self) -> CellTable:
         return self.plan_items.value
 
-    def follow(self, pubs: set['Node']):
-        raise Exception
-
-    def update(self, old_value: 'Node', new_value: 'Node'):
-        raise Exception
-
-    def _on_updated(self):
-        raise Exception
-
 
 class CreateGroupSheetNode(Command):
     source_id: UUID
