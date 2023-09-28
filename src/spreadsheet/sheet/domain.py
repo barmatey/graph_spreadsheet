@@ -32,9 +32,3 @@ class SheetNode(Node):
         self.table.append(row)
         self.size = (self.size[0] + 1, len(row))
         logger.warning("row was appended, but not notified")
-
-    def follow(self, pubs: set['Node']):
-        raise NotImplemented
-
-    def update(self, old_value: 'Node', new_value: 'Node'):
-        raise NotImplemented
