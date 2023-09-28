@@ -34,7 +34,7 @@ class MapperNode(Node):
                 key = self.ccols[pub.index[1]]
                 value = pub.value
                 self.filter_by[key] = value
-            elif isinstance(pub, sheet_domain.SheetNode):
+            elif isinstance(pub, sheet_domain.Sheet):
                 pass
             else:
                 raise TypeError(f"invalid type: {type(pub)}")

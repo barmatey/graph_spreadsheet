@@ -7,7 +7,7 @@ from src.node.domain import Event, Command
 from src.spreadsheet.sheet import domain as sheet_domain
 
 
-class FinrepSheet(sheet_domain.SheetNode):
+class FinrepSheet(sheet_domain.Sheet):
     uuid: UUID = Field(default_factory=uuid4)
 
 

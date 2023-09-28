@@ -12,7 +12,7 @@ def size_factory():
     return 0, 0
 
 
-class SheetNode(Node):
+class Sheet(Node):
     size: tuple[int, int] = Field(default_factory=size_factory)
     table: list[list[SheetCell]] = Field(default_factory=list)
 
@@ -28,7 +28,9 @@ class SheetNode(Node):
             result.append(r)
         return result
 
-    def append_rows(self, rows: list[list[SheetCell]]):
+    def append_rows(self, rows: list[SheetCell] | list[list[SheetCell]]):
+        if len(rows) and isinstance(rows[0], SheetCell):
+            rows = [rows]
         for row in rows:
             if self.size[1] != 0 and self.size[1] != len(row):
                 raise IndexError
@@ -58,17 +60,17 @@ class SheetNode(Node):
 
 class SheetSubscriber(ABC):
     @abstractmethod
-    def follow_sheet(self, sheet: SheetNode):
+    def follow_sheet(self, sheet: Sheet):
         raise NotImplemented
 
 
 class RowsAppended(Event):
-    sheet: SheetNode
+    sheet: Sheet
     rows: list[list[SheetCell]]
     uuid: UUID = Field(default_factory=uuid4)
 
 
 class RowsDeleted(Event):
-    sheet: SheetNode
+    sheet: Sheet
     rows: list[list[SheetCell]]
     uuid: UUID = Field(default_factory=uuid4)

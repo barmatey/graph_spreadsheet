@@ -4,7 +4,7 @@ from pydantic import Field
 
 from src.core.cell import CellTable
 from src.core.pydantic_model import Model
-from src.node.domain import Command, Node
+from src.node.domain import Command
 from src.report.source.domain import SourceSubscriber, SourceNode
 from src.report.wire.domain import Ccol, WireNode
 from src.spreadsheet.cell.domain import CellTablePublisher, SheetCell
@@ -18,7 +18,7 @@ class PlanItems(Model):
     uuid: UUID = Field(default_factory=uuid4)
 
 
-class GroupSheetNode(sheet_domain.SheetNode, SourceSubscriber, CellTablePublisher):
+class GroupSheetNode(sheet_domain.Sheet, SourceSubscriber, CellTablePublisher):
     plan_items: PlanItems
     uuid: UUID = Field(default_factory=uuid4)
 
@@ -46,19 +46,21 @@ class GroupSheetNode(sheet_domain.SheetNode, SourceSubscriber, CellTablePublishe
         new_key = str(new_row)
 
         # Drop old value
-        utable = self.plan_items.value
+        rows_to_delete = []
         self.plan_items.uniques[old_key] -= 1
         if self.plan_items.uniques[old_key] == 0:
             del self.plan_items.uniques[old_key]
-            for i, row in enumerate(utable):
-                if str(row) == old_key:
-                    del utable[i]
+            for i, row in enumerate(self.table):
+                if str([v.value for v in row]) == old_key:
+                    rows_to_delete.append(i)
+        if rows_to_delete:
+            self.delete_rows(rows_to_delete)
 
         if self.plan_items.uniques.get(new_key) is not None:
             self.plan_items.uniques[new_key] += 1
         else:
             self.plan_items.uniques[new_key] = 1
-            utable.append(new_row)
+            self.append_rows([SheetCell(index=(self.size[0], j), value=value) for j, value in enumerate(new_row)])
 
     def get_cell_table(self) -> CellTable:
         return self.plan_items.value

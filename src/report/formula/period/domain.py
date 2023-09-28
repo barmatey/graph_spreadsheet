@@ -28,7 +28,7 @@ class PeriodNode(Node):
 
     def follow(self, pubs: set['Node']):
         for pub in pubs:
-            if isinstance(pub, sheet_domain.SheetNode):
+            if isinstance(pub, sheet_domain.Sheet):
                 pass
             else:
                 raise TypeError(f"invalid type: {type(pub)}")
