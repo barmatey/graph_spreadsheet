@@ -1,10 +1,11 @@
 from abc import ABC, abstractmethod
+from uuid import UUID, uuid4
 
 from loguru import logger
 from pydantic import Field
 
 from src.core.cell import CellTable, CellValue
-from src.node.domain import Node
+from src.node.domain import Node, Event
 from src.spreadsheet.cell.domain import SheetCell
 
 
@@ -33,10 +34,16 @@ class SheetNode(Node):
             raise IndexError
         self.table.append(row)
         self.size = (self.size[0] + 1, len(row))
-        logger.warning("row was appended, but not notified")
+        self._events.append_event(RowAppended(sheet=self, row=row))
 
 
 class SheetSubscriber(ABC):
     @abstractmethod
     def follow_sheet(self, sheet: SheetNode):
         raise NotImplemented
+
+
+class RowAppended(Event):
+    sheet: SheetNode
+    row: list[SheetCell]
+    uuid: UUID = Field(default_factory=uuid4)
