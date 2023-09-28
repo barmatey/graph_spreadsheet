@@ -27,15 +27,16 @@ class GroupSheetNode(sheet_domain.SheetNode, SourceSubscriber, CellTablePublishe
         self._on_subscribed({source})
 
     def on_wires_appended(self, wires: list[WireNode]):
+        rows = []
         for wire in wires:
             row = [wire.__getattribute__(ccol) for ccol in self.plan_items.ccols]
             key = str(row)
-            row = [SheetCell(index=(self.size[0], j), value=value) for j, value in enumerate(row)]
+            rows.append([SheetCell(index=(self.size[0], j), value=value) for j, value in enumerate(row)])
             if self.plan_items.uniques.get(key) is None:
-                self.append_row(row)
                 self.plan_items.uniques[key] = 1
             else:
                 self.plan_items.uniques[key] += 1
+        self.append_rows(rows)
 
     def on_wire_updated(self, old_value: WireNode, new_value: WireNode):
         old_row = [old_value.__getattribute__(ccol) for ccol in self.plan_items.ccols]

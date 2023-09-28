@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from uuid import UUID, uuid4
 
-from loguru import logger
 from pydantic import Field
 
 from src.core.cell import CellTable, CellValue
@@ -29,12 +28,13 @@ class SheetNode(Node):
             result.append(r)
         return result
 
-    def append_row(self, row: list[SheetCell]):
-        if self.size[1] != 0 and self.size[1] != len(row):
-            raise IndexError
-        self.table.append(row)
-        self.size = (self.size[0] + 1, len(row))
-        self._events.append_event(RowAppended(sheet=self, row=row))
+    def append_rows(self, rows: list[list[SheetCell]]):
+        for row in rows:
+            if self.size[1] != 0 and self.size[1] != len(row):
+                raise IndexError
+            self.table.append(row)
+            self.size = (self.size[0] + 1, len(row))
+        self._events.append_event(RowsAppended(sheet=self, rows=rows))
 
 
 class SheetSubscriber(ABC):
@@ -43,7 +43,7 @@ class SheetSubscriber(ABC):
         raise NotImplemented
 
 
-class RowAppended(Event):
+class RowsAppended(Event):
     sheet: SheetNode
-    row: list[SheetCell]
+    rows: list[list[SheetCell]]
     uuid: UUID = Field(default_factory=uuid4)
