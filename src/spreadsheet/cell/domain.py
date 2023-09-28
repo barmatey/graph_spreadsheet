@@ -20,6 +20,9 @@ class Cell(Model):
     def __str__(self):
         return f"Cell(index={self.index}, value={self.value})"
 
+    def __eq__(self, other):
+        return self.index == other.index and self.value == other.value
+
 
 CellTable = list[list[CellValue]]
 

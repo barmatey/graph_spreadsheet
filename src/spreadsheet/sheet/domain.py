@@ -15,6 +15,7 @@ def size_factory():
 class Sheet(Node):
     size: tuple[int, int] = Field(default_factory=size_factory)
     table: list[list[SheetCell]] = Field(default_factory=list)
+    uuid: UUID = Field(default_factory=uuid4)
 
     def __str__(self):
         return f"{self.__class__.__name__}(size={self.size})"
