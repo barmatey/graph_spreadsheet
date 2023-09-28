@@ -1,3 +1,5 @@
+from abc import ABC, abstractmethod
+
 from loguru import logger
 from pydantic import Field
 
@@ -32,3 +34,9 @@ class SheetNode(Node):
         self.table.append(row)
         self.size = (self.size[0] + 1, len(row))
         logger.warning("row was appended, but not notified")
+
+
+class SheetSubscriber(ABC):
+    @abstractmethod
+    def follow_sheet(self, sheet: SheetNode):
+        raise NotImplemented
