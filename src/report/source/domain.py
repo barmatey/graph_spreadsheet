@@ -16,7 +16,7 @@ class SourceNode(Node, WireSubscriber):
     def follow_wires(self, wires: set[WireNode]):
         self.wires.extend(wires)
         self._on_subscribed(wires)
-        self._events.append_event(WireNodesAppended(wire_nodes=list(wires), source_node=self))
+        self._events.append(WireNodesAppended(wire_nodes=list(wires), source_node=self))
 
     def on_wire_updated(self, old_value: WireNode, new_value: WireNode):
         self._events.append_node_updated_event(WireUpdated(source=self, old_value=old_value, new_value=new_value))

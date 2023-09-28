@@ -12,20 +12,21 @@ Ccol = typing.Literal['currency', 'sender', 'receiver', 'sub1', 'sub2', 'comment
 
 
 class WireNode(Node):
-    currency: str
-    date: datetime
     sender: float
     receiver: float
     amount: float
-    sub1: str
-    sub2: str
-    comment: str
+    currency: str = "RUB"
+    date: datetime = Field(default_factory=datetime.now)
+    sub1: str = ""
+    sub2: str = ""
+    comment: str = ""
     uuid: UUID = Field(default_factory=uuid4)
 
-    def set_node_fields(self, data: dict):
+    def set_node_fields(self, **kwargs):
         old_value = self.model_copy(deep=True)
-        super().set_node_fields(data)
-        self._events.append_event(WireUpdated(old_value=old_value, new_value=self))
+        for key, value in kwargs.items():
+            self.__setattr__(key, value)
+        self._on_updated(WireUpdated(old_value=old_value, new_value=self))
 
 
 class WireSubscriber(ABC):

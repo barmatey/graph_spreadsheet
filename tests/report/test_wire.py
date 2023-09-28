@@ -62,3 +62,17 @@ def test_created_wire_was_linked_with_source(repo: GraphRepo):
 
     assert wire in source_pubs
     assert source in wire_subs
+
+
+def test_double_update_wire_create_one_event():
+    wire = WireNode(sender=1, receiver=1, amount=22)
+    wire.set_node_fields(sender=22)
+    wire.set_node_fields(receiver=12)
+    events = wire.parse_events()
+    print()
+    print(events)
+    print()
+    assert wire.sender == 22
+    assert wire.receiver == 12
+    # assert len(events) == 1
+

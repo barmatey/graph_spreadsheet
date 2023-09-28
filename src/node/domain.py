@@ -1,5 +1,6 @@
 from abc import abstractmethod
 from collections import OrderedDict
+from typing import Optional
 from uuid import UUID, uuid4
 from pydantic import Field, PrivateAttr
 
@@ -14,40 +15,15 @@ class Event(Model):
     uuid: UUID
 
 
-class EventQueue:
-    def __init__(self):
-        self._events = OrderedDict()
-
-    def append_node_updated_event(self, event: 'NodeUpdated'):
-        key = "node_updated_event"
-        if self._events.get(key) is None:
-            self._events[key] = event
-        else:
-            old: 'NodeUpdated' = self._events.pop(key)
-            self._events[key] = NodeUpdated(old_value=old.old_value, new_value=event.new_value)
-
-    def append_unique_event(self, event: Event):
-        key = type(event)
-        if self._events.get(key) is not None:
-            self._events.pop(key)
-        self._events[key] = event
-
-    def append_event(self, event: Event):
-        self._events[event.uuid] = event
-
-    def parse_events(self) -> list[Event]:
-        events = self._events
-        self._events = OrderedDict()
-        return list(events.values())
-
-
 class Node(Model):
     uuid: UUID
-    _events: EventQueue = PrivateAttr()
+    _events = PrivateAttr()
+    _updated: Optional['NodeUpdated'] = PrivateAttr()
 
     def __init__(self, **data):
         super().__init__(**data)
-        self._events = EventQueue()
+        self._events = []
+        self._updated = None
 
     def __repr__(self):
         return self.__class__.__name__
@@ -56,14 +32,21 @@ class Node(Model):
         return self.__class__.__name__
 
     def _on_subscribed(self, pubs: set['Node']):
-        self._events.append_event(NodeSubscribed(sub=self, pubs=pubs))
+        self._events.append(NodeSubscribed(sub=self, pubs=pubs))
 
-    def set_node_fields(self, data: dict):
-        for key, value in data.items():
-            self.__setattr__(key, value)
+    def _on_updated(self, event: 'NodeUpdated'):
+        if self._updated is None:
+            self._updated = event
+        else:
+            self._updated.new_value = event.new_value
 
     def parse_events(self) -> list[Event]:
-        return self._events.parse_events()
+        events: list[Event] = self._events
+        self._events = []
+        if self._updated is not None:
+            events.append(self._updated)
+            self._updated = None
+        return events
 
 
 class NodeSubscribed(Event):
@@ -73,4 +56,6 @@ class NodeSubscribed(Event):
 
 
 class NodeUpdated(Event):
-    pass
+    old_value: Node
+    new_value: Node
+    uuid: UUID = Field(default_factory=uuid4)
