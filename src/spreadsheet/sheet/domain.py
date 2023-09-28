@@ -4,8 +4,8 @@ from loguru import logger
 from pydantic import Field
 
 from src.core.cell import CellTable, CellValue
-from src.node.domain import Node, Event
-from src.spreadsheet.cell.domain import Cell
+from src.node.domain import Node
+from src.spreadsheet.cell.domain import SheetCell
 
 
 def size_factory():
@@ -14,7 +14,7 @@ def size_factory():
 
 class SheetNode(Node):
     size: tuple[int, int] = Field(default_factory=size_factory)
-    table: list[list[Cell]] = Field(default_factory=list)
+    table: list[list[SheetCell]] = Field(default_factory=list)
 
     def __str__(self):
         return f"{self.__class__.__name__}(size={self.size})"
@@ -28,7 +28,7 @@ class SheetNode(Node):
             result.append(r)
         return result
 
-    def append_row(self, row: list[Cell]):
+    def append_row(self, row: list[SheetCell]):
         if self.size[1] != 0 and self.size[1] != len(row):
             raise IndexError
         self.table.append(row)
