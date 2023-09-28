@@ -51,5 +51,6 @@ def test_sheet_events_have_properly_order(sheet: Sheet):
     events = sheet.parse_events()
     assert len(events) == 3
     assert type(events[0]) == RowsDeleted
-    assert type(events[1]) == RowsReindexed
+    assert type(events[1]) == RowsAppended
+    assert type(events[2]) == RowsReindexed
 

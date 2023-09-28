@@ -14,7 +14,6 @@ from src.spreadsheet.sheet import domain as sheet_domain
 class PlanItems(Model):
     ccols: list[Ccol]
     uniques: dict[str, int] = Field(default_factory=dict)
-    value: CellTable = Field(default_factory=list)
     uuid: UUID = Field(default_factory=uuid4)
 
 
