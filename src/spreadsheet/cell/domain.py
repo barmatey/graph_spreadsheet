@@ -1,9 +1,11 @@
 from abc import ABC, abstractmethod
 from uuid import UUID, uuid4
+
+from loguru import logger
 from pydantic import Field
 
 from src.core.cell import CellValue, CellTable
-from src.node.domain import Node, Event
+from src.node.domain import Node, Event, NodeUpdated
 
 
 class CellValuePublisher(ABC):
@@ -12,13 +14,21 @@ class CellValuePublisher(ABC):
         raise NotImplemented
 
 
-class CellTablePublisher(ABC):
+class CellTablePublisher(Node, ABC):
     @abstractmethod
     def get_cell_table(self) -> CellTable:
         raise NotImplemented
 
 
 class CellSubscriber(ABC):
+    @abstractmethod
+    def follow_cell_value_publisher(self, pub: CellValuePublisher):
+        raise NotImplemented
+
+    @abstractmethod
+    def follow_cell_table_publisher(self, pub: CellTablePublisher):
+        raise NotImplemented
+
     @abstractmethod
     def on_updated_value(self, old_value: CellValue, new_value: CellValue):
         raise NotImplemented
@@ -28,7 +38,7 @@ class CellSubscriber(ABC):
         raise NotImplemented
 
 
-class Cell(Node):
+class Cell(Node, CellSubscriber, CellValuePublisher):
     index: tuple[int, int]
     value: CellValue
     uuid: UUID = Field(default_factory=uuid4)
@@ -39,34 +49,28 @@ class Cell(Node):
     def __str__(self):
         return f"Cell(index={self.index}, value={self.value})"
 
-    def follow(self, pubs: set['Node']):
-        if len(pubs) != 1:
-            raise Exception
-        for pub in pubs:
-            if not hasattr(pub, "value"):
-                raise Exception
-            if isinstance(pub.value, CellValue):
-                self.value = pub.value
-            elif isinstance(pub.value, list):
-                self.value = pub.value[self.index[0]][self.index[1]]
-            else:
-                raise TypeError(f"real type is: {type(pub)}")
-        self._on_subscribed(pubs)
-        self._on_updated()
+    def get_cell_value(self) -> CellValue:
+        return self.value
 
-    def update(self, old_value: 'Node', new_value: 'Node'):
-        if not hasattr(new_value, "value"):
-            raise Exception
-        if old_value.value == new_value.value:
-            return
+    def follow_cell_value_publisher(self, pub: CellValuePublisher):
+        self.value = pub.get_cell_value()
+        self._on_subscribed({pub})
+        logger.warning("Have to update!")
 
-        if isinstance(new_value.value, CellValue):
-            self.value = new_value.value
-        elif isinstance(new_value.value, list):
-            self.value = new_value.value[self.index[0]][self.index[1]]
-        else:
-            raise TypeError(f"real type is: {type(new_value)}")
-        self._on_updated()
+    def follow_cell_table_publisher(self, pub: CellTablePublisher):
+        self.value = pub.get_cell_table()[self.index[0]][self.index[1]]
+        self._on_subscribed({pub})
+        logger.warning("Have to update!")
 
-    def _on_updated(self):
-        pass
+    def on_updated_value(self, old_value: CellValue, new_value: CellValue):
+        self.value = new_value
+        logger.warning("Have to update!")
+
+    def on_updated_table(self, old_table: CellTable, new_table: CellTable):
+        self.value = new_table[self.index[0]][self.index[1]]
+        logger.warning("Have to update")
+
+
+
+class CellUpdated(NodeUpdated):
+    pass
