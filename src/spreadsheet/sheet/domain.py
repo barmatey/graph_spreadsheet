@@ -50,13 +50,14 @@ class Sheet(Node):
                 deleted_rows.append(self.table[i])
         self.table = new_table
         self.size = (len(new_table), self.size[1] if len(new_table) else 0)
-        self.reindex()
         self._events.append_event(RowsDeleted(sheet=self, rows=deleted_rows))
+        self.reindex()
 
     def reindex(self):
         for i in range(0, self.size[0]):
             for j in range(0, self.size[1]):
                 self.table[i][j].index = (i, j)
+        self._events.append_event(RowsReindexed(sheet=self))
 
 
 class SheetSubscriber(ABC):
@@ -74,4 +75,9 @@ class RowsAppended(Event):
 class RowsDeleted(Event):
     sheet: Sheet
     rows: list[list[SheetCell]]
+    uuid: UUID = Field(default_factory=uuid4)
+
+
+class RowsReindexed(Event):
+    sheet: Sheet
     uuid: UUID = Field(default_factory=uuid4)

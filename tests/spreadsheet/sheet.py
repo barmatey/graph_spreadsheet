@@ -1,5 +1,22 @@
+import pytest
+
 from src.spreadsheet.cell.domain import SheetCell
 from src.spreadsheet.sheet.domain import Sheet
+
+
+@pytest.fixture(scope="function")
+def sheet():
+    sheet = Sheet()
+    rows = [
+        [SheetCell(index=(0, 0), value=11), SheetCell(index=(0, 1), value=12)],
+        [SheetCell(index=(1, 0), value=11), SheetCell(index=(1, 1), value=12)],
+        [SheetCell(index=(2, 0), value=11), SheetCell(index=(2, 1), value=12)],
+        [SheetCell(index=(3, 0), value=11), SheetCell(index=(3, 1), value=12)],
+        [SheetCell(index=(4, 0), value=11), SheetCell(index=(4, 1), value=12)],
+    ]
+    sheet.append_rows(rows)
+    sheet.parse_events()
+    return sheet
 
 
 def test_create_sheet():
@@ -14,17 +31,7 @@ def test_append_row_change_size():
     assert sheet.size == (1, 2)
 
 
-def test_delete_rows():
-    sheet = Sheet()
-    rows = [
-        [SheetCell(index=(0, 0), value=11), SheetCell(index=(0, 1), value=12)],
-        [SheetCell(index=(1, 0), value=11), SheetCell(index=(1, 1), value=12)],
-        [SheetCell(index=(2, 0), value=11), SheetCell(index=(2, 1), value=12)],
-        [SheetCell(index=(3, 0), value=11), SheetCell(index=(3, 1), value=12)],
-        [SheetCell(index=(4, 0), value=11), SheetCell(index=(4, 1), value=12)],
-    ]
-    sheet.append_rows(rows)
-
+def test_delete_rows(sheet):
     sheet.delete_rows([1, 2])
 
     expected = [
@@ -36,3 +43,10 @@ def test_delete_rows():
     for i in range(0, sheet.size[0]):
         for j in range(0, sheet.size[1]):
             assert sheet.table[i][j] == expected[i][j]
+
+
+def test_sheet_events_have_properly_order(sheet: Sheet):
+    sheet.delete_rows([2, 3])
+    sheet.append_rows([SheetCell(index=(0, 0), value=11), SheetCell(index=(0, 1), value=12)])
+    events = sheet.parse_events()
+    assert len(events) == 3
