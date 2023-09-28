@@ -55,21 +55,6 @@ class Node(Model):
     def __str__(self):
         return self.__class__.__name__
 
-    @abstractmethod
-    def update(self, old_value: 'Node', new_value: 'Node'):
-        raise NotImplemented
-
-    @abstractmethod
-    def follow(self, pubs: set['Node']):
-        raise NotImplemented
-
-    def as_child(self, pubs: set['Node']):
-        """Subscribe on publishers without typechecking and without changing state"""
-        self._on_subscribed(pubs)
-
-    def _on_updated(self):
-        self._events.append_node_updated_event(NodeUpdated(old_value=self.model_copy(deep=True), new_value=self))
-
     def _on_subscribed(self, pubs: set['Node']):
         self._events.append_event(NodeSubscribed(sub=self, pubs=pubs))
 
@@ -79,10 +64,6 @@ class Node(Model):
 
     def parse_events(self) -> list[Event]:
         return self._events.parse_events()
-
-
-class NodeUpdated(Event):
-    pass
 
 
 class NodeSubscribed(Event):
