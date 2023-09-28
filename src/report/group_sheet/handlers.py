@@ -29,7 +29,7 @@ class CreateGroupSheetNodeHandler(CommandHandler):
         for i in range(0, len(group_sheet.plan_items.value)):
             row = []
             for j in range(0, len(group_sheet.plan_items.value[0])):
-                cell = cell_domain.CellNode(index=(i, j), value=group_sheet.plan_items.value[i][j])
+                cell = cell_domain.Cell(index=(i, j), value=group_sheet.plan_items.value[i][j])
                 cell.follow({group_sheet})
                 self.extend_events(cell.parse_events())
                 self._repo.add(cell)

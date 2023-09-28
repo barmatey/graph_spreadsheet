@@ -21,7 +21,7 @@ class MapperNode(Node):
         return all([wire.__getattribute__(key) == value for key, value in self.filter_by.items()])
 
     def update(self, old_value: 'Node', new_value: 'Node'):
-        if not isinstance(old_value, cell_domain.CellNode) and isinstance(new_value, cell_domain.CellNode):
+        if not isinstance(old_value, cell_domain.Cell) and isinstance(new_value, cell_domain.Cell):
             raise TypeError(f"invalid types: {type(old_value)}, {type(new_value)}")
         key = self.ccols[new_value.index[1]]
         value = new_value.value
@@ -30,7 +30,7 @@ class MapperNode(Node):
 
     def follow(self, pubs: set['Node']):
         for pub in pubs:
-            if isinstance(pub, cell_domain.CellNode):
+            if isinstance(pub, cell_domain.Cell):
                 key = self.ccols[pub.index[1]]
                 value = pub.value
                 self.filter_by[key] = value

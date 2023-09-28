@@ -6,7 +6,7 @@ from src.core.cell import CellValue
 from src.node.domain import Node, Event
 
 
-class CellNode(Node):
+class Cell(Node):
     index: tuple[int, int]
     value: CellValue
     uuid: UUID = Field(default_factory=uuid4)

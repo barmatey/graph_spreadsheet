@@ -58,7 +58,7 @@ class CreateProfitSheetNodeHandler(CommandHandler):
         # Create first row (no calculating, follow value only)
         row = []
         for j, period in enumerate(periods):
-            sheet_cell = cell_domain.CellNode(index=(0, j), value=None)
+            sheet_cell = cell_domain.Cell(index=(0, j), value=None)
             sheet_cell.follow({period})
             self.extend_events(sheet_cell.parse_events())
             self._repo.add(sheet_cell)
@@ -76,7 +76,7 @@ class CreateProfitSheetNodeHandler(CommandHandler):
                 self._repo.add(profit_cell)
                 self.extend_events(profit_cell.parse_events())
 
-                sheet_cell = cell_domain.CellNode(index=(i, j + 1), value=None)
+                sheet_cell = cell_domain.Cell(index=(i, j + 1), value=None)
                 sheet_cell.follow({profit_cell})
                 self._repo.add(sheet_cell)
                 self.extend_events(sheet_cell.parse_events())
