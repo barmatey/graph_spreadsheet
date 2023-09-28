@@ -7,6 +7,7 @@ from src.core.pydantic_model import Model
 from src.node.domain import Command, Node
 from src.report.source.domain import SourceSubscriber, SourceNode
 from src.report.wire.domain import Ccol, WireNode
+from src.spreadsheet.cell.domain import CellTablePublisher
 from src.spreadsheet.sheet import domain as sheet_domain
 
 
@@ -17,7 +18,7 @@ class PlanItems(Model):
     uuid: UUID = Field(default_factory=uuid4)
 
 
-class GroupSheetNode(sheet_domain.SheetNode, SourceSubscriber):
+class GroupSheetNode(sheet_domain.SheetNode, SourceSubscriber, CellTablePublisher):
     plan_items: PlanItems
     uuid: UUID = Field(default_factory=uuid4)
 
@@ -57,8 +58,7 @@ class GroupSheetNode(sheet_domain.SheetNode, SourceSubscriber):
             self.plan_items.uniques[new_key] = 1
             utable.append(new_row)
 
-    @property
-    def value(self) -> CellTable:
+    def get_cell_table(self) -> CellTable:
         return self.plan_items.value
 
 

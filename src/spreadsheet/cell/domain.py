@@ -14,7 +14,7 @@ class CellValuePublisher(ABC):
         raise NotImplemented
 
 
-class CellTablePublisher(Node, ABC):
+class CellTablePublisher(ABC):
     @abstractmethod
     def get_cell_table(self) -> CellTable:
         raise NotImplemented
@@ -69,7 +69,6 @@ class Cell(Node, CellSubscriber, CellValuePublisher):
     def on_updated_table(self, old_table: CellTable, new_table: CellTable):
         self.value = new_table[self.index[0]][self.index[1]]
         logger.warning("Have to update")
-
 
 
 class CellUpdated(NodeUpdated):
