@@ -28,7 +28,7 @@ class UpdateWireHandler(CommandHandler):
 
         # Update node
         wire_node = self._repo.get_by_id(cmd.uuid).model_copy(deep=True)
-        wire_node.set_node_fields(cmd.model_dump(exclude_none=True, exclude={"uuid"}))
+        wire_node.set_node_fields(**cmd.model_dump(exclude_none=True, exclude={"uuid"}))
         self.extend_events(wire_node.parse_events())
         return wire_node
 
