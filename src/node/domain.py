@@ -74,19 +74,15 @@ class Node(Model):
         self._events.append_event(NodeSubscribed(sub=self, pubs=pubs))
 
     def set_node_fields(self, data: dict):
-        old_value = self.model_copy(deep=True)
         for key, value in data.items():
             self.__setattr__(key, value)
-        self._events.append_node_updated_event(NodeUpdated(old_value=old_value, new_value=self))
 
     def parse_events(self) -> list[Event]:
         return self._events.parse_events()
 
 
 class NodeUpdated(Event):
-    old_value: Node
-    new_value: Node
-    uuid: UUID = Field(default_factory=uuid4)
+    pass
 
 
 class NodeSubscribed(Event):

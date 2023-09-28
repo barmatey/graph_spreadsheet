@@ -22,11 +22,10 @@ class GroupSheetNode(sheet_domain.SheetNode, SourceSubscriber):
     uuid: UUID = Field(default_factory=uuid4)
 
     def follow_source(self, source: SourceNode):
-        self.wires_appended(source.wires)
-        self._on_updated()
+        self.on_wires_appended(source.wires)
         self._on_subscribed({source})
 
-    def wires_appended(self, wires: list[WireNode]):
+    def on_wires_appended(self, wires: list[WireNode]):
         for wire in wires:
             row = [wire.__getattribute__(ccol) for ccol in self.plan_items.ccols]
             key = str(row)
@@ -35,9 +34,8 @@ class GroupSheetNode(sheet_domain.SheetNode, SourceSubscriber):
                 self.plan_items.uniques[key] = 1
             else:
                 self.plan_items.uniques[key] += 1
-        self._on_updated()
 
-    def wire_updated(self, old_value: WireNode, new_value: WireNode):
+    def on_wire_updated(self, old_value: WireNode, new_value: WireNode):
         old_row = [old_value.__getattribute__(ccol) for ccol in self.plan_items.ccols]
         old_key = str(old_row)
 
@@ -55,12 +53,9 @@ class GroupSheetNode(sheet_domain.SheetNode, SourceSubscriber):
 
         if self.plan_items.uniques.get(new_key) is not None:
             self.plan_items.uniques[new_key] += 1
-            return
-        self.plan_items.uniques[new_key] = 1
-        utable.append(new_row)
-
-        self._on_updated()
-        return
+        else:
+            self.plan_items.uniques[new_key] = 1
+            utable.append(new_row)
 
     @property
     def value(self) -> CellTable:
@@ -73,7 +68,7 @@ class GroupSheetNode(sheet_domain.SheetNode, SourceSubscriber):
         raise Exception
 
     def _on_updated(self):
-        pass
+        raise Exception
 
 
 class CreateGroupSheetNode(Command):

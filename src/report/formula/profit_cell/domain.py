@@ -25,10 +25,10 @@ class ProfitCellNode(Node, SourceSubscriber):
         self._on_subscribed({source})
         self._on_updated()
 
-    def wires_appended(self, wire: list[WireNode]):
+    def on_wires_appended(self, wire: list[WireNode]):
         raise NotImplemented
 
-    def wire_updated(self, old_value: WireNode, new_value: WireNode):
+    def on_wire_updated(self, old_value: WireNode, new_value: WireNode):
         raise NotImplemented
 
     def follow(self, pubs: set['Node']):

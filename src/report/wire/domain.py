@@ -24,10 +24,15 @@ class WireNode(Node):
 
     def update(self, old_value: 'Node', new_value: 'Node'):
         logger.warning("WireNode parent was updated?")
-        self._events.append_node_updated_event(WireUpdated(old_value=self.model_copy(deep=True), new_value=self))
+        raise Exception
 
     def follow(self, pubs: set['Node']):
         raise NotImplemented
+
+    def set_node_fields(self, data: dict):
+        old_value = self.model_copy(deep=True)
+        super().set_node_fields(data)
+        self._events.append_event(WireUpdated(old_value=old_value, new_value=self))
 
 
 class WireSubscriber(ABC):
@@ -36,7 +41,7 @@ class WireSubscriber(ABC):
         raise NotImplemented
 
     @abstractmethod
-    def update_wire(self, old_value: WireNode, new_value: WireNode):
+    def on_wire_updated(self, old_value: WireNode, new_value: WireNode):
         raise NotImplemented
 
 
