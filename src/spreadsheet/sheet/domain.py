@@ -37,7 +37,6 @@ class Sheet(Node):
                 raise IndexError
             self.table.append(row)
             self.size = (self.size[0] + 1, len(row))
-        self._events.append_event(RowsAppended(sheet=self, rows=rows))
 
     def delete_rows(self, indexes: list[int]):
         hashes = {index: 1 for index in indexes}
@@ -50,14 +49,12 @@ class Sheet(Node):
                 deleted_rows.append(self.table[i])
         self.table = new_table
         self.size = (len(new_table), self.size[1] if len(new_table) else 0)
-        self._events.append_event(RowsDeleted(sheet=self, rows=deleted_rows))
         self.reindex()
 
     def reindex(self):
         for i in range(0, self.size[0]):
             for j in range(0, self.size[1]):
                 self.table[i][j].index = (i, j)
-        self._events.append_event(RowsReindexed(sheet=self))
 
 
 class SheetSubscriber(ABC):
