@@ -23,8 +23,11 @@ class Cell(Model):
     def __eq__(self, other):
         return self.index == other.index and self.value == other.value
 
+    def __hash__(self) -> int:
+        return self.uuid.__hash__()
 
-CellTable = list[list[CellValue]]
+
+CellTable = list[list[Cell]]
 
 
 class CellPublisher(ABC):
@@ -41,7 +44,7 @@ class CellTablePublisher(ABC):
 
 class CellSubscriber(ABC):
     @abstractmethod
-    def follow_cell_publisher(self, pub: CellPublisher):
+    def follow_cell_publishers(self, pubs: set[CellPublisher]):
         raise NotImplemented
 
     @abstractmethod
@@ -51,7 +54,7 @@ class CellSubscriber(ABC):
 
 class CellTableSubscriber(ABC):
     @abstractmethod
-    def follow_cell_table_publisher(self, pub: CellTablePublisher):
+    def follow_cell_table_publishers(self, pubs: set[CellTablePublisher]):
         raise NotImplemented
 
     @abstractmethod
@@ -63,24 +66,36 @@ class SheetCell(Cell, Node, CellSubscriber, CellTableSubscriber, CellPublisher):
     def get_cell(self) -> Cell:
         return self
 
-    def follow_cell_publisher(self, pub: CellPublisher):
-        self.value = pub.get_cell().value
-        self._on_subscribed({pub})
-        logger.warning("Have to update!")
+    def follow_cell_publishers(self, pubs: set[CellPublisher]):
+        old_value = self.model_copy(deep=True)
+        if len(pubs) != 1:
+            raise Exception
+        for pub in pubs:
+            self.value = pub.get_cell().value
+        self._on_subscribed(pubs)
+        self._on_updated(CellUpdated(old_value=old_value, new_value=self))
 
-    def follow_cell_table_publisher(self, pub: CellTablePublisher):
-        self.value = pub.get_cell_table()[self.index[0]][self.index[1]].value
-        self._on_subscribed({pub})
-        logger.warning("Have to update!")
+    def follow_cell_table_publishers(self, pubs: set[CellTablePublisher]):
+        old_value = self.model_copy(deep=True)
+        if len(pubs) != 1:
+            raise Exception
+        for pub in pubs:
+            self.value = pub.get_cell_table()[self.index[0]][self.index[1]].value
+        self._on_subscribed(pubs)
+        self._on_updated(CellUpdated(old_value=old_value, new_value=self))
 
-    def on_updated_cell(self, old_value: Cell, new_value: Cell):
+    def on_updated_cell(self, _old_value: Cell, new_value: Cell):
+        old_value = self.model_copy(deep=True)
         self.value = new_value.value
-        logger.warning("Have to update!")
+        self._on_updated(CellUpdated(old_value=old_value, new_value=self))
 
-    def on_updated_cell_table(self, old_table: CellTable, new_table: CellTable):
+    def on_updated_cell_table(self, _old_table: CellTable, new_table: CellTable):
+        old_value = self.model_copy(deep=True)
         self.value = new_table[self.index[0]][self.index[1]].value
-        logger.warning("Have to update")
+        self._on_updated(CellUpdated(old_value=old_value, new_value=self))
 
 
 class CellUpdated(NodeUpdated):
-    pass
+    old_value: SheetCell
+    new_value: SheetCell
+    uuid: UUID = Field(default_factory=uuid4)

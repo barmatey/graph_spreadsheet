@@ -2,14 +2,13 @@ from uuid import UUID, uuid4
 
 from pydantic import Field
 
-from src.node.domain import Node, Command
+from src.node.domain import Node, Command, NodeUpdated
 from src.report.wire import domain as wire_domain
 from src.report.wire.domain import Ccol
-from src.spreadsheet.cell import domain as cell_domain
-from src.spreadsheet.sheet import domain as sheet_domain
+from src.spreadsheet.cell.domain import Cell, CellPublisher, CellSubscriber
 
 
-class MapperNode(Node):
+class MapperNode(Node, CellSubscriber):
     ccols: list[Ccol]
     filter_by: dict = Field(default_factory=dict)
     uuid: UUID = Field(default_factory=uuid4)
@@ -20,30 +19,30 @@ class MapperNode(Node):
     def is_filtred(self, wire: wire_domain.WireNode) -> bool:
         return all([wire.__getattribute__(key) == value for key, value in self.filter_by.items()])
 
-    def update(self, old_value: 'Node', new_value: 'Node'):
-        if not isinstance(old_value, cell_domain.Cell) and isinstance(new_value, cell_domain.Cell):
-            raise TypeError(f"invalid types: {type(old_value)}, {type(new_value)}")
+    def follow_cell_publishers(self, pubs: set[CellPublisher]):
+        old_value = self.model_copy(deep=True)
+        for pub in pubs:
+            key = self.ccols[pub.get_cell().index[1]]
+            value = pub.get_cell().value
+            self.filter_by[key] = value
+        self._on_subscribed(pubs)
+        self._on_updated(MapperUpdated(old_value=old_value, new_value=self))
+
+    def on_updated_cell(self, old_value: Cell, new_value: Cell):
+        old_value = self.model_copy(deep=True)
         key = self.ccols[new_value.index[1]]
         value = new_value.value
         self.filter_by[key] = value
-        self._on_updated()
-
-    def follow(self, pubs: set['Node']):
-        for pub in pubs:
-            if isinstance(pub, cell_domain.Cell):
-                key = self.ccols[pub.index[1]]
-                value = pub.value
-                self.filter_by[key] = value
-            elif isinstance(pub, sheet_domain.Sheet):
-                pass
-            else:
-                raise TypeError(f"invalid type: {type(pub)}")
-
-        self._on_subscribed(pubs)
-        self._on_updated()
+        self._on_updated(MapperUpdated(old_value=old_value, new_value=self))
 
 
 class CreateMapperNode(Command):
     utable_id: UUID
     row_index: int
+    uuid: UUID = Field(default_factory=uuid4)
+
+
+class MapperUpdated(NodeUpdated):
+    old_value: MapperNode
+    new_value: MapperNode
     uuid: UUID = Field(default_factory=uuid4)

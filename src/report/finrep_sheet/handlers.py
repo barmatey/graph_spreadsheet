@@ -20,11 +20,11 @@ class CreateProfitSheetNodeHandler(CommandHandler):
         mappers = []
         for i in range(0, group_sheet.size[0]):
             mapper = mapper_domain.MapperNode(ccols=group_sheet.plan_items.ccols)
-            pubs = {parent_sheet}
+            pubs = set()
             for j in range(group_sheet.size[1]):
                 cell = group_sheet.table[i][j]
                 pubs.add(cell)
-            mapper.follow(pubs)
+            mapper.follow_cell_publishers(pubs)
             self.extend_events(mapper.parse_events())
             self._repo.add(mapper)
             mappers.append(mapper)
@@ -58,8 +58,8 @@ class CreateProfitSheetNodeHandler(CommandHandler):
         # Create first row (no calculating, follow value only)
         row = []
         for j, period in enumerate(periods):
-            sheet_cell = cell_domain.Cell(index=(0, j), value=None)
-            sheet_cell.follow({period})
+            sheet_cell = cell_domain.SheetCell(index=(0, j), value=None)
+            sheet_cell.fo({period})
             self.extend_events(sheet_cell.parse_events())
             self._repo.add(sheet_cell)
             row.append(sheet_cell)
