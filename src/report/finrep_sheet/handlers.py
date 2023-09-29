@@ -3,13 +3,14 @@ from uuid import UUID
 from loguru import logger
 import pandas as pd
 
-from src.node.handlers import CommandHandler
+import src.report
+import src.report.finrep_sheet.domain
+from src.node.handlers import CommandHandler, EventHandler
 from src.report.formula.mapper import domain as mapper_domain
 from src.report.formula.period import domain as period_domain
-from src.report.formula.profit_cell import domain as pf_domain
 from src.report.group_sheet import domain as group_domain
-from src.spreadsheet.cell import domain as cell_domain
 from . import domain as finrep_domain
+from ..source import domain as source_domain
 
 
 class CreateProfitSheetNodeHandler(CommandHandler):
@@ -54,7 +55,7 @@ class CreateProfitSheetNodeHandler(CommandHandler):
         # Create first row (no calculating, follow value only)
         rows = []
         for j, period in enumerate(periods):
-            profit_cell = pf_domain.ProfitPeriodCell(index=(0, j), value=0)
+            profit_cell = src.report.finrep_sheet.domain.ProfitPeriodCell(index=(0, j), value=0)
             profit_cell.follow_periods({period})
             self.extend_events(profit_cell.parse_events())
             self._repo.add(profit_cell)
@@ -66,7 +67,7 @@ class CreateProfitSheetNodeHandler(CommandHandler):
         for i, mapper in enumerate(mappers):
             row = []
             for j, period in enumerate(periods):
-                profit_cell = pf_domain.ProfitCell(index=(i, j + 1), value=0)
+                profit_cell = src.report.finrep_sheet.domain.ProfitCell(index=(i, j + 1), value=0)
                 profit_cell.follow_periods({period})
                 profit_cell.follow_mappers({mapper})
                 profit_cell.follow_source(source)
@@ -81,4 +82,45 @@ class CreateProfitSheetNodeHandler(CommandHandler):
 
 FINREP_COMMAND_HANDLERS = {
     finrep_domain.CreateProfitSheetNode: CreateProfitSheetNodeHandler,
+}
+
+
+class CreateProfitCellNodeHandler(CommandHandler):
+    def execute(self, cmd: src.report.finrep_sheet.domain.CreateProfitCellNode) -> src.report.finrep_sheet.domain.ProfitCell:
+        logger.error(f"CreateProfitSumNode.execute()")
+
+        # Get parents
+        mapper = self._repo.get_by_id(cmd.mapper_node_id)
+        period = self._repo.get_by_id(cmd.period_node_id)
+        source = self._repo.get_by_id(cmd.source_node_id)
+
+        # Create node
+        profit_cell_node = src.report.finrep_sheet.domain.ProfitCell(value=0)
+        self._repo.add(profit_cell_node)
+
+        # Subscribing
+        profit_cell_node.follow({mapper, period})
+        self.extend_events(profit_cell_node.parse_events())
+        profit_cell_node.follow({source})
+        self.extend_events(profit_cell_node.parse_events())
+        return profit_cell_node
+
+
+class ProfitCellRecalculateRequestedHandler(EventHandler):
+    def handle(self, event: src.report.finrep_sheet.domain.ProfitCellRecalculateRequested):
+        profit_cell = event.node
+        source: source_domain.Source = filter(
+            lambda x: isinstance(x, source_domain.Source),
+            self._repo.get_node_parents(profit_cell)
+        ).__next__()
+        profit_cell.recalculate(source.wires)
+        self.extend_events(profit_cell.parse_events())
+        logger.debug(f"ProfitCellRecalculateRequested.handle()")
+
+
+PROFIT_CELL_EVENT_HANDLERS = {
+    src.report.finrep_sheet.domain.ProfitCellRecalculateRequested: ProfitCellRecalculateRequestedHandler,
+}
+PROFIT_CELL_COMMAND_HANDLERS = {
+    src.report.finrep_sheet.domain.CreateProfitCellNode: CreateProfitCellNodeHandler,
 }
