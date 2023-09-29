@@ -7,12 +7,10 @@ from src.report.formula.period import domain as period_domain
 from src.report.source.domain import SourceSubscriber, SourceNode
 from src.report.wire import domain as wire_domain
 from src.report.wire.domain import WireNode
+from src.spreadsheet.cell.domain import SheetCell
 
 
-# todo Source processing
-
-
-class ProfitCellNode(Node, SourceSubscriber):
+class ProfitCellNode(SheetCell):
     value: float
     mapper: mapper_domain.MapperNode | None = None
     period: period_domain.PeriodNode | None = None
@@ -23,7 +21,6 @@ class ProfitCellNode(Node, SourceSubscriber):
             if self.mapper.is_filtred(w) and self.period.is_filtred(w):
                 self.value += w.amount
         self._on_subscribed({source})
-        self._on_updated()
 
     def on_wires_appended(self, wire: list[WireNode]):
         raise NotImplemented
@@ -68,7 +65,6 @@ class ProfitCellNode(Node, SourceSubscriber):
         for wire in wires:
             if self.mapper.is_filtred(wire):
                 self.value += wire.amount
-        self._on_updated()
 
 
 class CreateProfitCellNode(Command):

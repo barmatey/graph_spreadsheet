@@ -1,6 +1,6 @@
 from loguru import logger
 
-from src.node.handlers import CommandHandler
+from src.node.handlers import CommandHandler, EventHandler
 from . import domain as mapper_domain
 
 
@@ -16,6 +16,16 @@ class CreateMapperNodeHandler(CommandHandler):
         return mapper_node
 
 
+class MapperUpdatedHandler(EventHandler):
+    def handle(self, event: mapper_domain.MapperUpdated):
+        logger.debug("MapperUpdated.handle()")
+        self._repo.update(event.new_value)
+
+
 MAPPER_COMMAND_HANDLERS = {
     mapper_domain.CreateMapperNode: CreateMapperNodeHandler,
+}
+
+MAPPER_EVENT_HANDlERS = {
+    mapper_domain.MapperUpdated: MapperUpdatedHandler,
 }

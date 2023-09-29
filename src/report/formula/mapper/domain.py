@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from uuid import UUID, uuid4
 
 from pydantic import Field
@@ -5,10 +6,10 @@ from pydantic import Field
 from src.node.domain import Node, Command, NodeUpdated
 from src.report.wire import domain as wire_domain
 from src.report.wire.domain import Ccol
-from src.spreadsheet.cell.domain import Cell, CellPublisher, CellSubscriber
+from src.spreadsheet.cell.domain import Cell, CellPublisher
 
 
-class MapperNode(Node, CellSubscriber):
+class MapperNode(Node):
     ccols: list[Ccol]
     filter_by: dict = Field(default_factory=dict)
     uuid: UUID = Field(default_factory=uuid4)
@@ -34,6 +35,16 @@ class MapperNode(Node, CellSubscriber):
         value = new_value.value
         self.filter_by[key] = value
         self._on_updated(MapperUpdated(old_value=old_value, new_value=self))
+
+
+class MapperSubscriber(ABC):
+    @abstractmethod
+    def follow_mappers(self, pubs: set[MapperNode]):
+        raise NotImplemented
+
+    @abstractmethod
+    def on_mapper_update(self, old_value: MapperNode, new_value: MapperNode):
+        raise NotImplemented
 
 
 class CreateMapperNode(Command):
