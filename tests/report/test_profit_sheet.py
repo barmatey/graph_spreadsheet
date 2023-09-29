@@ -57,7 +57,7 @@ def test_create_profit_sheet(repo):
         period=1,
         freq='Y'
     )
-    sheet: fr_domain.FinrepSheet = execute(cmd)
+    sheet: fr_domain.ProfitSheet = execute(cmd)
 
     actual = sheet.get_as_simple_table()
     expected = [

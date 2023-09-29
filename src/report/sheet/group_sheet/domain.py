@@ -17,7 +17,7 @@ class PlanItems(Model):
     uuid: UUID = Field(default_factory=uuid4)
 
 
-class GroupSheetNode(sheet_domain.Sheet, SourceSubscriber):
+class GroupSheet(sheet_domain.Sheet, SourceSubscriber):
     plan_items: PlanItems
     uuid: UUID = Field(default_factory=uuid4)
 

@@ -37,15 +37,15 @@ class CreateProfitSheetNodeHandler(CommandHandler):
             periods.append(period)
         return periods
 
-    def execute(self, cmd: pf_domain.CreateProfitSheetNode) -> pf_domain.FinrepSheet:
+    def execute(self, cmd: pf_domain.CreateProfitSheetNode) -> pf_domain.ProfitSheet:
         logger.info(f"CreateProfitSheetNode.execute()")
 
         # Result sheet
-        profit_sheet = pf_domain.FinrepSheet(uuid=cmd.uuid)
+        profit_sheet = pf_domain.ProfitSheet(uuid=cmd.uuid)
         self._repo.add(profit_sheet)
 
         # Parent data
-        group_sheet: group_domain.GroupSheetNode = self._repo.get_by_id(cmd.group_id)
+        group_sheet: group_domain.GroupSheet = self._repo.get_by_id(cmd.group_id)
         source = self._repo.get_by_id(cmd.source_id)
         mappers = self.__create_mappers(group_id=cmd.group_id, group_sheet=group_sheet)
         periods = self.__create_periods(cmd.start_date, cmd.end_date, cmd.period, cmd.freq)
@@ -94,11 +94,6 @@ class CreateProfitSheetNodeHandler(CommandHandler):
         return profit_sheet
 
 
-FINREP_COMMAND_HANDLERS = {
-    pf_domain.CreateProfitSheetNode: CreateProfitSheetNodeHandler,
-}
-
-
 class CreateProfitCellNodeHandler(CommandHandler):
     def execute(self,
                 cmd: pf_domain.CreateProfitCellNode) -> pf_domain.ProfitCell:
@@ -121,6 +116,23 @@ class CreateProfitCellNodeHandler(CommandHandler):
         return profit_cell_node
 
 
+class GroupSheetRowsAppendedHandler(EventHandler):
+    def handle(self, event: pf_domain.GroupSheetRowsAppended):
+        logger.debug(f"GroupSheetRowsAppended.handle()")
+
+        to_append = []
+        for row in event.rows:
+            mapper = mapper_domain.MapperNode(ccols=event.sheet.plan_items.ccols)
+            mapper.follow_cell_publishers(row)
+            self.extend_events(mapper.parse_events())
+            self._repo.add(mapper)
+            for cell in row:
+                index_cell = pf_domain.ProfitMapperCell(index=cell.index, value=cell.value)
+                index_cell.follow_cell_publishers({cell})
+                self.extend_events(index_cell.parse_events())
+                self._repo.add(index_cell)
+
+
 class ProfitCellRecalculateRequestedHandler(EventHandler):
     def handle(self, event: pf_domain.ProfitCellRecalculateRequested):
         profit_cell = event.node
@@ -133,9 +145,18 @@ class ProfitCellRecalculateRequestedHandler(EventHandler):
         logger.debug(f"ProfitCellRecalculateRequested.handle()")
 
 
+PROFIT_SHEET_COMMAND_HANDLERS = {
+    pf_domain.CreateProfitSheetNode: CreateProfitSheetNodeHandler,
+}
+
+PROFIT_SHEET_EVENT_HANDLERS = {
+    pf_domain.GroupSheetRowsAppended: GroupSheetRowsAppendedHandler,
+}
+
 PROFIT_CELL_EVENT_HANDLERS = {
     pf_domain.ProfitCellRecalculateRequested: ProfitCellRecalculateRequestedHandler,
 }
+
 PROFIT_CELL_COMMAND_HANDLERS = {
     pf_domain.CreateProfitCellNode: CreateProfitCellNodeHandler,
 }

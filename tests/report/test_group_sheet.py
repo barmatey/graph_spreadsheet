@@ -18,7 +18,7 @@ def repo():
 def test_create_group_sheet(repo):
     cmd_group = group_domain.CreateGroupSheetNode(uuid=group_sheet_uuid, source_id=source_uuid,
                                                   ccols=["sender", "sub1"])
-    group_sheet: group_domain.GroupSheetNode = execute(cmd_group)
+    group_sheet: group_domain.GroupSheet = execute(cmd_group)
     assert group_sheet.uuid == group_sheet_uuid
 
 
@@ -35,7 +35,7 @@ def test_created_group_sheet_has_properly_table(repo):
         [2.0, "World"],
         [3.0, "Anna!"]
     ]
-    real: group_domain.GroupSheetNode = repo.get_by_id(group_sheet_uuid).get_as_simple_table()
+    real: group_domain.GroupSheet = repo.get_by_id(group_sheet_uuid).get_as_simple_table()
     assert str(real) == str(expected)
 
 
@@ -67,7 +67,7 @@ def test_group_sheet_drop_duplicates():
     source = source_domain.Source(title="Source")
     source.follow_wires({wire1, wire2})
     plan_items = PlanItems(ccols=["sender", "sub1"])
-    sheet = group_domain.GroupSheetNode(plan_items=plan_items)
+    sheet = group_domain.GroupSheet(plan_items=plan_items)
     sheet.follow_source(source)
 
     actual = sheet.get_as_simple_table()

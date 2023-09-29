@@ -7,12 +7,12 @@ from . import domain as group_sheet_domain
 
 
 class GetSheetByIdHandler(CommandHandler):
-    def execute(self, cmd: group_sheet_domain.GetSheetById) -> group_sheet_domain.GroupSheetNode:
+    def execute(self, cmd: group_sheet_domain.GetSheetById) -> group_sheet_domain.GroupSheet:
         raise NotImplemented
 
 
 class CreateGroupSheetNodeHandler(CommandHandler):
-    def execute(self, cmd: group_sheet_domain.CreateGroupSheetNode) -> group_sheet_domain.GroupSheetNode:
+    def execute(self, cmd: group_sheet_domain.CreateGroupSheetNode) -> group_sheet_domain.GroupSheet:
         logger.error("CreateGroup.execute()")
 
         # Get wires
@@ -20,7 +20,7 @@ class CreateGroupSheetNodeHandler(CommandHandler):
 
         # Create
         plan_items = group_sheet_domain.PlanItems(ccols=cmd.ccols)
-        group_sheet = group_sheet_domain.GroupSheetNode(uuid=cmd.uuid, plan_items=plan_items)
+        group_sheet = group_sheet_domain.GroupSheet(uuid=cmd.uuid, plan_items=plan_items)
         self._repo.add(group_sheet)
 
         group_sheet.follow_source(source)

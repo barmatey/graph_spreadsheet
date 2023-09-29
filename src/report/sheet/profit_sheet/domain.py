@@ -3,11 +3,13 @@ from uuid import UUID, uuid4
 from datetime import datetime
 from pydantic import Field
 
+from src.core.pydantic_model import Model
 from src.node.domain import Event, Command
 from src.report.formula.mapper.domain import MapperSubscriber, MapperNode
 from src.report.formula.period.domain import PeriodSubscriber, PeriodNode
+from src.report.sheet.group_sheet.domain import GroupSheet
 from src.report.source.domain import SourceSubscriber, Source
-from src.report.wire.domain import WireNode
+from src.report.wire.domain import WireNode, Ccol
 from src.spreadsheet.cell.domain import SheetCell, CellUpdated
 from src.spreadsheet.sheet.domain import Sheet, SheetSubscriber
 
@@ -90,7 +92,7 @@ class ProfitCell(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber
         old_value = self.model_copy(deep=True)
         self.value = 0
         for wire in wires:
-            if self.mapper.is_filtred(wire):
+            if self.mapper.is_filtred(wire) and self.period.is_filtred(wire):
                 self.value += wire.amount
         self._on_updated(CellUpdated(old_value=old_value, new_value=self))
 
@@ -102,17 +104,22 @@ class ProfitCell(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber
         return events
 
 
-class FinrepSheet(Sheet, SheetSubscriber):
+class ProfitSheetMeta(Model):
+    start_date: datetime
+    end_date: datetime
+    period: int
+    freq: Literal["Y", "M", "D"]
+    ccols: Literal[Ccol]
+
+
+class ProfitSheet(Sheet, SheetSubscriber):
     uuid: UUID = Field(default_factory=uuid4)
 
     def follow_sheet(self, sheet: Sheet):
         self._on_subscribed({sheet})
 
     def on_rows_appended(self, rows: list[list[SheetCell]]):
-        to_append: list[list[SheetCell]] = []
-        for row in rows:
-            for j, cell in enumerate(row):
-                index_cell = ProfitMapperCell(index=cell.index, value=cell.value)
+        pass
 
 
 class CreateProfitSheetNode(Command):
@@ -133,7 +140,7 @@ class CreateProfitCellNode(Command):
 
 
 class GroupSheetRowsAppended(Event):
-    sheet: Sheet
+    profit_sheet: ProfitSheet
     rows: list[list[SheetCell]]
     uuid: UUID = Field(default_factory=uuid4)
 
