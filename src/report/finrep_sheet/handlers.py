@@ -55,30 +55,25 @@ class CreateProfitSheetNodeHandler(CommandHandler):
         # Create first row (no calculating, follow value only)
         rows = []
         for j, period in enumerate(periods):
-            sheet_cell = cell_domain.SheetCell(index=(0, j), value=None)
-            sheet_cell.follow_cell_publishers({period})
-            self.extend_events(sheet_cell.parse_events())
-            self._repo.add(sheet_cell)
-            rows.append(sheet_cell)
+            profit_cell = pf_domain.ProfitCellNode(index=(0, j), value=0)
+            profit_cell.follow_periods({period})
+            self.extend_events(profit_cell.parse_events())
+            self._repo.add(profit_cell)
+            rows.append(profit_cell)
         profit_sheet.append_rows(rows)
 
         # mapper is a row filter, period is a col filter
         for i, mapper in enumerate(mappers):
             row = []
             for j, period in enumerate(periods):
-                profit_cell = pf_domain.ProfitCellNode(value=0)
-                profit_cell.follow_cell_publishers({mapper, period})
+                profit_cell = pf_domain.ProfitCellNode(index=(i, j + 1), value=0)
+                profit_cell.follow_periods({period})
+                profit_cell.follow_mappers({mapper})
                 profit_cell.follow_source(source)
-                profit_cell.as_child({profit_sheet})
                 self._repo.add(profit_cell)
                 self.extend_events(profit_cell.parse_events())
-
-                sheet_cell = cell_domain.Cell(index=(i, j + 1), value=None)
-                sheet_cell.follow({profit_cell})
-                self._repo.add(sheet_cell)
-                self.extend_events(sheet_cell.parse_events())
-                row.append(sheet_cell)
-            profit_sheet.append_row(row)
+                row.append(profit_cell)
+            profit_sheet.append_rows(row)
 
         return profit_sheet
 

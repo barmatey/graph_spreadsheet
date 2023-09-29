@@ -1,7 +1,7 @@
 from uuid import UUID, uuid4
 from pydantic import Field
 
-from src.node.domain import Command, Event
+from src.node.domain import Command, Event, Node
 from src.report.formula.mapper import domain as mapper_domain
 from src.report.formula.mapper.domain import MapperSubscriber, MapperNode
 from src.report.formula.period import domain as period_domain
@@ -49,7 +49,7 @@ class ProfitCellNode(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscr
             self.period = pub
             self._recalculated = True
 
-    def on_update_period(self, old_value: PeriodNode, new_value: PeriodNode):
+    def on_period_updated(self, old_value: PeriodNode, new_value: PeriodNode):
         self.period = new_value
         self._recalculated = True
 

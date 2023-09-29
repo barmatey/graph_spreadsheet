@@ -29,7 +29,7 @@ class PeriodSubscriber(ABC):
         raise NotImplemented
 
     @abstractmethod
-    def on_update_period(self, old_value: PeriodNode, new_value: PeriodNode):
+    def on_period_updated(self, old_value: PeriodNode, new_value: PeriodNode):
         raise NotImplemented
 
 
