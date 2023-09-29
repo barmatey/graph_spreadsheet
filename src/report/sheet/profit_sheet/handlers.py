@@ -36,7 +36,7 @@ class CreateProfitSheetNodeHandler(CommandHandler):
             periods.append(period)
         return periods
 
-    def execute(self, cmd: pf_domain.CreateProfitSheetNode) -> pf_domain.ProfitSheet:
+    def execute(self, cmd: pf_domain.CreateProfitSheet) -> pf_domain.ProfitSheet:
         logger.info(f"CreateProfitSheetNode.execute()")
 
         # Parent data
@@ -96,11 +96,6 @@ class CreateProfitSheetNodeHandler(CommandHandler):
         return profit_sheet
 
 
-class CreateProfitCellNodeHandler(CommandHandler):
-    def execute(self, cmd: pf_domain.CreateProfitCellNode) -> pf_domain.ProfitCell:
-        raise Exception
-
-
 class GroupSheetRowsAppendedHandler(EventHandler):
     def handle(self, event: pf_domain.GroupSheetRowsAppended):
         logger.debug(f"GroupSheetRowsAppended.handle()")
@@ -147,7 +142,7 @@ class ProfitCellRecalculateRequestedHandler(EventHandler):
 
 
 PROFIT_SHEET_COMMAND_HANDLERS = {
-    pf_domain.CreateProfitSheetNode: CreateProfitSheetNodeHandler,
+    pf_domain.CreateProfitSheet: CreateProfitSheetNodeHandler,
 }
 
 PROFIT_SHEET_EVENT_HANDLERS = {
@@ -159,5 +154,4 @@ PROFIT_CELL_EVENT_HANDLERS = {
 }
 
 PROFIT_CELL_COMMAND_HANDLERS = {
-    pf_domain.CreateProfitCellNode: CreateProfitCellNodeHandler,
 }

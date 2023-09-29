@@ -48,7 +48,7 @@ def repo():
 
 
 def test_create_profit_sheet(repo):
-    cmd = fr_domain.CreateProfitSheetNode(
+    cmd = fr_domain.CreateProfitSheet(
         uuid=sheet_id,
         source_id=source_id,
         group_id=group_id,

@@ -54,7 +54,7 @@ def foo():
     cmd_group = group_domain.CreateGroupSheetNode(title="Hello", source_id=source.uuid, ccols=["sender"])
     group_sheet = execute(cmd_group)
 
-    cmd_profit = report_domain.CreateProfitSheetNode(
+    cmd_profit = report_domain.CreateProfitSheet(
         source_id=source.uuid,
         group_id=group_sheet.uuid,
         start_date=datetime(2023, 1, 1),

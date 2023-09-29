@@ -121,20 +121,13 @@ class ProfitSheet(Sheet, SheetSubscriber):
         self._events.append(GroupSheetRowsAppended(profit_sheet=self, rows=rows))
 
 
-class CreateProfitSheetNode(Command):
+class CreateProfitSheet(Command):
     source_id: UUID
     group_id: UUID
     start_date: datetime
     end_date: datetime
     period: int = 3
     freq: Literal['H', 'D', 'M', 'Y'] = 'M'
-    uuid: UUID = Field(default_factory=uuid4)
-
-
-class CreateProfitCellNode(Command):
-    period_node_id: UUID
-    mapper_node_id: UUID
-    source_node_id: UUID
     uuid: UUID = Field(default_factory=uuid4)
 
 
