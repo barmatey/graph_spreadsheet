@@ -2,7 +2,6 @@ from uuid import UUID, uuid4
 
 from pydantic import Field
 
-from src.core.cell import CellTable
 from src.core.pydantic_model import Model
 from src.node.domain import Command
 from src.report.source.domain import SourceSubscriber, Source

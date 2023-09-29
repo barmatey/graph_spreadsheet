@@ -13,7 +13,7 @@ class CreateSourceNodeHandler(CommandHandler):
 
 
 class WireAppendedHandler(EventHandler):
-    def handle(self, event: source_domain.WireNodesAppended):
+    def handle(self, event: source_domain.WiresAppended):
         subs: set[source_domain.SourceSubscriber] = self._repo.get_node_children(event.source_node)
         logger.debug(f"SourceWiresAppended.handle() => notify: {subs}")
         for sub in subs:
@@ -35,6 +35,6 @@ SOURCE_COMMAND_HANDLERS = {
 }
 
 SOURCE_EVENT_HANDLERS = {
-    source_domain.WireNodesAppended: WireAppendedHandler,
+    source_domain.WiresAppended: WireAppendedHandler,
     source_domain.WireUpdated: WireUpdatedHandler,
 }
