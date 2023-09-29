@@ -30,8 +30,8 @@ class CreateProfitCellNodeHandler(CommandHandler):
 class ProfitCellRecalculateRequestedHandler(EventHandler):
     def handle(self, event: pf_domain.ProfitCellRecalculateRequested):
         profit_cell = event.node
-        source: source_domain.SourceNode = filter(
-            lambda x: isinstance(x, source_domain.SourceNode),
+        source: source_domain.Source = filter(
+            lambda x: isinstance(x, source_domain.Source),
             self._repo.get_node_parents(profit_cell)
         ).__next__()
         profit_cell.recalculate(source.wires)

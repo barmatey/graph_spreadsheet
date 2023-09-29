@@ -8,7 +8,7 @@ from src.report.wire import domain as wire_domain
 from src.report.wire.domain import WireNode, WireSubscriber
 
 
-class SourceNode(Node, WireSubscriber):
+class Source(Node, WireSubscriber):
     title: str
     wires: list[wire_domain.WireNode] = Field(default_factory=list)
     uuid: UUID = Field(default_factory=uuid4)
@@ -24,7 +24,7 @@ class SourceNode(Node, WireSubscriber):
 
 class SourceSubscriber(ABC):
     @abstractmethod
-    def follow_source(self, source: SourceNode):
+    def follow_source(self, source: Source):
         raise NotImplemented
 
     @abstractmethod
@@ -43,12 +43,12 @@ class CreateSourceNode(Command):
 
 class WireNodesAppended(Event):
     wire_nodes: list[wire_domain.WireNode]
-    source_node: SourceNode
+    source_node: Source
     uuid: UUID = Field(default_factory=uuid4)
 
 
 class WireUpdated(NodeUpdated):
-    source: SourceNode
+    source: Source
     old_value: WireNode
     new_value: WireNode
     uuid: UUID = Field(default_factory=uuid4)

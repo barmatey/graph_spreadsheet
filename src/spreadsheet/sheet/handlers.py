@@ -6,7 +6,7 @@ from . import domain as sheet_domain
 
 class RowsAppendedHandler(EventHandler):
     def handle(self, event: sheet_domain.RowsAppended):
-        logger.debug(f"RowAppended.handle()")
+        logger.debug(f"RowsAppended.handle()")
         for row in event.rows:
             for cell in row:
                 self._repo.add(cell)
@@ -21,7 +21,7 @@ class RowsDeletedHandler(EventHandler):
 
 class RowsReindexedHandler(EventHandler):
     def handle(self, event: sheet_domain.RowsReindexed):
-        logger.debug("RowReindexed.handle()")
+        logger.debug("RowsReindexed.handle()")
         for i in range(0, event.sheet.size[0]):
             for j in range(0, event.sheet.size[1]):
                 self._repo.update(event.sheet.table[i][j])

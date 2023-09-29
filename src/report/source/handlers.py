@@ -5,17 +5,17 @@ from . import domain as source_domain
 
 
 class CreateSourceNodeHandler(CommandHandler):
-    def execute(self, cmd: source_domain.CreateSourceNode) -> source_domain.SourceNode:
+    def execute(self, cmd: source_domain.CreateSourceNode) -> source_domain.Source:
         logger.info("CreateSourceNode.execute()")
-        source_node = source_domain.SourceNode(uuid=cmd.uuid, title=cmd.title)
+        source_node = source_domain.Source(uuid=cmd.uuid, title=cmd.title)
         self._repo.add(source_node)
         return source_node
 
 
 class WireNodesAppendedHandler(EventHandler):
     def handle(self, event: source_domain.WireNodesAppended):
-        logger.debug("WireNodeAppended.handle()")
         subs: set[source_domain.SourceSubscriber] = self._repo.get_node_children(event.source_node)
+        logger.debug(f"WireNodeAppended.handle() => notify: {subs}")
         for sub in subs:
             sub.on_wires_appended(event.wire_nodes)
             self.extend_events(sub.parse_events())

@@ -14,7 +14,7 @@ class CreateWireNodeHandler(CommandHandler):
         self._repo.add(wire_node)
 
         # Append wire to source
-        source_node: source_domain.SourceNode = self._repo.get_by_id(cmd.source_id)
+        source_node: source_domain.Source = self._repo.get_by_id(cmd.source_id)
         source_node.follow_wires({wire_node})
 
         self.extend_events(source_node.parse_events())
@@ -40,11 +40,10 @@ class WireUpdatedHandler(EventHandler):
 
         # Update subscribers
         subs: set[wire_domain.WireSubscriber] = self._repo.get_node_children(event.new_value)
+        logger.debug(f"{event.new_value.__class__.__name__}UpdatedHandler => notify: {subs}")
         for sub in subs:
             sub.on_wire_updated(event.old_value, event.new_value)
             self.extend_events(sub.parse_events())
-
-        logger.debug(f"{event.new_value.__class__.__name__}UpdatedHandler => updated: {subs}")
 
 
 WIRE_COMMAND_HANDLERS = {

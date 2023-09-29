@@ -6,7 +6,7 @@ from src.report.formula.mapper import domain as mapper_domain
 from src.report.formula.mapper.domain import MapperSubscriber, MapperNode
 from src.report.formula.period import domain as period_domain
 from src.report.formula.period.domain import PeriodSubscriber, PeriodNode
-from src.report.source.domain import SourceSubscriber, SourceNode
+from src.report.source.domain import SourceSubscriber, Source
 from src.report.wire import domain as wire_domain
 from src.report.wire.domain import WireNode
 from src.spreadsheet.cell.domain import SheetCell
@@ -30,7 +30,7 @@ class ProfitCell(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber
     uuid: UUID = Field(default_factory=uuid4)
     _recalculated: bool = False
 
-    def follow_source(self, source: SourceNode):
+    def follow_source(self, source: Source):
         for w in source.wires:
             if self.mapper.is_filtred(w) and self.period.is_filtred(w):
                 self.value += w.amount

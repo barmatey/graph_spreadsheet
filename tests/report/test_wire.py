@@ -5,7 +5,7 @@ import pytest
 from src.messagebus.msgbus import Msgbus
 from src.node.domain import Node
 from src.node.repository import GraphRepo, GraphRepoFake
-from src.report.source.domain import CreateSourceNode, SourceNode
+from src.report.source.domain import CreateSourceNode, Source
 from src.report.wire.domain import CreateWireNode, WireNode
 
 source_uuid = uuid4()
@@ -55,7 +55,7 @@ def test_get_wire_node_from_repo(repo: GraphRepo):
 
 def test_created_wire_was_linked_with_source(repo: GraphRepo):
     wire: WireNode = repo.get_by_id(wire1_uuid)
-    source: SourceNode = repo.get_by_id(source_uuid)
+    source: Source = repo.get_by_id(source_uuid)
 
     source_pubs: set[Node] = repo.get_node_parents(source)
     wire_subs: set[Node] = repo.get_node_children(wire)

@@ -5,7 +5,7 @@ from pydantic import Field
 from src.core.cell import CellTable
 from src.core.pydantic_model import Model
 from src.node.domain import Command
-from src.report.source.domain import SourceSubscriber, SourceNode
+from src.report.source.domain import SourceSubscriber, Source
 from src.report.wire.domain import Ccol, WireNode
 from src.spreadsheet.cell.domain import CellTablePublisher, SheetCell
 from src.spreadsheet.sheet import domain as sheet_domain
@@ -21,7 +21,7 @@ class GroupSheetNode(sheet_domain.Sheet, SourceSubscriber):
     plan_items: PlanItems
     uuid: UUID = Field(default_factory=uuid4)
 
-    def follow_source(self, source: SourceNode):
+    def follow_source(self, source: Source):
         self.on_wires_appended(source.wires)
         self._on_subscribed({source})
 
