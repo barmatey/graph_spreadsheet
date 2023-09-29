@@ -109,10 +109,12 @@ class ProfitSheetMeta(Model):
     end_date: datetime
     period: int
     freq: Literal["Y", "M", "D"]
-    ccols: Literal[Ccol]
+    ccols: list[Literal[Ccol]]
+    uuid: UUID = Field(default_factory=uuid4)
 
 
 class ProfitSheet(Sheet, SheetSubscriber):
+    meta: ProfitSheetMeta
     uuid: UUID = Field(default_factory=uuid4)
 
     def follow_sheet(self, sheet: Sheet):

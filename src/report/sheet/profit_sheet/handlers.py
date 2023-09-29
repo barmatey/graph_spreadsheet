@@ -40,15 +40,17 @@ class CreateProfitSheetNodeHandler(CommandHandler):
     def execute(self, cmd: pf_domain.CreateProfitSheetNode) -> pf_domain.ProfitSheet:
         logger.info(f"CreateProfitSheetNode.execute()")
 
-        # Result sheet
-        profit_sheet = pf_domain.ProfitSheet(uuid=cmd.uuid)
-        self._repo.add(profit_sheet)
-
         # Parent data
         group_sheet: group_domain.GroupSheet = self._repo.get_by_id(cmd.group_id)
         source = self._repo.get_by_id(cmd.source_id)
         mappers = self.__create_mappers(group_id=cmd.group_id, group_sheet=group_sheet)
         periods = self.__create_periods(cmd.start_date, cmd.end_date, cmd.period, cmd.freq)
+
+        # Result sheet
+        sheet_meta = cmd.model_dump(exclude={"source_id", "group_id", "uuid"}) | {"ccols": group_sheet.plan_items.ccols}
+        sheet_meta = pf_domain.ProfitSheetMeta(**sheet_meta)
+        profit_sheet = pf_domain.ProfitSheet(uuid=cmd.uuid, meta=sheet_meta)
+        self._repo.add(profit_sheet)
 
         # Sheet subscribing
         profit_sheet.follow_sheet(group_sheet)
