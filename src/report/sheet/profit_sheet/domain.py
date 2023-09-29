@@ -30,6 +30,21 @@ class ProfitPeriodCell(SheetCell, PeriodSubscriber):
         self.value = new_value.to_date
 
 
+class ProfitMapperCell(SheetCell, MapperSubscriber):
+    uuid: UUID = Field(default_factory=uuid4)
+
+    def follow_mappers(self, pubs: set[MapperNode]):
+        old = self.model_copy(deep=True)
+        for pub in pubs:
+            self.value = pub.filter_by[pub.ccols[self.index[1]]]
+        self._on_updated(CellUpdated(old_value=old, new_value=self))
+
+    def on_mapper_update(self, old_value: MapperNode, new_value: MapperNode):
+        old = self.model_copy(deep=True)
+        self.value = new_value.filter_by[new_value.ccols[self.index[1]]]
+        self._on_updated(CellUpdated(old_value=old, new_value=self))
+
+
 class ProfitCell(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber):
     value: float
     mapper: mapper_domain.MapperNode | None = None

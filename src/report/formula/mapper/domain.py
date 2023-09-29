@@ -20,6 +20,9 @@ class MapperNode(Node):
     def is_filtred(self, wire: wire_domain.WireNode) -> bool:
         return all([wire.__getattribute__(key) == value for key, value in self.filter_by.items()])
 
+    def get_as_simple_row(self):
+        return [self.filter_by[ccol] for ccol in self.ccols]
+
     def follow_cell_publishers(self, pubs: set[Cell]):
         old_value = self.model_copy(deep=True)
         for pub in pubs:

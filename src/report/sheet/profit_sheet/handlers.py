@@ -3,7 +3,6 @@ from uuid import UUID
 from loguru import logger
 import pandas as pd
 
-
 from src.node.handlers import CommandHandler, EventHandler
 from src.report.formula.mapper import domain as mapper_domain
 from src.report.formula.period import domain as period_domain
@@ -51,22 +50,36 @@ class CreateProfitSheetNodeHandler(CommandHandler):
         mappers = self.__create_mappers(group_id=cmd.group_id)
         periods = self.__create_periods(cmd.start_date, cmd.end_date, cmd.period, cmd.freq)
 
+        left_indexes_len = len(mappers[0].ccols)
+
         # Create first row (no calculating, follow value only)
-        rows = []
-        for j, period in enumerate(periods):
+        row = []
+        for j in range(0,left_indexes_len):
+            cell = pf_domain.ProfitPeriodCell(index=(0, j), value=None)
+            self._repo.add(cell)
+            row.append(cell)
+
+        for j, period in enumerate(periods, start=left_indexes_len):
             profit_cell = pf_domain.ProfitPeriodCell(index=(0, j), value=0)
             profit_cell.follow_periods({period})
             self.extend_events(profit_cell.parse_events())
             self._repo.add(profit_cell)
-            rows.append(profit_cell)
-        profit_sheet.append_rows(rows)
+            row.append(profit_cell)
+        profit_sheet.append_rows(row)
 
         # mapper is a row filter, period is a col filter
         rows = []
         for i, mapper in enumerate(mappers):
             row = []
-            for j, period in enumerate(periods):
-                profit_cell = pf_domain.ProfitCell(index=(i, j + 1), value=0)
+            for j in range(0, left_indexes_len):
+                cell = pf_domain.ProfitMapperCell(index=(i, j), value=None)
+                cell.follow_mappers({mapper})
+                self._repo.add(cell)
+                self.extend_events(cell.parse_events())
+                row.append(cell)
+
+            for j, period in enumerate(periods, start=left_indexes_len):
+                profit_cell = pf_domain.ProfitCell(index=(i, j), value=0)
                 profit_cell.follow_periods({period})
                 profit_cell.follow_mappers({mapper})
                 profit_cell.follow_source(source)

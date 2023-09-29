@@ -61,9 +61,9 @@ def test_create_profit_sheet(repo):
 
     actual = sheet.get_as_simple_table()
     expected = [
-        [datetime(2021, 12, 31), datetime(2022, 12, 31)],
-        [10.0, 30.0],
-        [33.0, 44.0],
+        [None, None, datetime(2021, 12, 31), datetime(2022, 12, 31)],
+        [1.0, 'Profit', 10.0, 30.0],
+        [2.0, 'Expenses', 33.0, 44.0],
     ]
 
     assert str(actual) == str(expected)

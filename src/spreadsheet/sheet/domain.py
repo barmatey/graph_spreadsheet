@@ -35,7 +35,7 @@ class Sheet(Node):
             rows = [rows]
         for row in rows:
             if self.size[1] != 0 and self.size[1] != len(row):
-                raise IndexError
+                raise Exception
             self.table.append(row)
             self.size = (self.size[0] + 1, len(row))
         self._events.append(RowsAppended(sheet=self, rows=rows))
