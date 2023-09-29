@@ -6,7 +6,7 @@ from src.report.source import domain as source_domain
 
 
 class CreateWireNodeHandler(CommandHandler):
-    def execute(self, cmd: wire_domain.CreateWireNode) -> wire_domain.WireNode:
+    def execute(self, cmd: wire_domain.CreateWire) -> wire_domain.WireNode:
         logger.info("CreateWireNode.execute()")
 
         # Create wire node
@@ -47,7 +47,7 @@ class WireUpdatedHandler(EventHandler):
 
 
 WIRE_COMMAND_HANDLERS = {
-    wire_domain.CreateWireNode: CreateWireNodeHandler,
+    wire_domain.CreateWire: CreateWireNodeHandler,
     wire_domain.UpdateWire: UpdateWireHandler,
 }
 

@@ -19,12 +19,12 @@ def load_data():
     source = execute(cmd_source)
 
     # Wire
-    cmd_wire1 = wire_domain.CreateWireNode(uuid=wire1_uuid, sender=1, receiver=11, amount=1, sub1="Hello",
-                                           source_id=source.uuid)
-    cmd_wire2 = wire_domain.CreateWireNode(uuid=wire2_uuid, sender=2, receiver=22, amount=3, sub1="World",
-                                           source_id=source.uuid)
-    cmd_wire3 = wire_domain.CreateWireNode(uuid=wire3_uuid, sender=3, receiver=33, amount=12, sub1="Anna!",
-                                           source_id=source.uuid)
+    cmd_wire1 = wire_domain.CreateWire(uuid=wire1_uuid, sender=1, receiver=11, amount=1, sub1="Hello",
+                                       source_id=source.uuid)
+    cmd_wire2 = wire_domain.CreateWire(uuid=wire2_uuid, sender=2, receiver=22, amount=3, sub1="World",
+                                       source_id=source.uuid)
+    cmd_wire3 = wire_domain.CreateWire(uuid=wire3_uuid, sender=3, receiver=33, amount=12, sub1="Anna!",
+                                       source_id=source.uuid)
     execute(cmd_wire1)
     execute(cmd_wire2)
     execute(cmd_wire3)

@@ -6,7 +6,7 @@ from src.messagebus.msgbus import Msgbus
 from src.node.domain import Node
 from src.node.repository import GraphRepo, GraphRepoFake
 from src.report.source.domain import CreateSource, Source
-from src.report.wire.domain import CreateWireNode, WireNode
+from src.report.wire.domain import CreateWire, WireNode
 
 source_uuid = uuid4()
 wire1_uuid = uuid4()
@@ -40,7 +40,7 @@ def test_get_source_node_from_repo(repo):
 
 
 def test_create_wire_node(repo: GraphRepo):
-    cmd = CreateWireNode(uuid=wire1_uuid, source_id=source_uuid, sender=1, receiver=2, amount=111, sub1="Great")
+    cmd = CreateWire(uuid=wire1_uuid, source_id=source_uuid, sender=1, receiver=2, amount=111, sub1="Great")
     wire = execute(cmd)
     assert wire.sender == 1
     assert wire.receiver == 2

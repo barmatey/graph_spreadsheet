@@ -39,7 +39,7 @@ class WireSubscriber(ABC):
         raise NotImplemented
 
 
-class CreateWireNode(Command):
+class CreateWire(Command):
     source_id: UUID
     sender: float
     receiver: float
@@ -67,4 +67,4 @@ class UpdateWire(Command):
 class WireUpdated(Pubsub):
     old_value: WireNode
     new_value: WireNode
-    uuid: UUID= Field(default_factory=uuid4)
+    uuid: UUID = Field(default_factory=uuid4)

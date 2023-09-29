@@ -23,14 +23,14 @@ wire4_id = uuid4()
 
 def load_data():
     cmd_source = source_domain.CreateSource(uuid=source_id, title="Source")
-    cmd_wire1 = wire_domain.CreateWireNode(date=datetime(2021, 5, 5), uuid=wire1_id, source_id=source_id,
-                                           sender=1, receiver=2, amount=10, sub1="Profit", )
-    cmd_wire2 = wire_domain.CreateWireNode(date=datetime(2022, 5, 5), uuid=wire2_id, source_id=source_id,
-                                           sender=1, receiver=2, amount=30, sub1="Profit", )
-    cmd_wire3 = wire_domain.CreateWireNode(date=datetime(2021, 5, 5), uuid=wire3_id, source_id=source_id,
-                                           sender=2, receiver=2, amount=33, sub1="Expenses", )
-    cmd_wire4 = wire_domain.CreateWireNode(date=datetime(2022, 5, 5), uuid=wire4_id, source_id=source_id,
-                                           sender=2, receiver=2, amount=44, sub1="Expenses", )
+    cmd_wire1 = wire_domain.CreateWire(date=datetime(2021, 5, 5), uuid=wire1_id, source_id=source_id,
+                                       sender=1, receiver=2, amount=10, sub1="Profit", )
+    cmd_wire2 = wire_domain.CreateWire(date=datetime(2022, 5, 5), uuid=wire2_id, source_id=source_id,
+                                       sender=1, receiver=2, amount=30, sub1="Profit", )
+    cmd_wire3 = wire_domain.CreateWire(date=datetime(2021, 5, 5), uuid=wire3_id, source_id=source_id,
+                                       sender=2, receiver=2, amount=33, sub1="Expenses", )
+    cmd_wire4 = wire_domain.CreateWire(date=datetime(2022, 5, 5), uuid=wire4_id, source_id=source_id,
+                                       sender=2, receiver=2, amount=44, sub1="Expenses", )
     cmd_group = group_domain.CreateGroupSheet(uuid=group_id, source_id=source_id, ccols=["sender", "sub1"])
     execute(cmd_source)
     execute(cmd_wire1)
@@ -83,8 +83,8 @@ def test_update_wire_amount_changes_profit_cell_value(repo):
 
 
 def test_append_new_unique_wire_expand_profit_sheet(repo):
-    cmd = wire_domain.CreateWireNode(source_id=source_id, sender=3, receiver=2, amount=100, sub1="New",
-                                     date=datetime(2021, 5, 5))
+    cmd = wire_domain.CreateWire(source_id=source_id, sender=3, receiver=2, amount=100, sub1="New",
+                                 date=datetime(2021, 5, 5))
     execute(cmd)
 
     sheet = repo.get_by_id(sheet_id)
