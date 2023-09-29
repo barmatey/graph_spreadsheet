@@ -55,7 +55,7 @@ class CreateProfitSheetNodeHandler(CommandHandler):
         # Create first row (no calculating, follow value only)
         rows = []
         for j, period in enumerate(periods):
-            profit_cell = pf_domain.ProfitCellNode(index=(0, j), value=0)
+            profit_cell = pf_domain.ProfitPeriodCell(index=(0, j), value=0)
             profit_cell.follow_periods({period})
             self.extend_events(profit_cell.parse_events())
             self._repo.add(profit_cell)
@@ -63,6 +63,7 @@ class CreateProfitSheetNodeHandler(CommandHandler):
         profit_sheet.append_rows(rows)
 
         # mapper is a row filter, period is a col filter
+        rows = []
         for i, mapper in enumerate(mappers):
             row = []
             for j, period in enumerate(periods):
@@ -73,7 +74,8 @@ class CreateProfitSheetNodeHandler(CommandHandler):
                 self._repo.add(profit_cell)
                 self.extend_events(profit_cell.parse_events())
                 row.append(profit_cell)
-            profit_sheet.append_rows(row)
+            rows.append(row)
+        profit_sheet.append_rows(rows)
 
         return profit_sheet
 

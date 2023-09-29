@@ -17,7 +17,7 @@ class PlanItems(Model):
     uuid: UUID = Field(default_factory=uuid4)
 
 
-class GroupSheetNode(sheet_domain.Sheet, SourceSubscriber, CellTablePublisher):
+class GroupSheetNode(sheet_domain.Sheet, SourceSubscriber):
     plan_items: PlanItems
     uuid: UUID = Field(default_factory=uuid4)
 
@@ -30,9 +30,9 @@ class GroupSheetNode(sheet_domain.Sheet, SourceSubscriber, CellTablePublisher):
         for wire in wires:
             row = [wire.__getattribute__(ccol) for ccol in self.plan_items.ccols]
             key = str(row)
-            rows.append([SheetCell(index=(self.size[0], j), value=value) for j, value in enumerate(row)])
             if self.plan_items.uniques.get(key) is None:
                 self.plan_items.uniques[key] = 1
+                rows.append([SheetCell(index=(self.size[0], j), value=value) for j, value in enumerate(row)])
             else:
                 self.plan_items.uniques[key] += 1
         self.append_rows(rows)
@@ -60,9 +60,6 @@ class GroupSheetNode(sheet_domain.Sheet, SourceSubscriber, CellTablePublisher):
         else:
             self.plan_items.uniques[new_key] = 1
             self.append_rows([SheetCell(index=(self.size[0], j), value=value) for j, value in enumerate(new_row)])
-
-    def get_cell_table(self) -> CellTable:
-        return self.plan_items.value
 
 
 class CreateGroupSheetNode(Command):

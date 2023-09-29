@@ -12,6 +12,17 @@ from src.report.wire.domain import WireNode
 from src.spreadsheet.cell.domain import SheetCell
 
 
+class ProfitPeriodCell(SheetCell, PeriodSubscriber):
+    uuid: UUID = Field(default_factory=uuid4)
+
+    def follow_periods(self, pubs: set[PeriodNode]):
+        for pub in pubs:
+            self.value = pub.to_date
+
+    def on_period_updated(self, old_value: PeriodNode, new_value: PeriodNode):
+        self.value = new_value.to_date
+
+
 class ProfitCellNode(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber):
     value: float
     mapper: mapper_domain.MapperNode | None = None

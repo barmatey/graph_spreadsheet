@@ -1,6 +1,8 @@
 import pytest
 
 from src.node.repository import GraphRepoFake
+from src.report.group_sheet.domain import PlanItems
+from src.report.source import domain as source_domain
 from src.report.wire import domain as wire_domain
 from src.report.group_sheet import domain as group_domain
 from tests.report.before import execute, load_data, source_uuid, wire1_uuid, wire2_uuid, wire3_uuid, group_sheet_uuid
@@ -57,3 +59,17 @@ def test_plan_items_uniques_react_on_wire_change(repo):
     }
     real = repo.get_by_id(group_sheet_uuid).plan_items.uniques
     assert real == expected
+
+
+def test_group_sheet_drop_duplicates():
+    wire1 = wire_domain.WireNode(sender=1, receiver=2, amount=0, sub1="Hello")
+    wire2 = wire_domain.WireNode(sender=1, receiver=2, amount=0, sub1="Hello")
+    source = source_domain.SourceNode(title="Source")
+    source.follow_wires({wire1, wire2})
+    plan_items = PlanItems(ccols=["sender", "sub1"])
+    sheet = group_domain.GroupSheetNode(plan_items=plan_items)
+    sheet.follow_source(source)
+
+    actual = sheet.get_as_simple_table()
+    expected = [[1.0, "Hello"]]
+    assert str(actual) == str(expected)

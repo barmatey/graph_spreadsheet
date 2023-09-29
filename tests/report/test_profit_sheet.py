@@ -59,15 +59,19 @@ def test_create_profit_sheet(repo):
     )
     sheet: fr_domain.FinrepSheet = execute(cmd)
 
-    # actual = sheet.get_as_simple_table()
-    # expected = [
-    #     [datetime(2021, 12, 31), datetime(2022, 12, 31)],
-    #     [10, 30],
-    #     [33, 44],
-    # ]
-    #
-    # for i in range(0, sheet.size[0]):
-    #     assert len(actual) == len(expected)
-    #     for j in range(0, sheet.size[1]):
-    #         assert len(actual[i]) == len(expected[i])
-    #         assert actual[i][j] == expected[i][j]
+    actual = sheet.get_as_simple_table()
+    expected = [
+        [datetime(2021, 12, 31), datetime(2022, 12, 31)],
+        [10, 30],
+        [33, 44],
+    ]
+
+    print('\n\n\n\n')
+    print(actual)
+    print('\n\n\n\n')
+
+    for i in range(0, sheet.size[0]):
+        assert len(actual) == len(expected)
+        for j in range(0, sheet.size[1]):
+            assert len(actual[i]) == len(expected[i])
+            assert actual[i][j] == expected[i][j]
