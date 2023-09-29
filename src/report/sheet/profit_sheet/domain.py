@@ -12,16 +12,6 @@ from src.spreadsheet.cell.domain import SheetCell, CellUpdated
 from src.spreadsheet.sheet.domain import Sheet, SheetSubscriber
 
 
-class FinrepSheet(Sheet, SheetSubscriber):
-    uuid: UUID = Field(default_factory=uuid4)
-
-    def follow_sheet(self, sheet: Sheet):
-        self._on_subscribed({sheet})
-
-    def on_rows_appended(self, rows: list[list[SheetCell]]):
-        pass
-
-
 class ProfitPeriodCell(SheetCell, PeriodSubscriber):
     uuid: UUID = Field(default_factory=uuid4)
 
@@ -81,6 +71,7 @@ class ProfitCell(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber
     def follow_mappers(self, pubs: set[MapperNode]):
         for pub in pubs:
             self.mapper = pub
+        self._recalculated = True
 
     def on_mapper_update(self, old_value: MapperNode, new_value: MapperNode):
         self.mapper = new_value
@@ -89,6 +80,7 @@ class ProfitCell(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber
     def follow_periods(self, pubs: set[PeriodNode]):
         for pub in pubs:
             self.period = pub
+        self._recalculated = True
 
     def on_period_updated(self, old_value: PeriodNode, new_value: PeriodNode):
         self.period = new_value
@@ -110,6 +102,19 @@ class ProfitCell(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber
         return events
 
 
+class FinrepSheet(Sheet, SheetSubscriber):
+    uuid: UUID = Field(default_factory=uuid4)
+
+    def follow_sheet(self, sheet: Sheet):
+        self._on_subscribed({sheet})
+
+    def on_rows_appended(self, rows: list[list[SheetCell]]):
+        to_append: list[list[SheetCell]] = []
+        for row in rows:
+            for j, cell in enumerate(row):
+                index_cell = ProfitMapperCell(index=cell.index, value=cell.value)
+
+
 class CreateProfitSheetNode(Command):
     source_id: UUID
     group_id: UUID
@@ -124,6 +129,12 @@ class CreateProfitCellNode(Command):
     period_node_id: UUID
     mapper_node_id: UUID
     source_node_id: UUID
+    uuid: UUID = Field(default_factory=uuid4)
+
+
+class GroupSheetRowsAppended(Event):
+    sheet: Sheet
+    rows: list[list[SheetCell]]
     uuid: UUID = Field(default_factory=uuid4)
 
 

@@ -56,7 +56,7 @@ class CreateProfitSheetNodeHandler(CommandHandler):
         left_indexes_len = len(mappers[0].ccols)
         # Create first row (no calculating, follow value only)
         row = []
-        for j in range(0,left_indexes_len):
+        for j in range(0, left_indexes_len):
             cell = pf_domain.ProfitPeriodCell(index=(0, j), value=None)
             self._repo.add(cell)
             row.append(cell)
