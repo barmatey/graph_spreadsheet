@@ -30,21 +30,9 @@ class Cell(Model):
 CellTable = list[list[Cell]]
 
 
-class CellPublisher(ABC):
-    @abstractmethod
-    def get_cell(self) -> Cell:
-        raise NotImplemented
-
-
-class CellTablePublisher(ABC):
-    @abstractmethod
-    def get_cell_table(self) -> CellTable:
-        raise NotImplemented
-
-
 class CellSubscriber(ABC):
     @abstractmethod
-    def follow_cell_publishers(self, pubs: set[CellPublisher]):
+    def follow_cell_publishers(self, pubs: set[Cell]):
         raise NotImplemented
 
     @abstractmethod
@@ -54,7 +42,7 @@ class CellSubscriber(ABC):
 
 class CellTableSubscriber(ABC):
     @abstractmethod
-    def follow_cell_table_publishers(self, pubs: set[CellTablePublisher]):
+    def follow_cell_table_publishers(self, pubs: set[CellTable]):
         raise NotImplemented
 
     @abstractmethod
@@ -62,11 +50,11 @@ class CellTableSubscriber(ABC):
         raise NotImplemented
 
 
-class SheetCell(Cell, Node, CellSubscriber, CellTableSubscriber, CellPublisher):
+class SheetCell(Cell, Node, CellSubscriber, CellTableSubscriber):
     def get_cell(self) -> Cell:
         return self
 
-    def follow_cell_publishers(self, pubs: set[CellPublisher]):
+    def follow_cell_publishers(self, pubs: set[Cell]):
         old_value = self.model_copy(deep=True)
         if len(pubs) != 1:
             raise Exception
@@ -75,12 +63,12 @@ class SheetCell(Cell, Node, CellSubscriber, CellTableSubscriber, CellPublisher):
         self._on_subscribed(pubs)
         self._on_updated(CellUpdated(old_value=old_value, new_value=self))
 
-    def follow_cell_table_publishers(self, pubs: set[CellTablePublisher]):
+    def follow_cell_table_publishers(self, pubs: set[CellTable]):
         old_value = self.model_copy(deep=True)
         if len(pubs) != 1:
             raise Exception
         for pub in pubs:
-            self.value = pub.get_cell_table()[self.index[0]][self.index[1]].value
+            self.value = pub[self.index[0]][self.index[1]].value
         self._on_subscribed(pubs)
         self._on_updated(CellUpdated(old_value=old_value, new_value=self))
 

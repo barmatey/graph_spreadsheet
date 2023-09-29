@@ -7,7 +7,7 @@ from src.core.pydantic_model import Model
 from src.node.domain import Command
 from src.report.source.domain import SourceSubscriber, Source
 from src.report.wire.domain import Ccol, WireNode
-from src.spreadsheet.cell.domain import CellTablePublisher, SheetCell
+from src.spreadsheet.cell.domain import SheetCell
 from src.spreadsheet.sheet import domain as sheet_domain
 
 

@@ -6,7 +6,7 @@ from pydantic import Field
 from src.node.domain import Node, Command, NodeUpdated
 from src.report.wire import domain as wire_domain
 from src.report.wire.domain import Ccol
-from src.spreadsheet.cell.domain import Cell, CellPublisher
+from src.spreadsheet.cell.domain import Cell
 
 
 class MapperNode(Node):
@@ -20,7 +20,7 @@ class MapperNode(Node):
     def is_filtred(self, wire: wire_domain.WireNode) -> bool:
         return all([wire.__getattribute__(key) == value for key, value in self.filter_by.items()])
 
-    def follow_cell_publishers(self, pubs: set[CellPublisher]):
+    def follow_cell_publishers(self, pubs: set[Cell]):
         old_value = self.model_copy(deep=True)
         for pub in pubs:
             key = self.ccols[pub.get_cell().index[1]]
