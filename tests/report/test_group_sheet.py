@@ -1,11 +1,11 @@
 import pytest
 
 from src.node.repository import GraphRepoFake
-from src.report.group_sheet.domain import PlanItems
+from src.report.sheet.group_sheet import PlanItems
 from src.report.source import domain as source_domain
 from src.report.wire import domain as wire_domain
-from src.report.group_sheet import domain as group_domain
-from tests.report.before import execute, load_data, source_uuid, wire1_uuid, wire2_uuid, wire3_uuid, group_sheet_uuid
+from src.report.sheet.group_sheet import domain as group_domain
+from tests.report.before import execute, load_data, source_uuid, wire2_uuid, group_sheet_uuid
 
 
 @pytest.fixture(scope="module")
