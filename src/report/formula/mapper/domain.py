@@ -9,7 +9,7 @@ from src.report.wire.domain import Ccol
 from src.spreadsheet.cell.domain import Cell
 
 
-class MapperNode(Pubsub):
+class Mapper(Pubsub):
     ccols: list[Ccol]
     filter_by: dict = Field(default_factory=dict)
     uuid: UUID = Field(default_factory=uuid4)
@@ -42,15 +42,15 @@ class MapperNode(Pubsub):
 
 class MapperSubscriber(ABC):
     @abstractmethod
-    def follow_mappers(self, pubs: set[MapperNode]):
+    def follow_mappers(self, pubs: set[Mapper]):
         raise NotImplemented
 
     @abstractmethod
-    def on_mapper_update(self, old_value: MapperNode, new_value: MapperNode):
+    def on_mapper_update(self, old_value: Mapper, new_value: Mapper):
         raise NotImplemented
 
 
 class MapperUpdated(PubsubUpdated):
-    old_value: MapperNode
-    new_value: MapperNode
+    old_value: Mapper
+    new_value: Mapper
     uuid: UUID = Field(default_factory=uuid4)

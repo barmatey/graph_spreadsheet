@@ -8,7 +8,7 @@ from src.node.domain import Pubsub, Command
 from src.report.wire import domain as wire_domain
 
 
-class PeriodNode(Pubsub):
+class Period(Pubsub):
     from_date: datetime
     to_date: datetime
     uuid: UUID = Field(default_factory=uuid4)
@@ -25,9 +25,9 @@ class PeriodNode(Pubsub):
 
 class PeriodSubscriber(ABC):
     @abstractmethod
-    def follow_periods(self, pubs: set[PeriodNode]):
+    def follow_periods(self, pubs: set[Period]):
         raise NotImplemented
 
     @abstractmethod
-    def on_period_updated(self, old_value: PeriodNode, new_value: PeriodNode):
+    def on_period_updated(self, old_value: Period, new_value: Period):
         raise NotImplemented

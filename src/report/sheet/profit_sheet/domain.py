@@ -6,8 +6,8 @@ from pydantic import Field
 
 from src.core.pydantic_model import Model
 from src.node.domain import Event, Command
-from src.report.formula.mapper.domain import MapperSubscriber, MapperNode
-from src.report.formula.period.domain import PeriodSubscriber, PeriodNode
+from src.report.formula.mapper.domain import MapperSubscriber, Mapper
+from src.report.formula.period.domain import PeriodSubscriber, Period
 from src.report.source.domain import SourceSubscriber, Source
 from src.report.wire.domain import Wire, Ccol
 from src.spreadsheet.cell.domain import SheetCell, CellUpdated
@@ -17,32 +17,32 @@ from src.spreadsheet.sheet.domain import Sheet, SheetSubscriber
 class ProfitPeriodCell(SheetCell, PeriodSubscriber):
     uuid: UUID = Field(default_factory=uuid4)
 
-    def follow_periods(self, pubs: set[PeriodNode]):
+    def follow_periods(self, pubs: set[Period]):
         for pub in pubs:
             self.value = pub.to_date
 
-    def on_period_updated(self, old_value: PeriodNode, new_value: PeriodNode):
+    def on_period_updated(self, old_value: Period, new_value: Period):
         self.value = new_value.to_date
 
 
 class ProfitMapperCell(SheetCell, MapperSubscriber):
     uuid: UUID = Field(default_factory=uuid4)
 
-    def follow_mappers(self, pubs: set[MapperNode]):
+    def follow_mappers(self, pubs: set[Mapper]):
         old = self.model_copy(deep=True)
         for pub in pubs:
             self.value = pub.filter_by[pub.ccols[self.index[1]]]
         self._on_updated(CellUpdated(old_value=old, new_value=self))
 
-    def on_mapper_update(self, old_value: MapperNode, new_value: MapperNode):
+    def on_mapper_update(self, old_value: Mapper, new_value: Mapper):
         old = self.model_copy(deep=True)
         self.value = new_value.filter_by[new_value.ccols[self.index[1]]]
         self._on_updated(CellUpdated(old_value=old, new_value=self))
 
 
 class ProfitCell(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber):
-    mapper: MapperNode | None = None
-    period: PeriodNode | None = None
+    mapper: Mapper | None = None
+    period: Period | None = None
     uuid: UUID = Field(default_factory=uuid4)
     _recalculated: bool = False
 
@@ -69,21 +69,21 @@ class ProfitCell(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber
             self.value += new_value.amount
         self._on_updated(CellUpdated(old_value=old, new_value=self))
 
-    def follow_mappers(self, pubs: set[MapperNode]):
+    def follow_mappers(self, pubs: set[Mapper]):
         for pub in pubs:
             self.mapper = pub
         self._recalculated = True
 
-    def on_mapper_update(self, old_value: MapperNode, new_value: MapperNode):
+    def on_mapper_update(self, old_value: Mapper, new_value: Mapper):
         self.mapper = new_value
         self._recalculated = True
 
-    def follow_periods(self, pubs: set[PeriodNode]):
+    def follow_periods(self, pubs: set[Period]):
         for pub in pubs:
             self.period = pub
         self._recalculated = True
 
-    def on_period_updated(self, old_value: PeriodNode, new_value: PeriodNode):
+    def on_period_updated(self, old_value: Period, new_value: Period):
         self.period = new_value
         self._recalculated = True
 
@@ -104,7 +104,7 @@ class ProfitCell(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber
 
 
 class ProfitSheetMeta(Model):
-    periods: list[PeriodNode]
+    periods: list[Period]
     ccols: list[Literal[Ccol]]
     source_id: UUID
     uuid: UUID = Field(default_factory=uuid4)

@@ -12,10 +12,10 @@ from . import domain as pf_domain
 
 
 class CreateProfitSheetNodeHandler(CommandHandler):
-    def __create_mappers(self, group_id: UUID, group_sheet) -> list[mapper_domain.MapperNode]:
+    def __create_mappers(self, group_id: UUID, group_sheet) -> list[mapper_domain.Mapper]:
         mappers = []
         for i in range(0, group_sheet.size[0]):
-            mapper = mapper_domain.MapperNode(ccols=group_sheet.plan_items.ccols)
+            mapper = mapper_domain.Mapper(ccols=group_sheet.plan_items.ccols)
             pubs = set()
             for j in range(group_sheet.size[1]):
                 cell = group_sheet.table[i][j]
@@ -26,11 +26,11 @@ class CreateProfitSheetNodeHandler(CommandHandler):
             mappers.append(mapper)
         return mappers
 
-    def __create_periods(self, start_date, end_date, period, freq) -> list[period_domain.PeriodNode]:
+    def __create_periods(self, start_date, end_date, period, freq) -> list[period_domain.Period]:
         date_range = [x.to_pydatetime() for x in pd.date_range(start_date, end_date, freq=f"{period}{freq}")]
         periods = []
         for start, end in zip(date_range[:-1], date_range[1:]):
-            period = period_domain.PeriodNode(from_date=start, to_date=end)
+            period = period_domain.Period(from_date=start, to_date=end)
             self._repo.add(period)
             self.extend_events(period.parse_events())
             periods.append(period)
@@ -105,7 +105,7 @@ class GroupSheetRowsAppendedHandler(EventHandler):
         to_append = []
         for i, index_row in enumerate(event.rows, start=sheet.size[0]):
             row = []
-            mapper = mapper_domain.MapperNode(ccols=sheet.meta.ccols)
+            mapper = mapper_domain.Mapper(ccols=sheet.meta.ccols)
             mapper.follow_cell_publishers(index_row)
             self.extend_events(mapper.parse_events())
             self._repo.add(mapper)
