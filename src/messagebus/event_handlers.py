@@ -1,7 +1,7 @@
 from src.node.domain import Event
 from src.node.handlers import EventHandler, COMMON_EVENT_HANDLERS
 from src.report.source.handlers import SOURCE_EVENT_HANDLERS
-from src.report.finrep_sheet.handlers import PROFIT_CELL_EVENT_HANDLERS
+from src.report.profit_sheet.handlers import PROFIT_CELL_EVENT_HANDLERS
 from src.report.wire.handlers import WIRE_EVENT_HANDLERS
 from src.spreadsheet.sheet.handlers import SHEET_EVENT_HANDLERS
 from src.spreadsheet.cell.handlers import CELL_EVENT_HANDLERS

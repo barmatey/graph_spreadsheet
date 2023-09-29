@@ -9,7 +9,7 @@ from src.node.repository import GraphRepoFake
 from src.report.source import domain as source_domain
 from src.report.wire import domain as wire_domain
 from src.report.group_sheet import domain as group_domain
-from src.report.finrep_sheet import domain as report_domain
+from src.report.profit_sheet import domain as report_domain
 from datetime import datetime
 
 bus = Msgbus()
