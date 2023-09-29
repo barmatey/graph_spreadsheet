@@ -6,7 +6,7 @@ from . import domain as pf_domain
 
 
 class CreateProfitCellNodeHandler(CommandHandler):
-    def execute(self, cmd: pf_domain.CreateProfitCellNode) -> pf_domain.ProfitCellNode:
+    def execute(self, cmd: pf_domain.CreateProfitCellNode) -> pf_domain.ProfitCell:
         logger.error(f"CreateProfitSumNode.execute()")
 
         # Get parents
@@ -15,7 +15,7 @@ class CreateProfitCellNodeHandler(CommandHandler):
         source = self._repo.get_by_id(cmd.source_node_id)
 
         # Create node
-        profit_cell_node = pf_domain.ProfitCellNode(value=0)
+        profit_cell_node = pf_domain.ProfitCell(value=0)
         self._repo.add(profit_cell_node)
 
         # Subscribing

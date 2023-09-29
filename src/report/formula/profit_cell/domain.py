@@ -23,7 +23,7 @@ class ProfitPeriodCell(SheetCell, PeriodSubscriber):
         self.value = new_value.to_date
 
 
-class ProfitCellNode(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber):
+class ProfitCell(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber):
     value: float
     mapper: mapper_domain.MapperNode | None = None
     period: period_domain.PeriodNode | None = None
@@ -71,6 +71,13 @@ class ProfitCellNode(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscr
             if self.mapper.is_filtred(wire):
                 self.value += wire.amount
 
+    def parse_events(self) -> list[Event]:
+        events = super().parse_events()
+        if self._recalculated:
+            events.append(ProfitCellRecalculateRequested(node=self))
+            self._recalculated = False
+        return events
+
 
 class CreateProfitCellNode(Command):
     period_node_id: UUID
@@ -80,5 +87,5 @@ class CreateProfitCellNode(Command):
 
 
 class ProfitCellRecalculateRequested(Event):
-    node: ProfitCellNode
+    node: ProfitCell
     uuid: UUID = Field(default_factory=uuid4)

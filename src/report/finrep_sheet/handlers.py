@@ -66,7 +66,7 @@ class CreateProfitSheetNodeHandler(CommandHandler):
         for i, mapper in enumerate(mappers):
             row = []
             for j, period in enumerate(periods):
-                profit_cell = pf_domain.ProfitCellNode(index=(i, j + 1), value=0)
+                profit_cell = pf_domain.ProfitCell(index=(i, j + 1), value=0)
                 profit_cell.follow_periods({period})
                 profit_cell.follow_mappers({mapper})
                 profit_cell.follow_source(source)
