@@ -6,12 +6,12 @@ from uuid import UUID, uuid4
 from loguru import logger
 from pydantic import Field
 
-from src.node.domain import Node, Pubsub, Event, Command
+from src.node.domain import Pubsub, PubsubUpdated, Event, Command
 
 Ccol = typing.Literal['currency', 'sender', 'receiver', 'sub1', 'sub2', 'comment']
 
 
-class WireNode(Node):
+class Wire(Pubsub):
     sender: float
     receiver: float
     amount: float
@@ -31,11 +31,11 @@ class WireNode(Node):
 
 class WireSubscriber(ABC):
     @abstractmethod
-    def follow_wires(self, wires: set[WireNode]):
+    def follow_wires(self, wires: set[Wire]):
         raise NotImplemented
 
     @abstractmethod
-    def on_wire_updated(self, old_value: WireNode, new_value: WireNode):
+    def on_wire_updated(self, old_value: Wire, new_value: Wire):
         raise NotImplemented
 
 
@@ -64,7 +64,7 @@ class UpdateWire(Command):
     date: typing.Optional[datetime] = None
 
 
-class WireUpdated(Pubsub):
-    old_value: WireNode
-    new_value: WireNode
+class WireUpdated(PubsubUpdated):
+    old_value: Wire
+    new_value: Wire
     uuid: UUID = Field(default_factory=uuid4)

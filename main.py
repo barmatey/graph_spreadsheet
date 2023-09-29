@@ -3,7 +3,7 @@ from copy import deepcopy
 import pandas as pd
 
 from src.messagebus.msgbus import Msgbus
-from src.node.domain import Node
+from src.node.domain import Pubsub
 from src.node.repository import GraphRepoFake
 from src.report.source import domain as source_domain
 from src.report.wire import domain as wire_domain
@@ -15,11 +15,11 @@ bus = Msgbus()
 repo = GraphRepoFake()
 
 
-def print_graph(node: Node):
+def print_graph(node: Pubsub):
     level = 0
     string = "\n"
 
-    def print_node(n: Node):
+    def print_node(n: Pubsub):
         nonlocal level
         nonlocal string
         string = string + "-" * level + f"{n}\n"

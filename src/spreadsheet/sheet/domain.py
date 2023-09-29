@@ -4,7 +4,7 @@ from uuid import UUID, uuid4
 from pydantic import Field
 
 from src.core.cell import CellTable, CellValue
-from src.node.domain import Node, Event
+from src.node.domain import Pubsub, Event
 from src.spreadsheet.cell.domain import SheetCell
 
 
@@ -12,7 +12,7 @@ def size_factory():
     return 0, 0
 
 
-class Sheet(Node):
+class Sheet(Pubsub):
     size: tuple[int, int] = Field(default_factory=size_factory)
     table: list[list[SheetCell]] = Field(default_factory=list)
     uuid: UUID = Field(default_factory=uuid4)

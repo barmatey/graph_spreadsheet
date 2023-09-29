@@ -62,8 +62,8 @@ def test_plan_items_uniques_react_on_wire_change(repo):
 
 
 def test_group_sheet_drop_duplicates():
-    wire1 = wire_domain.WireNode(sender=1, receiver=2, amount=0, sub1="Hello")
-    wire2 = wire_domain.WireNode(sender=1, receiver=2, amount=0, sub1="Hello")
+    wire1 = wire_domain.Wire(sender=1, receiver=2, amount=0, sub1="Hello")
+    wire2 = wire_domain.Wire(sender=1, receiver=2, amount=0, sub1="Hello")
     source = source_domain.Source(title="Source")
     source.follow_wires({wire1, wire2})
     plan_items = PlanItems(ccols=["sender", "sub1"])

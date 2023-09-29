@@ -3,13 +3,13 @@ from uuid import UUID, uuid4
 
 from pydantic import Field
 
-from src.node.domain import Node, Command, Pubsub
+from src.node.domain import Pubsub, Command, PubsubUpdated
 from src.report.wire import domain as wire_domain
 from src.report.wire.domain import Ccol
 from src.spreadsheet.cell.domain import Cell
 
 
-class MapperNode(Node):
+class MapperNode(Pubsub):
     ccols: list[Ccol]
     filter_by: dict = Field(default_factory=dict)
     uuid: UUID = Field(default_factory=uuid4)
@@ -17,7 +17,7 @@ class MapperNode(Node):
     def __str__(self):
         return f"MapperNode(filter_by={self.filter_by})"
 
-    def is_filtred(self, wire: wire_domain.WireNode) -> bool:
+    def is_filtred(self, wire: wire_domain.Wire) -> bool:
         return all([wire.__getattribute__(key) == value for key, value in self.filter_by.items()])
 
     def get_as_simple_row(self):
@@ -50,7 +50,7 @@ class MapperSubscriber(ABC):
         raise NotImplemented
 
 
-class MapperUpdated(Pubsub):
+class MapperUpdated(PubsubUpdated):
     old_value: MapperNode
     new_value: MapperNode
     uuid: UUID = Field(default_factory=uuid4)

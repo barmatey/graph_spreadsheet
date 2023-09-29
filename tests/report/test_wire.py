@@ -3,10 +3,10 @@ from uuid import uuid4
 import pytest
 
 from src.messagebus.msgbus import Msgbus
-from src.node.domain import Node
+from src.node.domain import Pubsub
 from src.node.repository import GraphRepo, GraphRepoFake
 from src.report.source.domain import CreateSource, Source
-from src.report.wire.domain import CreateWire, WireNode
+from src.report.wire.domain import CreateWire, Wire
 
 source_uuid = uuid4()
 wire1_uuid = uuid4()
@@ -54,18 +54,18 @@ def test_get_wire_node_from_repo(repo: GraphRepo):
 
 
 def test_created_wire_was_linked_with_source(repo: GraphRepo):
-    wire: WireNode = repo.get_by_id(wire1_uuid)
+    wire: Wire = repo.get_by_id(wire1_uuid)
     source: Source = repo.get_by_id(source_uuid)
 
-    source_pubs: set[Node] = repo.get_node_parents(source)
-    wire_subs: set[Node] = repo.get_node_children(wire)
+    source_pubs: set[Pubsub] = repo.get_node_parents(source)
+    wire_subs: set[Pubsub] = repo.get_node_children(wire)
 
     assert wire in source_pubs
     assert source in wire_subs
 
 
 def test_double_update_wire_create_one_event():
-    wire = WireNode(sender=1, receiver=1, amount=22)
+    wire = Wire(sender=1, receiver=1, amount=22)
     wire.set_node_fields(sender=22)
     wire.set_node_fields(receiver=12)
     events = wire.parse_events()

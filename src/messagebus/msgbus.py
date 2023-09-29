@@ -6,7 +6,7 @@ from loguru import logger
 from .command_handlers import get_command_handler
 from .event_handlers import get_event_handler
 from ..helpers.decorators import singleton
-from ..node.domain import Event, Node, Command
+from ..node.domain import Event, Pubsub, Command
 
 
 @singleton
@@ -14,7 +14,7 @@ class Msgbus:
     def __init__(self):
         self._commands: deque[Command] = deque()
         self._events: deque[Event] = deque()
-        self.results: dict[UUID, Node] = {}
+        self.results: dict[UUID, Pubsub] = {}
 
     def push_command(self, cmd: Command):
         self._commands.append(cmd)

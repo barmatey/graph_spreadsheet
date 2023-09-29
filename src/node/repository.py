@@ -1,7 +1,7 @@
 from uuid import UUID
 
 from src.helpers.decorators import singleton
-from .domain import Node
+from .domain import Pubsub
 
 
 class Base:
@@ -12,17 +12,17 @@ class Base:
 
 
 class NodeRepoFake(Base):
-    def add(self, node: Node):
+    def add(self, node: Pubsub):
         if self._node_data.get(node.uuid) is not None:
             raise Exception(f"already exist: {type(node)}")
         self._node_data[node.uuid] = node
 
-    def update(self, node: Node):
+    def update(self, node: Pubsub):
         if self._node_data.get(node.uuid) is None:
             raise LookupError(f"node: {node}")
         self._node_data[node.uuid] = node
 
-    def get_by_id(self, uuid: UUID) -> Node:
+    def get_by_id(self, uuid: UUID) -> Pubsub:
         return self._node_data[uuid]
 
 
@@ -52,27 +52,27 @@ class GraphRepo(NodeRepoFake, ParentRepoFake, ChildrenRepoFake):
 
 @singleton
 class GraphRepoFake(GraphRepo):
-    def add(self, node: Node):
+    def add(self, node: Pubsub):
         super().add(node)
         self.append_node_parents(node, set())
         self.append_node_children(node, set())
 
-    def append_node_parents(self, node: Node, parents: set[Node]):
+    def append_node_parents(self, node: Pubsub, parents: set[Pubsub]):
         node = node.uuid
         parents = set(x.uuid for x in parents)
         super().append_node_parents(node, parents)
 
-    def append_node_children(self, node: Node, children: set[Node]):
+    def append_node_children(self, node: Pubsub, children: set[Pubsub]):
         node = node.uuid
         children = set(x.uuid for x in children)
         super().append_node_children(node, children)
 
-    def get_node_children(self, node: Node) -> set[Node]:
+    def get_node_children(self, node: Pubsub) -> set[Pubsub]:
         ids = super().get_node_children(node.uuid)
         nodes = set(self.get_by_id(x) for x in ids)
         return nodes
 
-    def get_node_parents(self, node: Node) -> set[Node]:
+    def get_node_parents(self, node: Pubsub) -> set[Pubsub]:
         ids = super().get_node_parents(node.uuid)
         nodes = set(self.get_by_id(x) for x in ids)
         return nodes

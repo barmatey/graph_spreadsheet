@@ -9,7 +9,7 @@ from src.node.domain import Event, Command
 from src.report.formula.mapper.domain import MapperSubscriber, MapperNode
 from src.report.formula.period.domain import PeriodSubscriber, PeriodNode
 from src.report.source.domain import SourceSubscriber, Source
-from src.report.wire.domain import WireNode, Ccol
+from src.report.wire.domain import Wire, Ccol
 from src.spreadsheet.cell.domain import SheetCell, CellUpdated
 from src.spreadsheet.sheet.domain import Sheet, SheetSubscriber
 
@@ -54,14 +54,14 @@ class ProfitCell(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber
         self._on_subscribed({source})
         self._on_updated(CellUpdated(old_value=old_value, new_value=self))
 
-    def on_wires_appended(self, wires: list[WireNode]):
+    def on_wires_appended(self, wires: list[Wire]):
         old_value = self.model_copy(deep=True)
         for wire in wires:
             if self.mapper.is_filtred(wire) and self.period.is_filtred(wire):
                 self.value += wire.amount
         self._on_updated(CellUpdated(old_value=old_value, new_value=self))
 
-    def on_wire_updated(self, old_value: WireNode, new_value: WireNode):
+    def on_wire_updated(self, old_value: Wire, new_value: Wire):
         old = self.model_copy(deep=True)
         if self.mapper.is_filtred(old_value) and self.period.is_filtred(old_value):
             self.value -= old_value.amount
@@ -87,7 +87,7 @@ class ProfitCell(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber
         self.period = new_value
         self._recalculated = True
 
-    def recalculate(self, wires: set[WireNode]):
+    def recalculate(self, wires: set[Wire]):
         old_value = self.model_copy(deep=True)
         self.value = 0
         for wire in wires:

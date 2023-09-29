@@ -5,7 +5,7 @@ from pydantic import Field
 from src.core.pydantic_model import Model
 from src.node.domain import Command
 from src.report.source.domain import SourceSubscriber, Source
-from src.report.wire.domain import Ccol, WireNode
+from src.report.wire.domain import Ccol, Wire
 from src.spreadsheet.cell.domain import SheetCell
 from src.spreadsheet.sheet import domain as sheet_domain
 
@@ -24,7 +24,7 @@ class GroupSheet(sheet_domain.Sheet, SourceSubscriber):
         self.on_wires_appended(source.wires)
         self._on_subscribed({source})
 
-    def on_wires_appended(self, wires: list[WireNode]):
+    def on_wires_appended(self, wires: list[Wire]):
         rows = []
         for wire in wires:
             row = [wire.__getattribute__(ccol) for ccol in self.plan_items.ccols]
@@ -36,7 +36,7 @@ class GroupSheet(sheet_domain.Sheet, SourceSubscriber):
                 self.plan_items.uniques[key] += 1
         self.append_rows(rows)
 
-    def on_wire_updated(self, old_value: WireNode, new_value: WireNode):
+    def on_wire_updated(self, old_value: Wire, new_value: Wire):
         old_row = [old_value.__getattribute__(ccol) for ccol in self.plan_items.ccols]
         old_key = str(old_row)
 

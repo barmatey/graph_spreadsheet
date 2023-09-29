@@ -6,11 +6,11 @@ from src.report.source import domain as source_domain
 
 
 class CreateWireNodeHandler(CommandHandler):
-    def execute(self, cmd: wire_domain.CreateWire) -> wire_domain.WireNode:
+    def execute(self, cmd: wire_domain.CreateWire) -> wire_domain.Wire:
         logger.info("CreateWireNode.execute()")
 
         # Create wire node
-        wire_node = wire_domain.WireNode(**cmd.model_dump(exclude={"source_id"}))
+        wire_node = wire_domain.Wire(**cmd.model_dump(exclude={"source_id"}))
         self._repo.add(wire_node)
 
         # Append wire to source
@@ -23,7 +23,7 @@ class CreateWireNodeHandler(CommandHandler):
 
 
 class UpdateWireHandler(CommandHandler):
-    def execute(self, cmd: wire_domain.UpdateWire) -> wire_domain.WireNode:
+    def execute(self, cmd: wire_domain.UpdateWire) -> wire_domain.Wire:
         logger.info("UpdateWire.execute()")
 
         # Update node

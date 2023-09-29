@@ -32,7 +32,7 @@ class BaseHandler:
 
 class CommandHandler(BaseHandler):
     @abstractmethod
-    def execute(self, cmd: domain.Command) -> domain.Node:
+    def execute(self, cmd: domain.Command) -> domain.Pubsub:
         raise NotImplemented
 
 
@@ -43,7 +43,7 @@ class EventHandler(BaseHandler):
 
 
 class NodeUpdatedHandler(EventHandler):
-    def handle(self, event: domain.Pubsub):
+    def handle(self, event: domain.PubsubUpdated):
         # Save
         self._repo.update(event.new_value)
 
