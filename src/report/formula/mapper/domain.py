@@ -50,12 +50,6 @@ class MapperSubscriber(ABC):
         raise NotImplemented
 
 
-class CreateMapperNode(Command):
-    utable_id: UUID
-    row_index: int
-    uuid: UUID = Field(default_factory=uuid4)
-
-
 class MapperUpdated(NodeUpdated):
     old_value: MapperNode
     new_value: MapperNode
