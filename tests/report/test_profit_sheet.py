@@ -31,7 +31,7 @@ def load_data():
                                            sender=2, receiver=2, amount=33, sub1="Expenses", )
     cmd_wire4 = wire_domain.CreateWireNode(date=datetime(2022, 5, 5), uuid=wire4_id, source_id=source_id,
                                            sender=2, receiver=2, amount=44, sub1="Expenses", )
-    cmd_group = group_domain.CreateGroupSheetNode(uuid=group_id, source_id=source_id, ccols=["sender", "sub1"])
+    cmd_group = group_domain.CreateGroupSheet(uuid=group_id, source_id=source_id, ccols=["sender", "sub1"])
     execute(cmd_source)
     execute(cmd_wire1)
     execute(cmd_wire2)

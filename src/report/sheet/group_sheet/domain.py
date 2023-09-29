@@ -62,7 +62,7 @@ class GroupSheet(sheet_domain.Sheet, SourceSubscriber):
             self.append_rows([SheetCell(index=(self.size[0], j), value=value) for j, value in enumerate(new_row)])
 
 
-class CreateGroupSheetNode(Command):
+class CreateGroupSheet(Command):
     source_id: UUID
     ccols: list[Ccol]
     uuid: UUID = Field(default_factory=uuid4)

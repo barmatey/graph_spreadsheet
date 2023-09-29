@@ -12,7 +12,7 @@ class GetSheetByIdHandler(CommandHandler):
 
 
 class CreateGroupSheetNodeHandler(CommandHandler):
-    def execute(self, cmd: group_sheet_domain.CreateGroupSheetNode) -> group_sheet_domain.GroupSheet:
+    def execute(self, cmd: group_sheet_domain.CreateGroupSheet) -> group_sheet_domain.GroupSheet:
         logger.error("CreateGroup.execute()")
 
         # Get wires
@@ -30,6 +30,6 @@ class CreateGroupSheetNodeHandler(CommandHandler):
 
 
 GROUP_COMMAND_HANDLERS = {
-    group_sheet_domain.CreateGroupSheetNode: CreateGroupSheetNodeHandler,
+    group_sheet_domain.CreateGroupSheet: CreateGroupSheetNodeHandler,
     group_sheet_domain.GetSheetById: GetSheetByIdHandler,
 }

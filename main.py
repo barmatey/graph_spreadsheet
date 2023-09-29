@@ -51,7 +51,7 @@ def foo():
     execute(cmd_wire2)
     execute(cmd_wire3)
 
-    cmd_group = group_domain.CreateGroupSheetNode(title="Hello", source_id=source.uuid, ccols=["sender"])
+    cmd_group = group_domain.CreateGroupSheet(title="Hello", source_id=source.uuid, ccols=["sender"])
     group_sheet = execute(cmd_group)
 
     cmd_profit = report_domain.CreateProfitSheet(

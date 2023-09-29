@@ -16,8 +16,8 @@ def repo():
 
 
 def test_create_group_sheet(repo):
-    cmd_group = group_domain.CreateGroupSheetNode(uuid=group_sheet_uuid, source_id=source_uuid,
-                                                  ccols=["sender", "sub1"])
+    cmd_group = group_domain.CreateGroupSheet(uuid=group_sheet_uuid, source_id=source_uuid,
+                                              ccols=["sender", "sub1"])
     group_sheet: group_domain.GroupSheet = execute(cmd_group)
     assert group_sheet.uuid == group_sheet_uuid
 
