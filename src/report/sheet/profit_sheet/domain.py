@@ -41,7 +41,6 @@ class ProfitMapperCell(SheetCell, MapperSubscriber):
 
 
 class ProfitCell(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber):
-    value: float
     mapper: MapperNode | None = None
     period: PeriodNode | None = None
     uuid: UUID = Field(default_factory=uuid4)
@@ -107,6 +106,7 @@ class ProfitCell(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber
 class ProfitSheetMeta(Model):
     periods: list[PeriodNode]
     ccols: list[Literal[Ccol]]
+    source_id: UUID
     uuid: UUID = Field(default_factory=uuid4)
 
 
@@ -118,7 +118,7 @@ class ProfitSheet(Sheet, SheetSubscriber):
         self._on_subscribed({sheet})
 
     def on_rows_appended(self, rows: list[list[SheetCell]]):
-        pass
+        self._events.append(GroupSheetRowsAppended(profit_sheet=self, rows=rows))
 
 
 class CreateProfitSheetNode(Command):

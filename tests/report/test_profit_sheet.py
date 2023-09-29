@@ -93,6 +93,6 @@ def test_append_new_unique_wire_expand_profit_sheet(repo):
         [None, None, datetime(2021, 12, 31), datetime(2022, 12, 31)],
         [1.0, 'Profit', 777.0, 30.0],
         [2.0, 'Expenses', 33.0, 44.0],
-        [3.0, "New", 100.0, 0.0]
+        [3.0, "New", 100.0, 0]
     ]
     assert str(actual) == str(expected)
