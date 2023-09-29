@@ -62,15 +62,11 @@ def test_create_profit_sheet(repo):
     actual = sheet.get_as_simple_table()
     expected = [
         [datetime(2021, 12, 31), datetime(2022, 12, 31)],
-        [10, 30],
-        [33, 44],
+        [10.0, 30.0],
+        [33.0, 44.0],
     ]
 
-    for i in range(0, sheet.size[0]):
-        assert len(actual) == len(expected)
-        for j in range(0, sheet.size[1]):
-            assert len(actual[i]) == len(expected[i])
-            assert actual[i][j] == expected[i][j]
+    assert str(actual) == str(expected)
 
 
 def test_update_wire_amount_changes_profit_cell_value(repo):

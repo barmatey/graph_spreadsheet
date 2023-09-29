@@ -2,6 +2,7 @@ from loguru import logger
 
 from src.node.handlers import CommandHandler, EventHandler
 from src.report.wire import domain as wire_domain
+from src.report.source import domain as source_domain
 from . import domain as pf_domain
 
 
@@ -29,8 +30,11 @@ class CreateProfitCellNodeHandler(CommandHandler):
 class ProfitCellRecalculateRequestedHandler(EventHandler):
     def handle(self, event: pf_domain.ProfitCellRecalculateRequested):
         profit_cell = event.node
-        wires = set(filter(lambda x: isinstance(x, wire_domain.WireNode), self._repo.get_node_parents(profit_cell)))
-        profit_cell.recalculate(wires)
+        source: source_domain.SourceNode = filter(
+            lambda x: isinstance(x, source_domain.SourceNode),
+            self._repo.get_node_parents(profit_cell)
+        ).__next__()
+        profit_cell.recalculate(source.wires)
         self.extend_events(profit_cell.parse_events())
         logger.debug(f"ProfitCellRecalculateRequested.handle()")
 

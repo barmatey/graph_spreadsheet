@@ -50,7 +50,6 @@ class ProfitCell(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber
     def follow_mappers(self, pubs: set[MapperNode]):
         for pub in pubs:
             self.mapper = pub
-            self._recalculated = True
 
     def on_mapper_update(self, old_value: MapperNode, new_value: MapperNode):
         self.mapper = new_value
@@ -59,7 +58,6 @@ class ProfitCell(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber
     def follow_periods(self, pubs: set[PeriodNode]):
         for pub in pubs:
             self.period = pub
-            self._recalculated = True
 
     def on_period_updated(self, old_value: PeriodNode, new_value: PeriodNode):
         self.period = new_value
