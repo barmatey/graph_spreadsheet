@@ -23,8 +23,8 @@ class WireNodesAppendedHandler(EventHandler):
 
 class WireUpdatedHandler(EventHandler):
     def handle(self, event: source_domain.WireUpdated):
-        logger.debug("WireUpdated.handle()")
         subs: set[source_domain.SourceSubscriber] = self._repo.get_node_children(event.source)
+        logger.debug(f"SourceWireUpdated.handle() =>  notify: f{subs}")
         for sub in subs:
             sub.on_wire_updated(event.old_value, event.new_value)
             self.extend_events(sub.parse_events())
