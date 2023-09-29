@@ -34,7 +34,6 @@ class CreateProfitSheetNodeHandler(CommandHandler):
         periods = []
         for start, end in zip(date_range[:-1], date_range[1:]):
             period = period_domain.PeriodNode(from_date=start, to_date=end)
-
             self._repo.add(period)
             self.extend_events(period.parse_events())
             periods.append(period)
@@ -44,7 +43,7 @@ class CreateProfitSheetNodeHandler(CommandHandler):
         logger.info(f"CreateProfitSheetNode.execute()")
 
         # Result sheet
-        profit_sheet = finrep_domain.FinrepSheet()
+        profit_sheet = finrep_domain.FinrepSheet(uuid=cmd.uuid)
         self._repo.add(profit_sheet)
 
         # Parent data

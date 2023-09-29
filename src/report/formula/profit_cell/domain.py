@@ -42,7 +42,8 @@ class ProfitCellNode(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscr
                 self.value += wire.amount
 
     def on_wire_updated(self, old_value: WireNode, new_value: WireNode):
-        self.value -= old_value.amount
+        if self.mapper.is_filtred(old_value) and self.period.is_filtred(old_value):
+            self.value -= old_value.amount
         if self.mapper.is_filtred(new_value) and self.period.is_filtred(new_value):
             self.value += new_value.amount
 
