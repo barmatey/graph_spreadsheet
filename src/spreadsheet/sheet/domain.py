@@ -73,6 +73,10 @@ class SheetSubscriber(ABC):
     def follow_sheet(self, sheet: Sheet):
         raise NotImplemented
 
+    @abstractmethod
+    def on_rows_appended(self, rows: list[list[SheetCell]]):
+        raise NotImplemented
+
 
 class RowsAppended(Event):
     sheet: Sheet

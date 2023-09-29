@@ -6,11 +6,18 @@ from . import domain as sheet_domain
 
 class RowsAppendedHandler(EventHandler):
     def handle(self, event: sheet_domain.RowsAppended):
-        logger.debug(f"RowsAppended.handle()")
+        # Save
+        self._repo.update(event.sheet)
         for row in event.rows:
             for cell in row:
                 self._repo.add(cell)
-        self._repo.update(event.sheet)
+
+        # Notify
+        subs: set[sheet_domain.SheetSubscriber] = self._repo.get_node_children(event.sheet)
+        logger.debug(f"RowsAppended.handle() => notify: {subs}")
+        for sub in subs:
+            sub.on_rows_appended(event.rows)
+            self.extend_events(sub.parse_events())
 
 
 class RowsDeletedHandler(EventHandler):

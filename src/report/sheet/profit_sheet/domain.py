@@ -4,19 +4,22 @@ from datetime import datetime
 from pydantic import Field
 
 from src.node.domain import Event, Command
-from src.report.formula.mapper import domain as mapper_domain
 from src.report.formula.mapper.domain import MapperSubscriber, MapperNode
-from src.report.formula.period import domain as period_domain
 from src.report.formula.period.domain import PeriodSubscriber, PeriodNode
 from src.report.source.domain import SourceSubscriber, Source
-from src.report.wire import domain as wire_domain
 from src.report.wire.domain import WireNode
 from src.spreadsheet.cell.domain import SheetCell, CellUpdated
-from src.spreadsheet.sheet import domain as sheet_domain
+from src.spreadsheet.sheet.domain import Sheet, SheetSubscriber
 
 
-class FinrepSheet(sheet_domain.Sheet):
+class FinrepSheet(Sheet, SheetSubscriber):
     uuid: UUID = Field(default_factory=uuid4)
+
+    def follow_sheet(self, sheet: Sheet):
+        self._on_subscribed({sheet})
+
+    def on_rows_appended(self, rows: list[list[SheetCell]]):
+        pass
 
 
 class ProfitPeriodCell(SheetCell, PeriodSubscriber):
@@ -47,8 +50,8 @@ class ProfitMapperCell(SheetCell, MapperSubscriber):
 
 class ProfitCell(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber):
     value: float
-    mapper: mapper_domain.MapperNode | None = None
-    period: period_domain.PeriodNode | None = None
+    mapper: MapperNode | None = None
+    period: PeriodNode | None = None
     uuid: UUID = Field(default_factory=uuid4)
     _recalculated: bool = False
 
@@ -91,7 +94,7 @@ class ProfitCell(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber
         self.period = new_value
         self._recalculated = True
 
-    def recalculate(self, wires: set[wire_domain.WireNode]):
+    def recalculate(self, wires: set[WireNode]):
         old_value = self.model_copy(deep=True)
         self.value = 0
         for wire in wires:
