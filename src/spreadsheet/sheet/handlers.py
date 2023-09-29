@@ -1,6 +1,6 @@
 from loguru import logger
 
-from src.node.handlers import EventHandler
+from src.pubsub.handlers import EventHandler
 from src.spreadsheet.sheet import domain as sheet_domain
 
 

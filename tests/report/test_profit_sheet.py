@@ -3,7 +3,7 @@ from datetime import datetime
 
 import pytest
 
-from src.node.repository import GraphRepoFake
+from src.pubsub.repository import GraphRepoFake
 from src.report.sheet.profit_sheet import domain as fr_domain
 from src.report.source import domain as source_domain
 from src.report.wire import domain as wire_domain

@@ -1,5 +1,5 @@
-from src.node.domain import Command
-from src.node.handlers import CommandHandler
+from src.pubsub.domain import Command
+from src.pubsub.handlers import CommandHandler
 from src.report.source.handlers import SOURCE_COMMAND_HANDLERS
 from src.report.wire.handlers import WIRE_COMMAND_HANDLERS
 from src.report.formula.mapper.handlers import MAPPER_COMMAND_HANDLERS

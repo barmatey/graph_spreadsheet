@@ -3,8 +3,8 @@ from collections import deque
 
 from loguru import logger
 
-from src.node import domain
-from src.node.repository import GraphRepoFake
+from src.pubsub import domain
+from src.pubsub.repository import GraphRepoFake
 
 
 class BaseHandler:
@@ -42,26 +42,11 @@ class EventHandler(BaseHandler):
         raise NotImplemented
 
 
-class NodeUpdatedHandler(EventHandler):
-    def handle(self, event: domain.PubsubUpdated):
-        # Save
-        self._repo.update(event.new_value)
-
-        # Update subscribers
-        subs = self._repo.get_node_children(event.new_value)
-        for sub in subs:
-            sub.update(event.old_value, event.new_value)
-            self.extend_events(sub.parse_events())
-
-        logger.debug(f"{event.new_value.__class__.__name__}UpdatedHandler => updated: {subs}")
-
-
 class NodeSubscribedHandler(EventHandler):
     def handle(self, event: domain.NodeSubscribed):
         self._repo.append_node_parents(event.sub, event.pubs)
         for pub in event.pubs:
             self._repo.append_node_children(pub, {event.sub})
-        # logger.debug(f"NodeSubscribedHandler(sub: {event.sub.__class__.__name__}, pubs: {event.pubs})")
 
 
 COMMON_EVENT_HANDLERS = {

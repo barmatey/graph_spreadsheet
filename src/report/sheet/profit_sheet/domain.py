@@ -5,7 +5,7 @@ from datetime import datetime
 from pydantic import Field
 
 from src.core.pydantic_model import Model
-from src.node.domain import Event, Command
+from src.pubsub.domain import Event, Command
 from src.report.formula.mapper.domain import MapperSubscriber, Mapper
 from src.report.formula.period.domain import PeriodSubscriber, Period
 from src.report.source.domain import SourceSubscriber, Source

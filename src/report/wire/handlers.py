@@ -1,6 +1,6 @@
 from loguru import logger
 
-from src.node.handlers import CommandHandler, EventHandler
+from src.pubsub.handlers import CommandHandler, EventHandler
 from . import domain as wire_domain
 from src.report.source import domain as source_domain
 

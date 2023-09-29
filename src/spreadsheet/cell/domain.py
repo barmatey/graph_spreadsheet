@@ -6,7 +6,7 @@ from pydantic import Field
 
 from src.core.cell import CellValue
 from src.core.pydantic_model import Model
-from src.node.domain import Pubsub, PubsubUpdated
+from src.pubsub.domain import Pubsub, PubsubUpdated
 
 
 class Cell(Model):

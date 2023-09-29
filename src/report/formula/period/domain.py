@@ -4,7 +4,7 @@ from uuid import UUID, uuid4
 
 from pydantic import Field
 
-from src.node.domain import Pubsub, Command
+from src.pubsub.domain import Pubsub
 from src.report.wire import domain as wire_domain
 
 

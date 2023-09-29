@@ -6,7 +6,7 @@ from loguru import logger
 from .command_handlers import get_command_handler
 from .event_handlers import get_event_handler
 from ..helpers.decorators import singleton
-from ..node.domain import Event, Pubsub, Command
+from ..pubsub.domain import Event, Pubsub, Command
 
 
 @singleton

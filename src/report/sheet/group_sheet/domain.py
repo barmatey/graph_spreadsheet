@@ -3,7 +3,7 @@ from uuid import UUID, uuid4
 from pydantic import Field
 
 from src.core.pydantic_model import Model
-from src.node.domain import Command
+from src.pubsub.domain import Command
 from src.report.source.domain import SourceSubscriber, Source
 from src.report.wire.domain import Ccol, Wire
 from src.spreadsheet.cell.domain import SheetCell

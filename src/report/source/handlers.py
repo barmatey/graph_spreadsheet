@@ -1,6 +1,6 @@
 from loguru import logger
 
-from src.node.handlers import CommandHandler, EventHandler
+from src.pubsub.handlers import CommandHandler, EventHandler
 from . import domain as source_domain
 
 

@@ -4,7 +4,7 @@ from uuid import UUID, uuid4
 from pydantic import Field
 
 from src.core.cell import CellTable, CellValue
-from src.node.domain import Pubsub, Event
+from src.pubsub.domain import Pubsub, Event
 from src.spreadsheet.cell.domain import SheetCell
 
 

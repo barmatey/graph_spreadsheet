@@ -3,8 +3,8 @@ from copy import deepcopy
 import pandas as pd
 
 from src.messagebus.msgbus import Msgbus
-from src.node.domain import Pubsub
-from src.node.repository import GraphRepoFake
+from src.pubsub.domain import Pubsub
+from src.pubsub.repository import GraphRepoFake
 from src.report.source import domain as source_domain
 from src.report.wire import domain as wire_domain
 from src.report.sheet.group_sheet import domain as group_domain

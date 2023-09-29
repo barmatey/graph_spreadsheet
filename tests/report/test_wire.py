@@ -3,8 +3,8 @@ from uuid import uuid4
 import pytest
 
 from src.messagebus.msgbus import Msgbus
-from src.node.domain import Pubsub
-from src.node.repository import GraphRepo, GraphRepoFake
+from src.pubsub.domain import Pubsub
+from src.pubsub.repository import GraphRepo, GraphRepoFake
 from src.report.source.domain import CreateSource, Source
 from src.report.wire.domain import CreateWire, Wire
 

@@ -6,7 +6,7 @@ from uuid import UUID, uuid4
 from loguru import logger
 from pydantic import Field
 
-from src.node.domain import Pubsub, PubsubUpdated, Event, Command
+from src.pubsub.domain import Pubsub, PubsubUpdated, Event, Command
 
 Ccol = typing.Literal['currency', 'sender', 'receiver', 'sub1', 'sub2', 'comment']
 
