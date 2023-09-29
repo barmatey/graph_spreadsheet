@@ -47,8 +47,7 @@ class CreateProfitSheetNodeHandler(CommandHandler):
         periods = self.__create_periods(cmd.start_date, cmd.end_date, cmd.period, cmd.freq)
 
         # Result sheet
-        sheet_meta = cmd.model_dump(exclude={"source_id", "group_id", "uuid"}) | {"ccols": group_sheet.plan_items.ccols}
-        sheet_meta = pf_domain.ProfitSheetMeta(**sheet_meta)
+        sheet_meta = pf_domain.ProfitSheetMeta(ccols=group_sheet.plan_items.ccols, periods=periods)
         profit_sheet = pf_domain.ProfitSheet(uuid=cmd.uuid, meta=sheet_meta)
         self._repo.add(profit_sheet)
 
@@ -73,7 +72,7 @@ class CreateProfitSheetNodeHandler(CommandHandler):
 
         # mapper is a row filter, period is a col filter
         rows = []
-        for i, mapper in enumerate(mappers):
+        for i, mapper in enumerate(mappers, start=1):
             row = []
             for j in range(0, left_indexes_len):
                 cell = pf_domain.ProfitMapperCell(index=(i, j), value=None)
@@ -92,6 +91,7 @@ class CreateProfitSheetNodeHandler(CommandHandler):
                 row.append(profit_cell)
             rows.append(row)
         profit_sheet.append_rows(rows)
+        self.extend_events(profit_sheet.parse_events())
 
         return profit_sheet
 
@@ -121,18 +121,32 @@ class CreateProfitCellNodeHandler(CommandHandler):
 class GroupSheetRowsAppendedHandler(EventHandler):
     def handle(self, event: pf_domain.GroupSheetRowsAppended):
         logger.debug(f"GroupSheetRowsAppended.handle()")
+        sheet = event.profit_sheet
 
         to_append = []
-        for row in event.rows:
-            mapper = mapper_domain.MapperNode(ccols=event.sheet.plan_items.ccols)
-            mapper.follow_cell_publishers(row)
+        for i, index_row in enumerate(event.rows, start=sheet.size[0]):
+            row = []
+            mapper = mapper_domain.MapperNode(ccols=sheet.meta.ccols)
+            mapper.follow_cell_publishers(index_row)
             self.extend_events(mapper.parse_events())
             self._repo.add(mapper)
-            for cell in row:
+            for cell in index_row:
                 index_cell = pf_domain.ProfitMapperCell(index=cell.index, value=cell.value)
                 index_cell.follow_cell_publishers({cell})
+                row.append(cell)
                 self.extend_events(index_cell.parse_events())
                 self._repo.add(index_cell)
+            for j, period in enumerate(sheet.meta.periods, start=len(sheet.meta.ccols)):
+                cell = pf_domain.ProfitCell(index=(i, j), value=None)
+                cell.follow_mappers({mapper})
+                cell.follow_periods({period})
+                row.append(cell)
+                self._repo.add(cell)
+                self.extend_events(cell.parse_events())
+            to_append.append(row)
+
+        sheet.append_rows(to_append)
+        self.extend_events(sheet.parse_events())
 
 
 class ProfitCellRecalculateRequestedHandler(EventHandler):

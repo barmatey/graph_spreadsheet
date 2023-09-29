@@ -14,7 +14,7 @@ class Base:
 class NodeRepoFake(Base):
     def add(self, node: Node):
         if self._node_data.get(node.uuid) is not None:
-            raise Exception
+            raise Exception(f"already exist: {type(node)}")
         self._node_data[node.uuid] = node
 
     def update(self, node: Node):

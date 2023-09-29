@@ -1,13 +1,13 @@
 from typing import Literal
 from uuid import UUID, uuid4
 from datetime import datetime
+
 from pydantic import Field
 
 from src.core.pydantic_model import Model
 from src.node.domain import Event, Command
 from src.report.formula.mapper.domain import MapperSubscriber, MapperNode
 from src.report.formula.period.domain import PeriodSubscriber, PeriodNode
-from src.report.sheet.group_sheet.domain import GroupSheet
 from src.report.source.domain import SourceSubscriber, Source
 from src.report.wire.domain import WireNode, Ccol
 from src.spreadsheet.cell.domain import SheetCell, CellUpdated
@@ -105,10 +105,7 @@ class ProfitCell(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber
 
 
 class ProfitSheetMeta(Model):
-    start_date: datetime
-    end_date: datetime
-    period: int
-    freq: Literal["Y", "M", "D"]
+    periods: list[PeriodNode]
     ccols: list[Literal[Ccol]]
     uuid: UUID = Field(default_factory=uuid4)
 

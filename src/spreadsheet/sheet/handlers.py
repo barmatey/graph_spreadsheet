@@ -1,16 +1,13 @@
 from loguru import logger
 
 from src.node.handlers import EventHandler
-from . import domain as sheet_domain
+from src.spreadsheet.sheet import domain as sheet_domain
 
 
 class RowsAppendedHandler(EventHandler):
     def handle(self, event: sheet_domain.RowsAppended):
         # Save
         self._repo.update(event.sheet)
-        for row in event.rows:
-            for cell in row:
-                self._repo.add(cell)
 
         # Notify
         subs: set[sheet_domain.SheetSubscriber] = self._repo.get_node_children(event.sheet)
