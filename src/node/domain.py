@@ -18,7 +18,7 @@ class Event(Model):
 class Node(Model):
     uuid: UUID
     _events = PrivateAttr()
-    _updated: Optional['NodeUpdated'] = PrivateAttr()
+    _updated: Optional['Pubsub'] = PrivateAttr()
 
     def __init__(self, **data):
         super().__init__(**data)
@@ -34,7 +34,7 @@ class Node(Model):
     def _on_subscribed(self, pubs: set['Node']):
         self._events.append(NodeSubscribed(sub=self, pubs=pubs))
 
-    def _on_updated(self, event: 'NodeUpdated'):
+    def _on_updated(self, event: 'Pubsub'):
         if self._updated is None:
             self._updated = event
         else:
@@ -55,7 +55,7 @@ class NodeSubscribed(Event):
     uuid: UUID = Field(default_factory=uuid4)
 
 
-class NodeUpdated(Event):
+class Pubsub(Event):
     old_value: Node
     new_value: Node
     uuid: UUID = Field(default_factory=uuid4)

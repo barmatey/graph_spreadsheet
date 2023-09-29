@@ -3,7 +3,7 @@ from uuid import UUID, uuid4
 
 from pydantic import Field
 
-from src.node.domain import Node, Event, Command, NodeUpdated
+from src.node.domain import Node, Event, Command, Pubsub
 from src.report.wire import domain as wire_domain
 from src.report.wire.domain import WireNode, WireSubscriber
 
@@ -36,7 +36,7 @@ class SourceSubscriber(ABC):
         raise NotImplemented
 
 
-class CreateSourceNode(Command):
+class CreateSource(Command):
     title: str
     uuid: UUID = Field(default_factory=uuid4)
 
@@ -47,7 +47,7 @@ class WiresAppended(Event):
     uuid: UUID = Field(default_factory=uuid4)
 
 
-class WireUpdated(NodeUpdated):
+class WireUpdated(Pubsub):
     source: Source
     old_value: WireNode
     new_value: WireNode

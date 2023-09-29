@@ -3,7 +3,7 @@ from uuid import UUID, uuid4
 
 from pydantic import Field
 
-from src.node.domain import Node, Command, NodeUpdated
+from src.node.domain import Node, Command, Pubsub
 from src.report.wire import domain as wire_domain
 from src.report.wire.domain import Ccol
 from src.spreadsheet.cell.domain import Cell
@@ -50,7 +50,7 @@ class MapperSubscriber(ABC):
         raise NotImplemented
 
 
-class MapperUpdated(NodeUpdated):
+class MapperUpdated(Pubsub):
     old_value: MapperNode
     new_value: MapperNode
     uuid: UUID = Field(default_factory=uuid4)

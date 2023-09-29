@@ -40,7 +40,7 @@ def execute(cmd):
 
 def foo():
     # Source
-    cmd_source = source_domain.CreateSourceNode(title="Hello")
+    cmd_source = source_domain.CreateSource(title="Hello")
     source = execute(cmd_source)
 
     # Wire

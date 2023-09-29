@@ -22,7 +22,7 @@ wire4_id = uuid4()
 
 
 def load_data():
-    cmd_source = source_domain.CreateSourceNode(uuid=source_id, title="Source")
+    cmd_source = source_domain.CreateSource(uuid=source_id, title="Source")
     cmd_wire1 = wire_domain.CreateWireNode(date=datetime(2021, 5, 5), uuid=wire1_id, source_id=source_id,
                                            sender=1, receiver=2, amount=10, sub1="Profit", )
     cmd_wire2 = wire_domain.CreateWireNode(date=datetime(2022, 5, 5), uuid=wire2_id, source_id=source_id,

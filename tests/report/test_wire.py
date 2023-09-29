@@ -5,7 +5,7 @@ import pytest
 from src.messagebus.msgbus import Msgbus
 from src.node.domain import Node
 from src.node.repository import GraphRepo, GraphRepoFake
-from src.report.source.domain import CreateSourceNode, Source
+from src.report.source.domain import CreateSource, Source
 from src.report.wire.domain import CreateWireNode, WireNode
 
 source_uuid = uuid4()
@@ -29,7 +29,7 @@ def execute(cmd):
 
 
 def test_create_source_node():
-    cmd = CreateSourceNode(uuid=source_uuid, title="Hello")
+    cmd = CreateSource(uuid=source_uuid, title="Hello")
     source = execute(cmd)
     assert source.title == "Hello"
 

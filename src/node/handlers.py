@@ -43,7 +43,7 @@ class EventHandler(BaseHandler):
 
 
 class NodeUpdatedHandler(EventHandler):
-    def handle(self, event: domain.NodeUpdated):
+    def handle(self, event: domain.Pubsub):
         # Save
         self._repo.update(event.new_value)
 

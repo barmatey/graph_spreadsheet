@@ -6,7 +6,7 @@ from uuid import UUID, uuid4
 from loguru import logger
 from pydantic import Field
 
-from src.node.domain import Node, NodeUpdated, Event, Command
+from src.node.domain import Node, Pubsub, Event, Command
 
 Ccol = typing.Literal['currency', 'sender', 'receiver', 'sub1', 'sub2', 'comment']
 
@@ -64,7 +64,7 @@ class UpdateWire(Command):
     date: typing.Optional[datetime] = None
 
 
-class WireUpdated(NodeUpdated):
+class WireUpdated(Pubsub):
     old_value: WireNode
     new_value: WireNode
     uuid: UUID= Field(default_factory=uuid4)

@@ -6,7 +6,7 @@ from pydantic import Field
 
 from src.core.cell import CellValue
 from src.core.pydantic_model import Model
-from src.node.domain import Node, NodeUpdated
+from src.node.domain import Node, Pubsub
 
 
 class Cell(Model):
@@ -83,7 +83,7 @@ class SheetCell(Cell, Node, CellSubscriber, CellTableSubscriber):
         self._on_updated(CellUpdated(old_value=old_value, new_value=self))
 
 
-class CellUpdated(NodeUpdated):
+class CellUpdated(Pubsub):
     old_value: SheetCell
     new_value: SheetCell
     uuid: UUID = Field(default_factory=uuid4)

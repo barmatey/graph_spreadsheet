@@ -5,7 +5,7 @@ from . import domain as source_domain
 
 
 class CreateSourceNodeHandler(CommandHandler):
-    def execute(self, cmd: source_domain.CreateSourceNode) -> source_domain.Source:
+    def execute(self, cmd: source_domain.CreateSource) -> source_domain.Source:
         logger.info("CreateSourceNode.execute()")
         source_node = source_domain.Source(uuid=cmd.uuid, title=cmd.title)
         self._repo.add(source_node)
@@ -31,7 +31,7 @@ class WireUpdatedHandler(EventHandler):
 
 
 SOURCE_COMMAND_HANDLERS = {
-    source_domain.CreateSourceNode: CreateSourceNodeHandler,
+    source_domain.CreateSource: CreateSourceNodeHandler,
 }
 
 SOURCE_EVENT_HANDLERS = {

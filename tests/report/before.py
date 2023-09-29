@@ -15,7 +15,7 @@ def execute(cmd):
 
 def load_data():
     # Source
-    cmd_source = source_domain.CreateSourceNode(uuid=source_uuid, title="Hello")
+    cmd_source = source_domain.CreateSource(uuid=source_uuid, title="Hello")
     source = execute(cmd_source)
 
     # Wire
