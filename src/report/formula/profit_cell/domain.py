@@ -1,20 +1,23 @@
 from uuid import UUID, uuid4
 from pydantic import Field
 
-from src.node.domain import Node, Command, Event
+from src.node.domain import Command, Event
 from src.report.formula.mapper import domain as mapper_domain
+from src.report.formula.mapper.domain import MapperSubscriber, MapperNode
 from src.report.formula.period import domain as period_domain
+from src.report.formula.period.domain import PeriodSubscriber, PeriodNode
 from src.report.source.domain import SourceSubscriber, SourceNode
 from src.report.wire import domain as wire_domain
 from src.report.wire.domain import WireNode
 from src.spreadsheet.cell.domain import SheetCell
 
 
-class ProfitCellNode(SheetCell):
+class ProfitCellNode(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber):
     value: float
     mapper: mapper_domain.MapperNode | None = None
     period: period_domain.PeriodNode | None = None
     uuid: UUID = Field(default_factory=uuid4)
+    _recalculated: bool = False
 
     def follow_source(self, source: SourceNode):
         for w in source.wires:
@@ -22,43 +25,33 @@ class ProfitCellNode(SheetCell):
                 self.value += w.amount
         self._on_subscribed({source})
 
-    def on_wires_appended(self, wire: list[WireNode]):
-        raise NotImplemented
+    def on_wires_appended(self, wires: list[WireNode]):
+        for wire in wires:
+            if self.mapper.is_filtred(wire) and self.period.is_filtred(wire):
+                self.value += wire.amount
 
     def on_wire_updated(self, old_value: WireNode, new_value: WireNode):
-        raise NotImplemented
+        self.value -= old_value.amount
+        if self.mapper.is_filtred(new_value) and self.period.is_filtred(new_value):
+            self.value += new_value.amount
 
-    def follow(self, pubs: set['Node']):
-        followed = pubs.copy()
+    def follow_mappers(self, pubs: set[MapperNode]):
         for pub in pubs:
-            if isinstance(pub, wire_domain.WireNode):
-                if self.mapper.is_filtred(pub) and self.period.is_filtred(pub):
-                    self.value += pub.amount
-            elif isinstance(pub, mapper_domain.MapperNode):
-                self.mapper = pub
-                self._events.append_unique_event(ProfitCellRecalculateRequested(node=self))
-            elif isinstance(pub, period_domain.PeriodNode):
-                self.period = pub
-                self._events.append_unique_event(ProfitCellRecalculateRequested(node=self))
-            else:
-                raise TypeError(f"real type is {type(pub)}")
-        self._on_subscribed(followed)
-        self._on_updated()
+            self.mapper = pub
+            self._recalculated = True
 
-    def update(self, old_value: 'Node', new_value: 'Node'):
-        if isinstance(old_value, wire_domain.WireNode) and isinstance(new_value, wire_domain.WireNode):
-            self.value -= old_value.amount
-            if self.mapper.is_filtred(new_value) and self.period.is_filtred(new_value):
-                self.value += new_value.amount
-        elif isinstance(old_value, mapper_domain.MapperNode) and isinstance(new_value, mapper_domain.MapperNode):
-            self.mapper = new_value
-            self._events.append_unique_event(ProfitCellRecalculateRequested(node=self))
-        elif isinstance(old_value, period_domain.PeriodNode) and isinstance(new_value, period_domain.PeriodNode):
-            self.period = new_value
-            self._events.append_unique_event(ProfitCellRecalculateRequested(node=self))
-        else:
-            raise TypeError(f"real type is {type(old_value)}, {type(new_value)}")
-        self._on_updated()
+    def on_mapper_update(self, old_value: MapperNode, new_value: MapperNode):
+        self.mapper = new_value
+        self._recalculated = True
+
+    def follow_periods(self, pubs: set[PeriodNode]):
+        for pub in pubs:
+            self.period = pub
+            self._recalculated = True
+
+    def on_update_period(self, old_value: PeriodNode, new_value: PeriodNode):
+        self.period = new_value
+        self._recalculated = True
 
     def recalculate(self, wires: set[wire_domain.WireNode]):
         self.value = 0
