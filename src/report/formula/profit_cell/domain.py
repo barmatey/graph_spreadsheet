@@ -9,7 +9,7 @@ from src.report.formula.period.domain import PeriodSubscriber, PeriodNode
 from src.report.source.domain import SourceSubscriber, Source
 from src.report.wire import domain as wire_domain
 from src.report.wire.domain import WireNode
-from src.spreadsheet.cell.domain import SheetCell
+from src.spreadsheet.cell.domain import SheetCell, CellUpdated
 
 
 class ProfitPeriodCell(SheetCell, PeriodSubscriber):
@@ -31,21 +31,27 @@ class ProfitCell(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber
     _recalculated: bool = False
 
     def follow_source(self, source: Source):
+        old_value = self.model_copy(deep=True)
         for w in source.wires:
             if self.mapper.is_filtred(w) and self.period.is_filtred(w):
                 self.value += w.amount
         self._on_subscribed({source})
+        self._on_updated(CellUpdated(old_value=old_value, new_value=self))
 
     def on_wires_appended(self, wires: list[WireNode]):
+        old_value = self.model_copy(deep=True)
         for wire in wires:
             if self.mapper.is_filtred(wire) and self.period.is_filtred(wire):
                 self.value += wire.amount
+        self._on_updated(CellUpdated(old_value=old_value, new_value=self))
 
     def on_wire_updated(self, old_value: WireNode, new_value: WireNode):
+        old = self.model_copy(deep=True)
         if self.mapper.is_filtred(old_value) and self.period.is_filtred(old_value):
             self.value -= old_value.amount
         if self.mapper.is_filtred(new_value) and self.period.is_filtred(new_value):
             self.value += new_value.amount
+        self._on_updated(CellUpdated(old_value=old, new_value=self))
 
     def follow_mappers(self, pubs: set[MapperNode]):
         for pub in pubs:
@@ -64,10 +70,12 @@ class ProfitCell(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber
         self._recalculated = True
 
     def recalculate(self, wires: set[wire_domain.WireNode]):
+        old_value = self.model_copy(deep=True)
         self.value = 0
         for wire in wires:
             if self.mapper.is_filtred(wire):
                 self.value += wire.amount
+        self._on_updated(CellUpdated(old_value=old_value, new_value=self))
 
     def parse_events(self) -> list[Event]:
         events = super().parse_events()
