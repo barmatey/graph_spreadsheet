@@ -31,9 +31,3 @@ class PeriodSubscriber(ABC):
     @abstractmethod
     def on_period_updated(self, old_value: PeriodNode, new_value: PeriodNode):
         raise NotImplemented
-
-
-class CreatePeriodNode(Command):
-    from_date: datetime
-    to_date: datetime
-    uuid: UUID = Field(default_factory=uuid4)
