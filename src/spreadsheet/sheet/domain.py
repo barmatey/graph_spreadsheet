@@ -33,15 +33,21 @@ class Sheet(Pubsub):
             result.append(r)
         return result
 
-    def append_rows(self, rows: list[SheetCell] | list[list[SheetCell]]):
-        if len(rows) and isinstance(rows[0], SheetCell):
+    def append_rows(self, rows: Sindex | list[Sindex], cells: list[SheetCell] | list[list[SheetCell]]):
+        if len(cells) and isinstance(rows[0], SheetCell):
+            cells = [cells]
+        if isinstance(rows, Sindex):
             rows = [rows]
-        for row in rows:
-            if self.size[1] != 0 and self.size[1] != len(row):
+        if len(rows) != len(cells):
+            raise Exception
+
+        for sindex, values in zip(rows, cells):
+            if self.size[1] != 0 and self.size[1] != len(values):
                 raise Exception
-            self.table.append(row)
-            self.size = (self.size[0] + 1, len(row))
-        self._events.append(RowsAppended(sheet=self, rows=rows))
+            self.table.append(values)
+            self.rows.append(sindex)
+            self.size = (self.size[0] + 1, len(cells))
+        self._events.append(RowsAppended(sheet=self, rows=rows, cells=cells))
 
     def delete_rows(self, indexes: list[int]):
         hashes = {index: 1 for index in indexes}
@@ -78,13 +84,14 @@ class SheetSubscriber(ABC):
         raise NotImplemented
 
     @abstractmethod
-    def on_rows_appended(self, rows: list[list[SheetCell]]):
+    def on_rows_appended(self, rows: list[Sindex], cells: list[list[SheetCell]]):
         raise NotImplemented
 
 
 class RowsAppended(Event):
     sheet: Sheet
-    rows: list[list[SheetCell]]
+    cells: list[list[SheetCell]]
+    rows: list[Sindex]
     uuid: UUID = Field(default_factory=uuid4)
 
 

@@ -8,15 +8,16 @@ class RowsAppendedHandler(EventHandler):
     def handle(self, event: sheet_domain.RowsAppended):
         # Save
         self._repo.update(event.sheet)
-        for row in event.rows:
-            for cell in row:
+        for row, cells in zip(event.rows, event.cells):
+            self._repo.add(row)
+            for cell in cells:
                 self._repo.add(cell)
 
         # Notify
         subs: set[sheet_domain.SheetSubscriber] = self._repo.get_node_children(event.sheet)
         logger.debug(f"RowsAppended.handle() => notify: {subs}")
         for sub in subs:
-            sub.on_rows_appended(event.rows)
+            sub.on_rows_appended(event.rows, event.cells)
             self.extend_events(sub.parse_events())
 
 

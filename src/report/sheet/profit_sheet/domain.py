@@ -12,6 +12,7 @@ from src.report.source.domain import SourceSubscriber, Source
 from src.report.wire.domain import Wire, Ccol
 from src.spreadsheet.cell.domain import SheetCell, CellUpdated
 from src.spreadsheet.sheet.domain import Sheet, SheetSubscriber
+from src.spreadsheet.sindex.handlers import Sindex
 
 
 class ProfitPeriodCell(SheetCell, PeriodSubscriber):
@@ -117,8 +118,8 @@ class ProfitSheet(Sheet, SheetSubscriber):
     def follow_sheet(self, sheet: Sheet):
         self._on_subscribed({sheet})
 
-    def on_rows_appended(self, rows: list[list[SheetCell]]):
-        self._events.append(GroupSheetRowsAppended(profit_sheet=self, rows=rows))
+    def on_rows_appended(self, rows: list[Sindex], cells: list[list[SheetCell]]):
+        self._events.append(GroupSheetRowsAppended(profit_sheet=self, rows=rows, cells=cells))
 
 
 class CreateProfitSheet(Command):
@@ -133,7 +134,8 @@ class CreateProfitSheet(Command):
 
 class GroupSheetRowsAppended(Event):
     profit_sheet: ProfitSheet
-    rows: list[list[SheetCell]]
+    rows: list[Sindex]
+    cells: list[list[SheetCell]]
     uuid: UUID = Field(default_factory=uuid4)
 
 
