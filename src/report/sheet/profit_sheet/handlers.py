@@ -10,90 +10,13 @@ from src.spreadsheet.sindex.handlers import Sindex
 from ..group_sheet import domain as group_domain
 from src.report.source import domain as source_domain
 from . import domain as pf_domain
+from . import usecases as pf_usecases
 
 
 class CreateProfitSheetNodeHandler(CommandHandler):
-    def __create_mappers(self, group_id: UUID, group_sheet) -> list[mapper_domain.Mapper]:
-        mappers = []
-        for i in range(0, group_sheet.size[0]):
-            mapper = mapper_domain.Mapper(ccols=group_sheet.plan_items.ccols)
-            pubs = set()
-            for j in range(group_sheet.size[1]):
-                cell = group_sheet.table[i][j]
-                pubs.add(cell)
-            mapper.follow_cell_publishers(pubs)
-            self.extend_events(mapper.parse_events())
-            self._repo.add(mapper)
-            mappers.append(mapper)
-        return mappers
-
-    def __create_periods(self, start_date, end_date, period, freq) -> list[period_domain.Period]:
-        date_range = [x.to_pydatetime() for x in pd.date_range(start_date, end_date, freq=f"{period}{freq}")]
-        periods = []
-        for start, end in zip(date_range[:-1], date_range[1:]):
-            period = period_domain.Period(from_date=start, to_date=end)
-            self._repo.add(period)
-            self.extend_events(period.parse_events())
-            periods.append(period)
-        return periods
-
     def execute(self, cmd: pf_domain.CreateProfitSheet) -> pf_domain.ProfitSheet:
         logger.info(f"CreateProfitSheetNode.execute()")
-
-        # Parent data
-        group_sheet: group_domain.GroupSheet = self._repo.get_by_id(cmd.group_id)
-        source = self._repo.get_by_id(cmd.source_id)
-        mappers = self.__create_mappers(group_id=cmd.group_id, group_sheet=group_sheet)
-        periods = self.__create_periods(cmd.start_date, cmd.end_date, cmd.period, cmd.freq)
-
-        # Result sheet
-        sheet_meta = pf_domain.ProfitSheetMeta(ccols=group_sheet.plan_items.ccols, periods=periods,
-                                               source_id=cmd.source_id)
-        profit_sheet = pf_domain.ProfitSheet(uuid=cmd.uuid, meta=sheet_meta)
-        self._repo.add(profit_sheet)
-
-        # Sheet subscribing
-        profit_sheet.follow_sheet(group_sheet)
-
-        left_indexes_len = len(mappers[0].ccols)
-        # Create first row (no calculating, follow value only)
-        row = []
-        for j in range(0, left_indexes_len):
-            cell = pf_domain.ProfitPeriodCell(row_index=Sindex(position=0), col_index=Sindex(position=j), value=None)
-            self._repo.add(cell)
-            row.append(cell)
-
-        for j, period in enumerate(periods, start=left_indexes_len):
-            profit_cell = pf_domain.ProfitPeriodCell(row_index=Sindex(position=0), col_index=Sindex(position=j), value=0)
-            profit_cell.follow_periods({period})
-            self.extend_events(profit_cell.parse_events())
-            self._repo.add(profit_cell)
-            row.append(profit_cell)
-        profit_sheet.append_rows(row)
-
-        # mapper is a row filter, period is a col filter
-        rows = []
-        for i, mapper in enumerate(mappers, start=1):
-            row = []
-            for j in range(0, left_indexes_len):
-                cell = pf_domain.ProfitMapperCell(row_index=Sindex(position=i), col_index=Sindex(position=j), value=None)
-                cell.follow_mappers({mapper})
-                self._repo.add(cell)
-                self.extend_events(cell.parse_events())
-                row.append(cell)
-
-            for j, period in enumerate(periods, start=left_indexes_len):
-                profit_cell = pf_domain.ProfitCell(row_index=Sindex(position=i), col_index=Sindex(position=j), value=0)
-                profit_cell.follow_periods({period})
-                profit_cell.follow_mappers({mapper})
-                profit_cell.follow_source(source)
-                self._repo.add(profit_cell)
-                self.extend_events(profit_cell.parse_events())
-                row.append(profit_cell)
-            rows.append(row)
-        profit_sheet.append_rows(rows)
-        self.extend_events(profit_sheet.parse_events())
-
+        profit_sheet = pf_usecases.CreateProfitSheetUsecase(cmd, self._repo).execute()
         return profit_sheet
 
 

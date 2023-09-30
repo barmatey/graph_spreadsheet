@@ -34,19 +34,19 @@ class Sheet(Pubsub):
         return result
 
     def append_rows(self, rows: Sindex | list[Sindex], cells: list[SheetCell] | list[list[SheetCell]]):
-        if len(cells) and isinstance(rows[0], SheetCell):
+        if len(cells) and isinstance(cells[0], SheetCell):
             cells = [cells]
         if isinstance(rows, Sindex):
             rows = [rows]
         if len(rows) != len(cells):
-            raise Exception
+            raise Exception(f'len rows != len cells, {len(rows)} != {len(cells)}')
 
         for sindex, values in zip(rows, cells):
             if self.size[1] != 0 and self.size[1] != len(values):
-                raise Exception
+                raise Exception(f"self.size[1] != len(values), {self.size[1]} != {len(values)}")
             self.table.append(values)
             self.rows.append(sindex)
-            self.size = (self.size[0] + 1, len(cells))
+            self.size = (self.size[0] + 1, len(values))
         self._events.append(RowsAppended(sheet=self, rows=rows, cells=cells))
 
     def delete_rows(self, indexes: list[int]):

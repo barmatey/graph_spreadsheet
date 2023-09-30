@@ -26,19 +26,22 @@ class GroupSheet(sheet_domain.Sheet, SourceSubscriber):
         self._on_subscribed({source})
 
     def on_wires_appended(self, wires: list[Wire]):
-        rows = []
+        table = []
+        rows: list[Sindex] = []
         for wire in wires:
-            row = [wire.__getattribute__(ccol) for ccol in self.plan_items.ccols]
-            key = str(row)
+            cells = [wire.__getattribute__(ccol) for ccol in self.plan_items.ccols]
+            key = str(cells)
             if self.plan_items.uniques.get(key) is None:
+                row_sindex = Sindex(position=self.size[0])
+                rows.append(row_sindex)
                 self.plan_items.uniques[key] = 1
-                rows.append([
-                    SheetCell(row_index=Sindex(position=self.size[0]), col_index=Sindex(position=j), value=value)
-                    for j, value in enumerate(row)
+                table.append([
+                    SheetCell(row_index=row_sindex, col_index=Sindex(position=j), value=value)
+                    for j, value in enumerate(cells)
                 ])
             else:
                 self.plan_items.uniques[key] += 1
-        self.append_rows(rows)
+        self.append_rows(rows, table)
 
     def on_wire_updated(self, old_value: Wire, new_value: Wire):
         old_row = [old_value.__getattribute__(ccol) for ccol in self.plan_items.ccols]
