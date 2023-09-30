@@ -103,7 +103,58 @@ class CreateProfitSheetUsecase:
         self._create_mappers()
         self._create_periods()
         self._create_blank_profit_sheet()
-        self._create_blank_profit_sheet()
         self._create_first_row()
         self._create_table_rows()
         return self._result
+
+
+class AppendRowsUsecase:
+    def __init__(self, sheet: pf_domain.ProfitSheet, rows: list[Sindex], table: list[list[pf_domain.SheetCell]],
+                 source: source_domain.Source):
+        self._sheet = sheet
+        self._source = source
+        self._pub_rows = rows
+        self._pub_table = table
+        self._mappers: list[mapper_domain.Mapper] = []
+
+    def _create_mappers(self):
+        for row in self._pub_table:
+            mapper = mapper_domain.Mapper(ccols=self._sheet.meta.ccols)
+            mapper.follow_cell_publishers(row)
+            self._mappers.append(mapper)
+
+    def _create_rows(self):
+        table: list[list[pf_domain.SheetCell]] = []
+        sindexes: list[Sindex] = []
+
+        i = self._sheet.size[0]
+        for pub_sindex, pub_cells, mapper in zip(self._pub_rows, self._pub_table, self._mappers):
+            sindex = Sindex(position=i)
+            sindexes.append(sindex)
+
+            table_row = []
+
+            # Create index part (left part)
+            for j, pub_cell in enumerate(pub_cells):
+                col_sindex = Sindex(position=j)
+                left_cell = pf_domain.SheetCell(row_index=sindex, col_index=col_sindex, value=pub_cell.value)
+                left_cell.follow_cell_publishers({pub_cell})
+                table_row.append(left_cell)
+
+            # Create table part
+            for j, period in enumerate(self._sheet.meta.periods, start=len(pub_cells)):
+                col_sindex = Sindex(position=j)
+                cell = pf_domain.ProfitCell(row_index=Sindex(row_index=sindex, col_index=col_sindex, value=0))
+                cell.follow_mappers({mapper})
+                cell.follow_periods({period})
+                cell.follow_source(self._source)
+                table_row.append(cell)
+
+            table.append(table_row)
+            i += 1
+        self._sheet.append_rows(sindexes, table)
+
+    def execute(self) -> pf_domain.ProfitSheet:
+        self._create_mappers()
+        self._create_rows()
+        return self._sheet
