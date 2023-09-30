@@ -1,10 +1,10 @@
-from uuid import UUID, uuid4
+from loguru import logger
 
-from pydantic import Field
+from src.pubsub.handlers import EventHandler
+from . import domain as sindex_domain
 
-from src.core.pydantic_model import Model
 
-
-class Sindex(Model):
-    position: int
-    uuid: UUID = Field(default_factory=uuid4)
+class SindexCreatedHandler(EventHandler):
+    def handle(self, event: sindex_domain.SindexCreated):
+        logger.debug(f"sindex_domainCreated.handle()")
+        self._repo.add(event.entity)
