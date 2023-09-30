@@ -62,7 +62,10 @@ class GroupSheet(sheet_domain.Sheet, SourceSubscriber):
             self.plan_items.uniques[new_key] += 1
         else:
             self.plan_items.uniques[new_key] = 1
-            self.append_rows([SheetCell(index=(self.size[0], j), value=value) for j, value in enumerate(new_row)])
+            self.append_rows([
+                SheetCell(row_index=Sindex(position=self.size[0]), col_index=Sindex(position=j), value=value)
+                for j, value in enumerate(new_row)
+            ])
 
 
 class CreateGroupSheet(Command):
