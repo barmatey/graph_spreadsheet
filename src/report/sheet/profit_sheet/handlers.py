@@ -5,9 +5,7 @@ import pandas as pd
 
 from src.pubsub.handlers import CommandHandler, EventHandler
 from src.report.formula.mapper import domain as mapper_domain
-from src.report.formula.period import domain as period_domain
-from src.spreadsheet.sindex.handlers import Sindex
-from ..group_sheet import domain as group_domain
+from src.spreadsheet.sindex.domain import Sindex
 from src.report.source import domain as source_domain
 from . import domain as pf_domain
 from . import usecases as pf_usecases

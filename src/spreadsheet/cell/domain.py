@@ -1,12 +1,13 @@
 from abc import ABC, abstractmethod
+from typing import Any
 from uuid import UUID, uuid4
 
-from pydantic import Field
+from pydantic import Field, PrivateAttr
 
 from src.core.cell import CellValue
 from src.core.pydantic_model import Model
 from src.pubsub.domain import Pubsub, PubsubUpdated, Event
-from src.spreadsheet.sindex.handlers import Sindex
+from src.spreadsheet.sindex.domain import Sindex
 
 
 class Cell(Model):
@@ -52,6 +53,10 @@ class CellTableSubscriber(ABC):
 
 
 class SheetCell(Cell, Pubsub, CellSubscriber, CellTableSubscriber):
+    def __init__(self, **data: Any):
+        super().__init__(**data)
+        self._events.append(SheetCellCreated(entity=self))
+
     def get_cell(self) -> Cell:
         return self
 
@@ -86,6 +91,7 @@ class SheetCell(Cell, Pubsub, CellSubscriber, CellTableSubscriber):
 
 class SheetCellCreated(Event):
     entity: SheetCell
+    uuid: UUID = Field(default_factory=uuid4)
 
 
 class CellUpdated(PubsubUpdated):

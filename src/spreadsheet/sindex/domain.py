@@ -13,3 +13,4 @@ class Sindex(Model):
 
 class SindexCreated(Event):
     entity: Sindex
+    uuid: UUID = Field(default_factory=uuid4)

@@ -6,7 +6,7 @@ from pydantic import Field
 from src.core.cell import CellTable, CellValue
 from src.pubsub.domain import Pubsub, Event
 from src.spreadsheet.cell.domain import SheetCell
-from src.spreadsheet.sindex.handlers import Sindex
+from src.spreadsheet.sindex.domain import Sindex
 
 
 def size_factory():
@@ -20,6 +20,10 @@ class Sheet(Pubsub):
     cols: list[Sindex] = Field(default_factory=list)
     uuid: UUID = Field(default_factory=uuid4)
     _reindexed: bool = False
+
+    def __init__(self, **data):
+        super().__init__(**data)
+        self._events.append(SheetCreated(entity=self))
 
     def __str__(self):
         return f"{self.__class__.__name__}(size={self.size})"
@@ -90,6 +94,7 @@ class SheetSubscriber(ABC):
 
 class SheetCreated(Event):
     entity: Sheet
+    uuid: UUID = Field(default_factory=uuid4)
 
 
 class RowsAppended(Event):

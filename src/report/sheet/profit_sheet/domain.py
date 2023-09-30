@@ -12,7 +12,7 @@ from src.report.source.domain import SourceSubscriber, Source
 from src.report.wire.domain import Wire, Ccol
 from src.spreadsheet.cell.domain import SheetCell, CellUpdated
 from src.spreadsheet.sheet.domain import Sheet, SheetSubscriber
-from src.spreadsheet.sindex.handlers import Sindex
+from src.spreadsheet.sindex.domain import Sindex
 
 
 class ProfitPeriodCell(SheetCell, PeriodSubscriber):
