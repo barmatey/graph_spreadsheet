@@ -5,7 +5,7 @@ from pydantic import Field
 
 from src.core.cell import CellValue
 from src.core.pydantic_model import Model
-from src.pubsub.domain import Pubsub, PubsubUpdated
+from src.pubsub.domain import Pubsub, PubsubUpdated, Event
 from src.spreadsheet.sindex.handlers import Sindex
 
 
@@ -82,6 +82,10 @@ class SheetCell(Cell, Pubsub, CellSubscriber, CellTableSubscriber):
         old_value = self.model_copy(deep=True)
         self.value = new_table[self.index[0]][self.index[1]].value
         self._on_updated(CellUpdated(old_value=old_value, new_value=self))
+
+
+class SheetCellCreated(Event):
+    entity: SheetCell
 
 
 class CellUpdated(PubsubUpdated):
