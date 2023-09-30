@@ -88,6 +88,10 @@ class SheetSubscriber(ABC):
         raise NotImplemented
 
 
+class SheetCreated(Event):
+    entity: Sheet
+
+
 class RowsAppended(Event):
     sheet: Sheet
     cells: list[list[SheetCell]]
