@@ -46,7 +46,7 @@ class Pubsub(Model):
         else:
             self._updated.new_value = event.new_value
 
-    def parse_events(self) -> list[Event]:
+    def parse_events(self, _deep=False) -> list[Event]:
         events: list[Event] = self._events
         self._events = []
         if self._updated is not None:
