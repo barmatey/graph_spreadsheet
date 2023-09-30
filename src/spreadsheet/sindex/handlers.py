@@ -8,3 +8,8 @@ class SindexCreatedHandler(EventHandler):
     def handle(self, event: sindex_domain.SindexCreated):
         logger.debug(f"sindex_domainCreated.handle()")
         self._repo.add(event.entity)
+
+
+SINDEX_EVENT_HANDLERS = {
+    sindex_domain.SindexCreated: SindexCreatedHandler,
+}

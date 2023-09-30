@@ -21,5 +21,6 @@ class SheetCellUpdatedHandler(EventHandler):
 
 
 CELL_EVENT_HANDLERS = {
+    cell_domain.SheetCellCreated: SheetCellCreatedHandler,
     cell_domain.CellUpdated: SheetCellUpdatedHandler,
 }

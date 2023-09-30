@@ -42,6 +42,7 @@ class RowsReindexedHandler(EventHandler):
 
 
 SHEET_EVENT_HANDLERS = {
+    sheet_domain.SheetCreated: SheetCreatedHandler,
     sheet_domain.RowsAppended: RowsAppendedHandler,
     sheet_domain.RowsDeleted: RowsDeletedHandler,
     sheet_domain.RowsReindexed: RowsReindexedHandler,
