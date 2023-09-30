@@ -11,7 +11,7 @@ class GetSheetByIdHandler(CommandHandler):
         raise NotImplemented
 
 
-class CreateGroupSheetNodeHandler(CommandHandler):
+class CreateGroupSheetHandler(CommandHandler):
     def execute(self, cmd: group_sheet_domain.CreateGroupSheet) -> group_sheet_domain.GroupSheet:
         logger.error("CreateGroup.execute()")
 
@@ -30,6 +30,6 @@ class CreateGroupSheetNodeHandler(CommandHandler):
 
 
 GROUP_COMMAND_HANDLERS = {
-    group_sheet_domain.CreateGroupSheet: CreateGroupSheetNodeHandler,
+    group_sheet_domain.CreateGroupSheet: CreateGroupSheetHandler,
     group_sheet_domain.GetSheetById: GetSheetByIdHandler,
 }

@@ -96,3 +96,17 @@ def test_append_new_unique_wire_expand_profit_sheet(repo):
         [3.0, "New", 100.0, 0]
     ]
     assert str(actual) == str(expected)
+
+
+def test_profit_sheet_squeeze_after_group_sheet(repo):
+    cmd = wire_domain.UpdateWire(uuid=wire1_id, sender=2, sub1="Expenses")
+    execute(cmd)
+
+    sheet = repo.get_by_id(sheet_id)
+    actual = sheet.get_as_simple_table()
+    expected = [
+        [None, None, datetime(2021, 12, 31), datetime(2022, 12, 31)],
+        [2.0, 'Expenses', 33.0, 44.0],
+        [3.0, "New", 100.0, 0]
+    ]
+    assert str(actual) == str(expected)

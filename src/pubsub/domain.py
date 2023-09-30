@@ -1,4 +1,4 @@
-from abc import abstractmethod
+from abc import abstractmethod, ABC
 from collections import OrderedDict
 from typing import Optional
 from uuid import UUID, uuid4
@@ -13,6 +13,12 @@ class Command(Model):
 
 class Event(Model):
     uuid: UUID
+
+
+class Subscriber(ABC):
+    @abstractmethod
+    def parse_events(self) -> list[Event]:
+        raise NotImplemented
 
 
 class Pubsub(Model):
