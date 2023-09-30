@@ -31,12 +31,12 @@ class ProfitMapperCell(SheetCell, MapperSubscriber):
     def follow_mappers(self, pubs: set[Mapper]):
         old = self.model_copy(deep=True)
         for pub in pubs:
-            self.value = pub.filter_by[pub.ccols[self.index[1]]]
+            self.value = pub.filter_by[pub.ccols[self.col_index.position]]
         self._on_updated(CellUpdated(old_value=old, new_value=self))
 
     def on_mapper_update(self, old_value: Mapper, new_value: Mapper):
         old = self.model_copy(deep=True)
-        self.value = new_value.filter_by[new_value.ccols[self.index[1]]]
+        self.value = new_value.filter_by[new_value.ccols[self.col_index.position]]
         self._on_updated(CellUpdated(old_value=old, new_value=self))
 
 

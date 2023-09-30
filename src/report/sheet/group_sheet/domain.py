@@ -8,6 +8,7 @@ from src.report.source.domain import SourceSubscriber, Source
 from src.report.wire.domain import Ccol, Wire
 from src.spreadsheet.cell.domain import SheetCell
 from src.spreadsheet.sheet import domain as sheet_domain
+from src.spreadsheet.sindex.handlers import Sindex
 
 
 class PlanItems(Model):
@@ -31,7 +32,10 @@ class GroupSheet(sheet_domain.Sheet, SourceSubscriber):
             key = str(row)
             if self.plan_items.uniques.get(key) is None:
                 self.plan_items.uniques[key] = 1
-                rows.append([SheetCell(index=(self.size[0], j), value=value) for j, value in enumerate(row)])
+                rows.append([
+                    SheetCell(row_index=Sindex(position=self.size[0]), col_index=Sindex(position=j), value=value)
+                    for j, value in enumerate(row)
+                ])
             else:
                 self.plan_items.uniques[key] += 1
         self.append_rows(rows)

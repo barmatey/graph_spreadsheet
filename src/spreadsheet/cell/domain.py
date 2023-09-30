@@ -1,24 +1,25 @@
 from abc import ABC, abstractmethod
 from uuid import UUID, uuid4
 
-from loguru import logger
 from pydantic import Field
 
 from src.core.cell import CellValue
 from src.core.pydantic_model import Model
 from src.pubsub.domain import Pubsub, PubsubUpdated
+from src.spreadsheet.sindex.handlers import Sindex
 
 
 class Cell(Model):
-    index: tuple[int, int]
+    row_index: Sindex
+    col_index: Sindex
     value: CellValue
     uuid: UUID = Field(default_factory=uuid4)
 
     def __repr__(self):
-        return f"Cell(index={self.index}, value={self.value})"
+        return f"Cell(index=({self.row_index.position}, {self.col_index.position}), value={self.value})"
 
     def __str__(self):
-        return f"Cell(index={self.index}, value={self.value})"
+        return f"Cell(index=({self.row_index.position}, {self.col_index.position}), value={self.value})"
 
     def __eq__(self, other):
         return self.index == other.index and self.value == other.value

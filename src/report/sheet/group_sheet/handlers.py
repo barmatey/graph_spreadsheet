@@ -1,8 +1,6 @@
 from loguru import logger
 
 from src.pubsub.handlers import CommandHandler
-from src.report.wire import domain as wire_domain
-from src.spreadsheet.cell import domain as cell_domain
 from . import domain as group_sheet_domain
 
 

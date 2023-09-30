@@ -26,7 +26,7 @@ class Mapper(Pubsub):
     def follow_cell_publishers(self, pubs: set[Cell]):
         old_value = self.model_copy(deep=True)
         for pub in pubs:
-            key = self.ccols[pub.get_cell().index[1]]
+            key = self.ccols[pub.col_index.position]
             value = pub.get_cell().value
             self.filter_by[key] = value
         self._on_subscribed(pubs)
@@ -34,7 +34,7 @@ class Mapper(Pubsub):
 
     def on_updated_cell(self, old_value: Cell, new_value: Cell):
         old_value = self.model_copy(deep=True)
-        key = self.ccols[new_value.index[1]]
+        key = self.ccols[new_value.col_index.position]
         value = new_value.value
         self.filter_by[key] = value
         self._on_updated(MapperUpdated(old_value=old_value, new_value=self))

@@ -57,7 +57,8 @@ class Sheet(Pubsub):
     def reindex(self):
         for i in range(0, self.size[0]):
             for j in range(0, self.size[1]):
-                self.table[i][j].index = (i, j)
+                self.table[i][j].row_index.position = i
+                self.table[i][j].col_index.position = j
         self._reindexed = True
 
     def parse_events(self) -> list[Event]:
