@@ -1,7 +1,7 @@
 import pytest
 
 from src.pubsub.repository import GraphRepoFake
-from src.report.sheet.group_sheet import PlanItems
+from src.report.sheet.group_sheet.domain import PlanItems
 from src.report.source import domain as source_domain
 from src.report.wire import domain as wire_domain
 from src.report.sheet.group_sheet import domain as group_domain
