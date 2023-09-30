@@ -6,6 +6,7 @@ from pydantic import Field
 from src.core.cell import CellTable, CellValue
 from src.pubsub.domain import Pubsub, Event
 from src.spreadsheet.cell.domain import SheetCell
+from src.spreadsheet.sindex.handlers import Sindex
 
 
 def size_factory():
@@ -15,6 +16,8 @@ def size_factory():
 class Sheet(Pubsub):
     size: tuple[int, int] = Field(default_factory=size_factory)
     table: list[list[SheetCell]] = Field(default_factory=list)
+    rows: list[Sindex] = Field(default_factory=list)
+    cols: list[Sindex] = Field(default_factory=list)
     uuid: UUID = Field(default_factory=uuid4)
     _reindexed: bool = False
 
