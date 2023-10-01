@@ -1,10 +1,11 @@
 from abc import abstractmethod, ABC
-from collections import OrderedDict
+from sortedcontainers import SortedList
 from typing import Optional
 from uuid import UUID, uuid4
 from pydantic import Field, PrivateAttr
 
 from src.core.pydantic_model import Model
+from src.helpers.decorators import singleton
 
 
 class Command(Model):
@@ -13,12 +14,37 @@ class Command(Model):
 
 class Event(Model):
     uuid: UUID
+    priority: int
 
 
 class Subscriber(ABC):
     @abstractmethod
     def parse_events(self) -> list[Event]:
         raise NotImplemented
+
+
+@singleton
+class EventQueue:
+    def __init__(self):
+        self._events = SortedList(key=lambda x: x.priority)
+        self._pubsub_updated_events = {}
+
+    def append(self, event: Event):
+        if isinstance(event, PubsubUpdated):
+            key = type(event)
+            if self._pubsub_updated_events.get(key) is None:
+                self._pubsub_updated_events[key] = event
+            else:
+                self._pubsub_updated_events[key].old_value = event.new_value
+        else:
+            self._events.append(event)
+
+    def parse_events(self) -> SortedList[Event]:
+        events = self._events
+        events.extend(self._pubsub_updated_events.values())
+        self._events = SortedList(key=lambda x: x.priority)
+        self._pubsub_updated_events = {}
+        return events
 
 
 class Pubsub(Model):

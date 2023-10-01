@@ -75,7 +75,7 @@ class Sheet(Pubsub):
         self._reindexed = True
 
     def parse_events(self, deep=False) -> list[Event]:
-        events = super().parse_events()
+        events = []
         if deep:
             for row in self.rows:
                 events.extend(row.parse_events())
@@ -84,6 +84,7 @@ class Sheet(Pubsub):
             for cells in self.table:
                 for cell in cells:
                     events.extend(cell.parse_events())
+        events.extend(super().parse_events())
         if self._reindexed:
             events.append(RowsReindexed(sheet=self))
             self._reindexed = False
