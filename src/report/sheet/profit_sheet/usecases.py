@@ -144,7 +144,7 @@ class AppendRowsUsecase:
             # Create table part
             for j, period in enumerate(self._sheet.meta.periods, start=len(pub_cells)):
                 col_sindex = Sindex(position=j)
-                cell = pf_domain.ProfitCell(row_index=Sindex(row_index=sindex, col_index=col_sindex, value=0))
+                cell = pf_domain.ProfitCell(row_index=sindex, col_index=col_sindex, value=0)
                 cell.follow_mappers({mapper})
                 cell.follow_periods({period})
                 cell.follow_source(self._source)
