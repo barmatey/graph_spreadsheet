@@ -68,18 +68,10 @@ class Pubsub(Model):
         self._events.append(NodeSubscribed(sub=self, pubs=pubs))
 
     def _on_updated(self, event: 'PubsubUpdated'):
-        if self._updated is None:
-            self._updated = event
-        else:
-            self._updated.new_value = event.new_value
+        self._events.append(event)
 
     def parse_events(self, _deep=False) -> list[Event]:
-        events: list[Event] = self._events
-        self._events = []
-        if self._updated is not None:
-            events.append(self._updated)
-            self._updated = None
-        return events
+        return self._events.parse_events()
 
 
 class NodeSubscribed(Event):

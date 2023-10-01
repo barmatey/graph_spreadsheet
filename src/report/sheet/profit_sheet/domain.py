@@ -96,13 +96,6 @@ class ProfitCell(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber
                 self.value += wire.amount
         self._on_updated(CellUpdated(old_value=old_value, new_value=self))
 
-    def parse_events(self) -> list[Event]:
-        events = super().parse_events()
-        if self._recalculated:
-            events.append(ProfitCellRecalculateRequested(node=self))
-            self._recalculated = False
-        return events
-
 
 class ProfitSheetMeta(Model):
     periods: list[Period]
