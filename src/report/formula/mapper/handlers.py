@@ -4,6 +4,12 @@ from src.pubsub.handlers import EventHandler
 from . import domain as mapper_domain
 
 
+class MapperCreated(EventHandler):
+    def handle(self, event: mapper_domain.MapperCreated):
+        logger.debug(f"MapperCreated.handle()")
+        self._repo.add(event.entity)
+
+
 class MapperUpdatedHandler(EventHandler):
     def handle(self, event: mapper_domain.MapperUpdated):
         logger.debug("MapperUpdated.handle()")
