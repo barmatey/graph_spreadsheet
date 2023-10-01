@@ -1,6 +1,5 @@
 from abc import abstractmethod, ABC
 from sortedcontainers import SortedList
-from typing import Optional
 from uuid import UUID, uuid4
 from pydantic import Field, PrivateAttr
 
@@ -51,12 +50,10 @@ class EventQueue:
 class Pubsub(Model):
     uuid: UUID
     _events = PrivateAttr()
-    _updated: Optional['PubsubUpdated'] = PrivateAttr()
 
     def __init__(self, **data):
         super().__init__(**data)
         self._events = EventQueue()
-        self._updated = None
 
     def __repr__(self):
         return self.__class__.__name__
@@ -70,7 +67,7 @@ class Pubsub(Model):
     def _on_updated(self, event: 'PubsubUpdated'):
         self._events.append(event)
 
-    def parse_events(self, _deep=False) -> list[Event]:
+    def parse_events(self, _deep=False) -> SortedList[Event]:
         return self._events.parse_events()
 
 

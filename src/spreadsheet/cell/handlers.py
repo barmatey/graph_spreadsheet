@@ -6,7 +6,7 @@ from . import domain as cell_domain
 
 class SheetCellCreatedHandler(EventHandler):
     def handle(self, event: cell_domain.SheetCellCreated):
-        logger.debug(f"SheetCellCreated.handle()")
+        # logger.debug(f"SheetCellCreated.handle()")
         self._repo.add(event.entity)
 
 

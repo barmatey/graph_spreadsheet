@@ -10,6 +10,7 @@ class CreateProfitSheetNodeHandler(CommandHandler):
     def execute(self, cmd: pf_domain.CreateProfitSheet) -> pf_domain.ProfitSheet:
         logger.info(f"CreateProfitSheetNode.execute()")
         profit_sheet = pf_usecases.CreateProfitSheetUsecase(cmd, self._repo).execute()
+        self.extend_events(profit_sheet.parse_events())
         return profit_sheet
 
 
@@ -19,7 +20,7 @@ class GroupSheetRowsAppendedHandler(EventHandler):
         source = self._repo.get_by_id(event.profit_sheet.meta.source_id)
         profit_sheet = event.profit_sheet
         profit_sheet = pf_usecases.AppendRowsUsecase(profit_sheet, event.rows, event.cells, source).execute()
-        self.extend_events(profit_sheet.parse_events(deep=True))
+        self.extend_events(profit_sheet.parse_events())
 
 
 class ProfitCellRecalculateRequestedHandler(EventHandler):

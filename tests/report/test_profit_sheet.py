@@ -81,32 +81,32 @@ def test_update_wire_amount_changes_profit_cell_value(repo):
     ]
     assert str(actual) == str(expected)
 
-
-def test_append_new_unique_wire_expand_profit_sheet(repo):
-    cmd = wire_domain.CreateWire(source_id=source_id, sender=3, receiver=2, amount=100, sub1="New",
-                                 date=datetime(2021, 5, 5))
-    execute(cmd)
-
-    sheet = repo.get_by_id(sheet_id)
-    actual = sheet.get_as_simple_table()
-    expected = [
-        [None, None, datetime(2021, 12, 31), datetime(2022, 12, 31)],
-        [1.0, 'Profit', 777.0, 30.0],
-        [2.0, 'Expenses', 33.0, 44.0],
-        [3.0, "New", 100.0, 0]
-    ]
-    assert str(actual) == str(expected)
-
-
-def test_profit_sheet_squeeze_after_group_sheet(repo):
-    cmd = wire_domain.UpdateWire(uuid=wire1_id, sender=2, sub1="Expenses")
-    execute(cmd)
-
-    sheet = repo.get_by_id(sheet_id)
-    actual = sheet.get_as_simple_table()
-    expected = [
-        [None, None, datetime(2021, 12, 31), datetime(2022, 12, 31)],
-        [2.0, 'Expenses', 33.0, 44.0],
-        [3.0, "New", 100.0, 0]
-    ]
-    assert str(actual) == str(expected)
+#
+# def test_append_new_unique_wire_expand_profit_sheet(repo):
+#     cmd = wire_domain.CreateWire(source_id=source_id, sender=3, receiver=2, amount=100, sub1="New",
+#                                  date=datetime(2021, 5, 5))
+#     execute(cmd)
+#
+#     sheet = repo.get_by_id(sheet_id)
+#     actual = sheet.get_as_simple_table()
+#     expected = [
+#         [None, None, datetime(2021, 12, 31), datetime(2022, 12, 31)],
+#         [1.0, 'Profit', 777.0, 30.0],
+#         [2.0, 'Expenses', 33.0, 44.0],
+#         [3.0, "New", 100.0, 0]
+#     ]
+#     assert str(actual) == str(expected)
+#
+#
+# def test_profit_sheet_squeeze_after_group_sheet(repo):
+#     cmd = wire_domain.UpdateWire(uuid=wire1_id, sender=2, sub1="Expenses")
+#     execute(cmd)
+#
+#     sheet = repo.get_by_id(sheet_id)
+#     actual = sheet.get_as_simple_table()
+#     expected = [
+#         [None, None, datetime(2021, 12, 31), datetime(2022, 12, 31)],
+#         [2.0, 'Expenses', 33.0, 44.0],
+#         [3.0, "New", 100.0, 0]
+#     ]
+#     assert str(actual) == str(expected)

@@ -18,7 +18,7 @@ class WireAppendedHandler(EventHandler):
         logger.debug(f"SourceWiresAppended.handle() => notify: {subs}")
         for sub in subs:
             sub.on_wires_appended(event.wire_nodes)
-            self.extend_events(sub.parse_events(deep=True))
+            self.extend_events(sub.parse_events())
 
 
 class WireUpdatedHandler(EventHandler):

@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from uuid import UUID, uuid4
 
+from loguru import logger
 from pydantic import Field
 
 from src.pubsub.domain import Pubsub, Command, PubsubUpdated, Event
@@ -16,6 +17,7 @@ class Mapper(Pubsub):
 
     def __init__(self, **data):
         super().__init__(**data)
+        logger.error("MAPPER CREATED")
         self._events.append(MapperCreated(entity=self))
 
     def __str__(self):
@@ -56,8 +58,8 @@ class MapperSubscriber(ABC):
 
 class MapperCreated(Event):
     entity: Mapper
-    priority: int = 10
     uuid: UUID = Field(default_factory=uuid4)
+    priority: int = 10
 
 
 class MapperUpdated(PubsubUpdated):
