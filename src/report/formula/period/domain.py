@@ -4,7 +4,7 @@ from uuid import UUID, uuid4
 
 from pydantic import Field
 
-from src.pubsub.domain import Pubsub
+from src.pubsub.domain import Pubsub, Event
 from src.report.wire import domain as wire_domain
 
 
@@ -12,6 +12,10 @@ class Period(Pubsub):
     from_date: datetime
     to_date: datetime
     uuid: UUID = Field(default_factory=uuid4)
+
+    def __init__(self, **data):
+        super().__init__(**data)
+        self._events.append(PeriodCreated(entity=self))
 
     def __repr__(self):
         return self.__str__()
@@ -31,3 +35,9 @@ class PeriodSubscriber(ABC):
     @abstractmethod
     def on_period_updated(self, old_value: Period, new_value: Period):
         raise NotImplemented
+
+
+class PeriodCreated(Event):
+    entity: Period
+    uuid: UUID = Field(default_factory=uuid4)
+    priority: int = 10

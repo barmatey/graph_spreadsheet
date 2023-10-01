@@ -8,6 +8,7 @@ from src.spreadsheet.cell.handlers import CELL_EVENT_HANDLERS
 from src.report.formula.mapper.handlers import MAPPER_EVENT_HANDlERS
 from src.report.sheet.profit_sheet.handlers import PROFIT_SHEET_EVENT_HANDLERS
 from src.spreadsheet.sindex.handlers import SINDEX_EVENT_HANDLERS
+from src.report.formula.period.handlers import PERIOD_EVENT_HANDLERS
 
 EVENT_HANDLERS = (
         COMMON_EVENT_HANDLERS
@@ -19,6 +20,7 @@ EVENT_HANDLERS = (
         | CELL_EVENT_HANDLERS
         | PROFIT_SHEET_EVENT_HANDLERS
         | SINDEX_EVENT_HANDLERS
+        | PERIOD_EVENT_HANDLERS
 )
 
 
