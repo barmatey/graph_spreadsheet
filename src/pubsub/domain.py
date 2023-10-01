@@ -54,7 +54,7 @@ class Pubsub(Model):
 
     def __init__(self, **data):
         super().__init__(**data)
-        self._events = []
+        self._events = EventQueue()
         self._updated = None
 
     def __repr__(self):

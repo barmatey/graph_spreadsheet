@@ -17,3 +17,4 @@ class Sindex(Pubsub):
 class SindexCreated(Event):
     entity: Sindex
     uuid: UUID = Field(default_factory=uuid4)
+    priority = 10

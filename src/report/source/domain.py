@@ -45,6 +45,7 @@ class WiresAppended(Event):
     wire_nodes: list[wire_domain.Wire]
     source_node: Source
     uuid: UUID = Field(default_factory=uuid4)
+    priority = 10
 
 
 class WireUpdated(PubsubUpdated):
@@ -52,3 +53,4 @@ class WireUpdated(PubsubUpdated):
     old_value: Wire
     new_value: Wire
     uuid: UUID = Field(default_factory=uuid4)
+    priority = 10

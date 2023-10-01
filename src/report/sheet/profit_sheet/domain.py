@@ -137,8 +137,10 @@ class GroupSheetRowsAppended(Event):
     rows: list[Sindex]
     cells: list[list[SheetCell]]
     uuid: UUID = Field(default_factory=uuid4)
+    priority = 10
 
 
 class ProfitCellRecalculateRequested(Event):
     node: ProfitCell
     uuid: UUID = Field(default_factory=uuid4)
+    priority = 10
