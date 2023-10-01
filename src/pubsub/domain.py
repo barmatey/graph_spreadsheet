@@ -37,11 +37,12 @@ class EventQueue:
             else:
                 self._pubsub_updated_events[key].old_value = event.new_value
         else:
-            self._events.append(event)
+            self._events.add(event)
 
     def parse_events(self) -> SortedList[Event]:
         events = self._events
-        events.extend(self._pubsub_updated_events.values())
+        for event in self._pubsub_updated_events.values():
+            events.add(event)
         self._events = SortedList(key=lambda x: x.priority)
         self._pubsub_updated_events = {}
         return events
@@ -85,9 +86,11 @@ class NodeSubscribed(Event):
     pubs: set[Pubsub]
     sub: Pubsub
     uuid: UUID = Field(default_factory=uuid4)
+    priority: int = 10
 
 
 class PubsubUpdated(Event):
     old_value: Pubsub
     new_value: Pubsub
     uuid: UUID = Field(default_factory=uuid4)
+    priority: int = 10

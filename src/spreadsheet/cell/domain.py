@@ -92,11 +92,11 @@ class SheetCell(Cell, Pubsub, CellSubscriber, CellTableSubscriber):
 class SheetCellCreated(Event):
     entity: SheetCell
     uuid: UUID = Field(default_factory=uuid4)
-    priority = 10
+    priority: int = 10
 
 
 class CellUpdated(PubsubUpdated):
     old_value: SheetCell
     new_value: SheetCell
     uuid: UUID = Field(default_factory=uuid4)
-    priority = 10
+    priority: int = 10

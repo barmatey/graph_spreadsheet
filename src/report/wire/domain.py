@@ -68,4 +68,4 @@ class WireUpdated(PubsubUpdated):
     old_value: Wire
     new_value: Wire
     uuid: UUID = Field(default_factory=uuid4)
-    priority = 10
+    priority: int = 10

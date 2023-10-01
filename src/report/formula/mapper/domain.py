@@ -54,4 +54,4 @@ class MapperUpdated(PubsubUpdated):
     old_value: Mapper
     new_value: Mapper
     uuid: UUID = Field(default_factory=uuid4)
-    priority = 10
+    priority: int = 10

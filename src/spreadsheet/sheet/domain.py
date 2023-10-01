@@ -104,7 +104,7 @@ class SheetSubscriber(ABC):
 class SheetCreated(Event):
     entity: Sheet
     uuid: UUID = Field(default_factory=uuid4)
-    priority = 10
+    priority: int = 10
 
 
 class RowsAppended(Event):
@@ -112,17 +112,17 @@ class RowsAppended(Event):
     cells: list[list[SheetCell]]
     rows: list[Sindex]
     uuid: UUID = Field(default_factory=uuid4)
-    priority = 10
+    priority: int = 10
 
 
 class RowsDeleted(Event):
     sheet: Sheet
     rows: list[list[SheetCell]]
     uuid: UUID = Field(default_factory=uuid4)
-    priority = 10
+    priority: int = 10
 
 
 class RowsReindexed(Event):
     sheet: Sheet
     uuid: UUID = Field(default_factory=uuid4)
-    priority = 10
+    priority: int = 10
