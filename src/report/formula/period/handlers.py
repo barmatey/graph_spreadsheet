@@ -7,7 +7,6 @@ from . import domain as period_domain
 
 class PeriodCreatedHandler(EventHandler):
     def handle(self, event: period_domain.PeriodCreated):
-        logger.debug("PeriodCreated.handle()")
         self._repo.add(event.entity)
 
 

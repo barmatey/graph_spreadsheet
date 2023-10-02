@@ -17,7 +17,6 @@ class CreateProfitSheetNodeHandler(CommandHandler):
 
 class GroupSheetRowsAppendedHandler(EventHandler):
     def handle(self, event: pf_domain.GroupSheetRowsAppended):
-        logger.debug(f"GroupSheetRowsAppended.handle()")
         source = self._repo.get_by_id(event.profit_sheet.meta.source_id)
         profit_sheet = event.profit_sheet
         pf_usecases.AppendRowsUsecase(profit_sheet, event.rows, event.cells, source).execute()
@@ -31,7 +30,6 @@ class ProfitCellRecalculateRequestedHandler(EventHandler):
             self._repo.get_node_parents(profit_cell)
         ).__next__()
         profit_cell.recalculate(source.wires)
-        logger.debug(f"ProfitCellRecalculateRequested.handle()")
 
 
 PROFIT_SHEET_COMMAND_HANDLERS = {

@@ -17,17 +17,15 @@ class RowsAppendedHandler(EventHandler):
 
         # Notify
         subs: set[sheet_domain.SheetSubscriber] = self._repo.get_node_children(event.sheet)
-        logger.debug(f"RowsAppended.handle() => notify: {subs}")
         for sub in subs:
             sub.on_rows_appended(event.rows, event.cells)
 
 
 class RowsReindexedHandler(EventHandler):
     def handle(self, event: sheet_domain.RowsReindexed):
-        logger.debug("RowsReindexed.handle()")
-        for i in range(0, event.sheet.size[0]):
-            for j in range(0, event.sheet.size[1]):
-                self._repo.update(event.sheet.table[i][j])
+        pass
+
+
 
 
 SHEET_EVENT_HANDLERS = {

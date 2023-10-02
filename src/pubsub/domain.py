@@ -1,4 +1,6 @@
 from abc import abstractmethod, ABC
+
+from loguru import logger
 from sortedcontainers import SortedList
 from uuid import UUID, uuid4
 from pydantic import Field, PrivateAttr
@@ -36,7 +38,7 @@ class EventQueue:
     def append(self, event: Event, unique=False):
         if unique:
             self._uniques[type(event)] = event
-        if isinstance(event, PubsubUpdated):
+        elif isinstance(event, PubsubUpdated):
             key = type(event)
             if self._pubsub_updated_events.get(key) is None:
                 self._pubsub_updated_events[key] = event
@@ -44,6 +46,7 @@ class EventQueue:
                 self._pubsub_updated_events[key].old_value = event.new_value
         else:
             self._events.add(event)
+
 
     def parse_events(self) -> SortedList[Event]:
         events = self._events

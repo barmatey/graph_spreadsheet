@@ -61,10 +61,9 @@ class Sheet(Pubsub):
                 new_table.append(self.table[i])
                 new_rows.append(self.rows[i])
             else:
-                pass
-                # self.rows[i].delete()
-                # for cell in self.table[i]:
-                #     cell.delete()
+                self.rows[i].delete()
+                for cell in self.table[i]:
+                    cell.delete()
 
         self.table = new_table
         self.rows = new_rows

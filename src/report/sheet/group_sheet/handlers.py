@@ -11,8 +11,6 @@ class GetSheetByIdHandler(CommandHandler):
 
 class CreateGroupSheetHandler(CommandHandler):
     def execute(self, cmd: group_sheet_domain.CreateGroupSheet) -> group_sheet_domain.GroupSheet:
-        logger.error("CreateGroup.execute()")
-
         # Get wires
         source = self._repo.get_by_id(cmd.source_id)
 
