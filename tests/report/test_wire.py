@@ -3,7 +3,7 @@ from uuid import uuid4
 import pytest
 
 from src.messagebus.msgbus import Msgbus
-from src.pubsub.domain import Pubsub
+from src.pubsub.domain import Pubsub, EventQueue
 from src.pubsub.repository import GraphRepo, GraphRepoFake
 from src.report.source.domain import CreateSource, Source
 from src.report.wire.domain import CreateWire, Wire
@@ -68,7 +68,8 @@ def test_double_update_wire_create_one_event():
     wire = Wire(sender=1, receiver=1, amount=22)
     wire.set_node_fields(sender=22)
     wire.set_node_fields(receiver=12)
-    events = wire.parse_events()
+    event_queue = EventQueue()
+    events = event_queue.parse_events()
     assert wire.sender == 22
     assert wire.receiver == 12
     assert len(events) == 2
