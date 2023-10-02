@@ -99,8 +99,8 @@ def test_append_new_unique_wire_expand_profit_sheet(repo):
 
 
 def test_profit_sheet_squeeze_after_group_sheet(repo):
-    cmd = wire_domain.UpdateWire(uuid=wire1_id, sender=2, sub1="Expenses")
-    execute(cmd)
+    execute(wire_domain.UpdateWire(uuid=wire1_id, sender=2, sub1="Expenses"))
+    execute(wire_domain.UpdateWire(uuid=wire2_id, sender=2, sub1="Expenses"))
 
     sheet = repo.get_by_id(sheet_id)
     actual = sheet.get_as_simple_table()
