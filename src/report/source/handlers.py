@@ -1,6 +1,7 @@
 from loguru import logger
 
 from src.pubsub.handlers import CommandHandler, EventHandler
+from src.report.wire import domain as wire_domain
 from . import domain as source_domain
 
 
@@ -14,6 +15,11 @@ class CreateSourceHandler(CommandHandler):
 class SourceCreatedHandler(EventHandler):
     def handle(self, event: source_domain.SourceCreated):
         self._repo.add(event.entity)
+
+
+class SourceDeletedHandler(EventHandler):
+    def handle(self, event: source_domain.SourceDeleted):
+        raise NotImplemented
 
 
 class WireAppendedHandler(EventHandler):

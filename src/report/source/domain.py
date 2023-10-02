@@ -51,6 +51,12 @@ class SourceCreated(Event):
     priority: int = 10
 
 
+class SourceDeleted(Event):
+    entity: Source
+    uuid: UUID = Field(default_factory=uuid4)
+    priority: int = 10
+
+
 class WiresAppended(Event):
     wire_nodes: list[wire_domain.Wire]
     source_node: Source
