@@ -1,8 +1,9 @@
+from abc import abstractmethod
 from uuid import UUID, uuid4
 
 from pydantic import Field
 
-from src.pubsub.domain import Event, Pubsub
+from src.pubsub.domain import Event, Pubsub, Subscriber
 
 
 class Sindex(Pubsub):
@@ -14,7 +15,19 @@ class Sindex(Pubsub):
         self._events.append(SindexCreated(entity=self))
 
 
+class SindexSubscriber(Subscriber):
+    @abstractmethod
+    def on_sindex_deleted(self, pub: Sindex):
+        raise NotImplemented
+
+
 class SindexCreated(Event):
+    entity: Sindex
+    uuid: UUID = Field(default_factory=uuid4)
+    priority: int = 10
+
+
+class SindexDeleted(Event):
     entity: Sindex
     uuid: UUID = Field(default_factory=uuid4)
     priority: int = 10

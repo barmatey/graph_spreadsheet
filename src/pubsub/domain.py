@@ -23,9 +23,7 @@ class Event(Model):
 
 
 class Subscriber(ABC):
-    @abstractmethod
-    def parse_events(self) -> list[Event]:
-        raise NotImplemented
+    pass
 
 
 @singleton

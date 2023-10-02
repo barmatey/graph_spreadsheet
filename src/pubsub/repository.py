@@ -17,6 +17,11 @@ class NodeRepoFake(Base):
             raise Exception(f"already exist: {type(node)}")
         self._node_data[node.uuid] = node
 
+    def remove(self, pub: Pubsub):
+        if self._node_data.get(pub.uuid) is not None:
+            raise Exception
+        del self._node_data[pub.uuid]
+
     def update(self, node: Pubsub):
         if self._node_data.get(node.uuid) is None:
             raise LookupError(f"node: {node}")
@@ -35,6 +40,11 @@ class ChildrenRepoFake(Base):
             self._children_data[uuid] = set()
         self._children_data[uuid] = self._children_data[uuid].union(children)
 
+    def remove_node_children(self, uuid: UUID):
+        if self._children_data.get(uuid) is None:
+            raise Exception
+        del self._children_data[uuid]
+
 
 class ParentRepoFake(Base):
     def get_node_parents(self, uuid: UUID) -> set[UUID]:
@@ -44,6 +54,11 @@ class ParentRepoFake(Base):
         if self._parent_data.get(uuid) is None:
             self._parent_data[uuid] = set()
         self._parent_data[uuid] = self._parent_data[uuid].union(parents)
+
+    def remove_node_parents(self, uuid: UUID):
+        if self._parent_data.get(uuid) is None:
+            raise Exception
+        del self._children_data[uuid]
 
 
 class GraphRepo(NodeRepoFake, ParentRepoFake, ChildrenRepoFake):
@@ -56,6 +71,11 @@ class GraphRepoFake(GraphRepo):
         super().add(node)
         self.append_node_parents(node, set())
         self.append_node_children(node, set())
+
+    def remove(self, pub: Pubsub):
+        super().remove(pub)
+        self.remove_node_children(pub.uuid)
+        self.remove_node_parents(pub.uuid)
 
     def append_node_parents(self, node: Pubsub, parents: set[Pubsub]):
         node = node.uuid

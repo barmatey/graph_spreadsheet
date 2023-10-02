@@ -25,7 +25,14 @@ class RowsAppendedHandler(EventHandler):
 class RowsDeletedHandler(EventHandler):
     def handle(self, event: sheet_domain.RowsDeleted):
         logger.warning("RowsDeleted.handle()")
-        raise Exception
+
+        # Delete from repo
+        for row in event.rows:
+            pass
+        for cells in event.table:
+            for cell in cells:
+                pass
+
 
 
 class RowsReindexedHandler(EventHandler):
