@@ -71,5 +71,5 @@ def test_double_update_wire_create_one_event():
     events = wire.parse_events()
     assert wire.sender == 22
     assert wire.receiver == 12
-    assert len(events) == 1
+    assert len(events) == 2
 

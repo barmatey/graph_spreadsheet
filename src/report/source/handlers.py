@@ -4,12 +4,16 @@ from src.pubsub.handlers import CommandHandler, EventHandler
 from . import domain as source_domain
 
 
-class CreateSourceNodeHandler(CommandHandler):
+class CreateSourceHandler(CommandHandler):
     def execute(self, cmd: source_domain.CreateSource) -> source_domain.Source:
         logger.info("CreateSourceNode.execute()")
         source_node = source_domain.Source(uuid=cmd.uuid, title=cmd.title)
-        self._repo.add(source_node)
         return source_node
+
+
+class SourceCreatedHandler(EventHandler):
+    def handle(self, event: source_domain.SourceCreated):
+        self._repo.add(event.entity)
 
 
 class WireAppendedHandler(EventHandler):
@@ -29,10 +33,11 @@ class WireUpdatedHandler(EventHandler):
 
 
 SOURCE_COMMAND_HANDLERS = {
-    source_domain.CreateSource: CreateSourceNodeHandler,
+    source_domain.CreateSource: CreateSourceHandler,
 }
 
 SOURCE_EVENT_HANDLERS = {
+    source_domain.SourceCreated: SourceCreatedHandler,
     source_domain.WiresAppended: WireAppendedHandler,
     source_domain.WireUpdated: WireUpdatedHandler,
 }

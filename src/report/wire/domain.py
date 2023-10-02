@@ -22,6 +22,10 @@ class Wire(Pubsub):
     comment: str = ""
     uuid: UUID = Field(default_factory=uuid4)
 
+    def __init__(self, **data):
+        super().__init__(**data)
+        self._events.append(WireCreated(entity=self))
+
     def set_node_fields(self, **kwargs):
         old_value = self.model_copy(deep=True)
         for key, value in kwargs.items():
@@ -62,6 +66,12 @@ class UpdateWire(Command):
     comment: typing.Optional[str] = None
     currency: typing.Optional[str] = None
     date: typing.Optional[datetime] = None
+
+
+class WireCreated(Event):
+    entity: Wire
+    uuid: UUID = Field(default_factory=uuid4)
+    priority: int = 10
 
 
 class WireUpdated(PubsubUpdated):

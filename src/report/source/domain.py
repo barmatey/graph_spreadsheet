@@ -13,6 +13,10 @@ class Source(Pubsub, WireSubscriber):
     wires: list[wire_domain.Wire] = Field(default_factory=list)
     uuid: UUID = Field(default_factory=uuid4)
 
+    def __init__(self, **data):
+        super().__init__(**data)
+        self._events.append(SourceCreated(entity=self))
+
     def follow_wires(self, wires: set[Wire]):
         self.wires.extend(wires)
         self._on_subscribed(wires)
@@ -39,6 +43,12 @@ class SourceSubscriber(ABC):
 class CreateSource(Command):
     title: str
     uuid: UUID = Field(default_factory=uuid4)
+
+
+class SourceCreated(Event):
+    entity: Source
+    uuid: UUID = Field(default_factory=uuid4)
+    priority: int = 10
 
 
 class WiresAppended(Event):
