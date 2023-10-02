@@ -34,6 +34,12 @@ class Msgbus:
             while self._events:
                 event = self._events.popleft()
                 handler = get_event_handler(event)
-                handler.handle(event)
+                try:
+                    handler.handle(event)
+                except Exception as err:
+                    logger.error(f"EXCEPTION: {err}")
+                    for e in self._events:
+                        logger.error(e)
+                    raise err
                 self._events.extend(self._event_queue.parse_events())
                 self._commands.extend(handler.parse_commands())

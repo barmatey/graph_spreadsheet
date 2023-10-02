@@ -9,7 +9,9 @@ from . import usecases as pf_usecases
 class CreateProfitSheetNodeHandler(CommandHandler):
     def execute(self, cmd: pf_domain.CreateProfitSheet) -> pf_domain.ProfitSheet:
         logger.info(f"CreateProfitSheetNode.execute()")
-        profit_sheet = pf_usecases.CreateProfitSheetUsecase(cmd, self._repo).execute()
+        group = self._repo.get_by_id(cmd.group_id)
+        source = self._repo.get_by_id(cmd.source_id)
+        profit_sheet = pf_usecases.CreateProfitSheetUsecase(cmd, group, source).execute()
         return profit_sheet
 
 

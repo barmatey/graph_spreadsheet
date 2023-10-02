@@ -9,11 +9,10 @@ from . import domain as pf_domain
 
 
 class CreateProfitSheetUsecase:
-    def __init__(self, cmd: pf_domain.CreateProfitSheet, repo):
+    def __init__(self, cmd: pf_domain.CreateProfitSheet, group: group_domain.GroupSheet, source: source_domain.Source):
         self._cmd = cmd
-        self._repo = repo
-        self._group_sheet: group_domain.GroupSheet = self._repo.get_by_id(cmd.group_id)
-        self._source: source_domain.Source = self._repo.get_by_id(cmd.source_id)
+        self._group_sheet: group_domain.GroupSheet = group
+        self._source: source_domain.Source = source
         self._periods: list[period_domain.Period] | None = None
         self._mappers: list[mapper_domain.Mapper] | None = None
         self._result: pf_domain.ProfitSheet | None = None
