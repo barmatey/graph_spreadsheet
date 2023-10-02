@@ -38,7 +38,11 @@ class CellSubscriber(ABC):
         raise NotImplemented
 
     @abstractmethod
-    def on_updated_cell(self, old_value: Cell, new_value: Cell):
+    def on_cell_updated(self, old_value: Cell, new_value: Cell):
+        raise NotImplemented
+
+    @abstractmethod
+    def on_cell_deleted(self, pub: Cell):
         raise NotImplemented
 
 
@@ -78,7 +82,7 @@ class SheetCell(Cell, Pubsub, CellSubscriber, CellTableSubscriber):
         self._on_subscribed(pubs)
         self._on_updated(CellUpdated(old_value=old_value, new_value=self))
 
-    def on_updated_cell(self, _old_value: Cell, new_value: Cell):
+    def on_cell_updated(self, _old_value: Cell, new_value: Cell):
         old_value = self.model_copy(deep=True)
         self.value = new_value.value
         self._on_updated(CellUpdated(old_value=old_value, new_value=self))
@@ -90,6 +94,12 @@ class SheetCell(Cell, Pubsub, CellSubscriber, CellTableSubscriber):
 
 
 class SheetCellCreated(Event):
+    entity: SheetCell
+    uuid: UUID = Field(default_factory=uuid4)
+    priority: int = 10
+
+
+class SheetCellDeleted(Event):
     entity: SheetCell
     uuid: UUID = Field(default_factory=uuid4)
     priority: int = 10

@@ -20,7 +20,7 @@ class SindexDeletedHandler(EventHandler):
         self._repo.remove(event.entity)
 
 
-
 SINDEX_EVENT_HANDLERS = {
     sindex_domain.SindexCreated: SindexCreatedHandler,
+    sindex_domain.SindexDeleted: SindexDeletedHandler,
 }
