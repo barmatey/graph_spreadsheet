@@ -40,7 +40,6 @@ class WireUpdatedHandler(EventHandler):
 
         # Update subscribers
         subs: set[wire_domain.WireSubscriber] = self._repo.get_node_children(event.new_value)
-        logger.debug(f"{event.new_value.__class__.__name__}UpdatedHandler => notify: {subs}")
         for sub in subs:
             sub.on_wire_updated(event.old_value, event.new_value)
 

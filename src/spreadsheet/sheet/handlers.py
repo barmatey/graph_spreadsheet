@@ -6,7 +6,6 @@ from src.spreadsheet.sheet import domain as sheet_domain
 
 class SheetCreatedHandler(EventHandler):
     def handle(self, event: sheet_domain.SheetCreated):
-        logger.debug(f"SheetCreated.handle()")
         self._repo.add(event.entity)
 
 
