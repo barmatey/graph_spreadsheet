@@ -22,19 +22,6 @@ class RowsAppendedHandler(EventHandler):
             sub.on_rows_appended(event.rows, event.cells)
 
 
-class RowsDeletedHandler(EventHandler):
-    def handle(self, event: sheet_domain.RowsDeleted):
-        logger.warning("RowsDeleted.handle()")
-
-        # Delete from repo
-        for row in event.rows:
-            pass
-        for cells in event.table:
-            for cell in cells:
-                pass
-
-
-
 class RowsReindexedHandler(EventHandler):
     def handle(self, event: sheet_domain.RowsReindexed):
         logger.debug("RowsReindexed.handle()")
@@ -46,6 +33,5 @@ class RowsReindexedHandler(EventHandler):
 SHEET_EVENT_HANDLERS = {
     sheet_domain.SheetCreated: SheetCreatedHandler,
     sheet_domain.RowsAppended: RowsAppendedHandler,
-    sheet_domain.RowsDeleted: RowsDeletedHandler,
     sheet_domain.RowsReindexed: RowsReindexedHandler,
 }

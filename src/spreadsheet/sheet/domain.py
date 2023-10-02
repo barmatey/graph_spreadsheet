@@ -54,19 +54,22 @@ class Sheet(Pubsub):
 
     def delete_rows(self, indexes: list[int]):
         hashes = {index: 1 for index in indexes}
-        deleted_rows: list[Sindex] = []
-        deleted_cells: list[list[SheetCell]] = []
         new_table = []
+        new_rows = []
         for i, row in enumerate(self.table):
             if hashes.get(i) is None:
                 new_table.append(self.table[i])
+                new_rows.append(self.rows[i])
             else:
-                deleted_rows.append(self.rows[i])
-                deleted_cells.append(self.table[i])
+                pass
+                # self.rows[i].delete()
+                # for cell in self.table[i]:
+                #     cell.delete()
+
         self.table = new_table
+        self.rows = new_rows
         self.size = (len(new_table), self.size[1] if len(new_table) else 0)
         self.reindex()
-        self._events.append(RowsDeleted(sheet=self, rows=deleted_rows, table=deleted_cells))
 
     def reindex(self):
         for i in range(0, self.size[0]):
@@ -96,14 +99,6 @@ class RowsAppended(Event):
     sheet: Sheet
     cells: list[list[SheetCell]]
     rows: list[Sindex]
-    uuid: UUID = Field(default_factory=uuid4)
-    priority: int = 10
-
-
-class RowsDeleted(Event):
-    sheet: Sheet
-    rows: list[Sindex]
-    table: list[list[SheetCell]]
     uuid: UUID = Field(default_factory=uuid4)
     priority: int = 10
 

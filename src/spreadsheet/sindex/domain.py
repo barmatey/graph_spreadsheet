@@ -33,4 +33,4 @@ class SindexCreated(Event):
 class SindexDeleted(Event):
     entity: Sindex
     uuid: UUID = Field(default_factory=uuid4)
-    priority: int = 10
+    priority: int = 30

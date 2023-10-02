@@ -18,7 +18,7 @@ class NodeRepoFake(Base):
         self._node_data[node.uuid] = node
 
     def remove(self, pub: Pubsub):
-        if self._node_data.get(pub.uuid) is not None:
+        if self._node_data.get(pub.uuid) is None:
             raise Exception
         del self._node_data[pub.uuid]
 
@@ -58,7 +58,7 @@ class ParentRepoFake(Base):
     def remove_node_parents(self, uuid: UUID):
         if self._parent_data.get(uuid) is None:
             raise Exception
-        del self._children_data[uuid]
+        del self._parent_data[uuid]
 
 
 class GraphRepo(NodeRepoFake, ParentRepoFake, ChildrenRepoFake):

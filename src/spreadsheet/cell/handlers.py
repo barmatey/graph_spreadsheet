@@ -13,7 +13,7 @@ class SheetCellCreatedHandler(EventHandler):
 class SheetCellDeletedHandler(EventHandler):
     def handle(self, event: cell_domain.CellDeleted):
         subs: set[cell_domain.CellSubscriber] = self._repo.get_node_children(event.entity)
-        logger.debug(f"SheetCellDeleted.handle() => notify: {subs}")
+        logger.debug(f"CellDeleted.handle() => notify: {subs}")
         for sub in subs:
             sub.on_cell_deleted(event.entity)
 

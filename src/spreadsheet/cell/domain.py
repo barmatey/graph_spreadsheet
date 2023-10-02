@@ -108,7 +108,7 @@ class CellCreated(Event):
 class CellDeleted(Event):
     entity: SheetCell
     uuid: UUID = Field(default_factory=uuid4)
-    priority: int = 10
+    priority: int = 30
 
 
 class CellUpdated(PubsubUpdated):
