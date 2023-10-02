@@ -73,9 +73,6 @@ class Pubsub(Model):
     def _on_updated(self, event: 'PubsubUpdated'):
         self._events.append(event)
 
-    def parse_events(self, _deep=False) -> SortedList[Event]:
-        return self._events.parse_events()
-
 
 class NodeSubscribed(Event):
     pubs: set[Pubsub]

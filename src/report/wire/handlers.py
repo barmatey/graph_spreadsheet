@@ -5,7 +5,7 @@ from . import domain as wire_domain
 from src.report.source import domain as source_domain
 
 
-class CreateWireNodeHandler(CommandHandler):
+class CreateWireHandler(CommandHandler):
     def execute(self, cmd: wire_domain.CreateWire) -> wire_domain.Wire:
         logger.info("CreateWireNode.execute()")
 
@@ -15,7 +15,6 @@ class CreateWireNodeHandler(CommandHandler):
         # Append wire to source
         source_node: source_domain.Source = self._repo.get_by_id(cmd.source_id)
         source_node.follow_wires({wire_node})
-
         return wire_node
 
 
@@ -24,7 +23,7 @@ class UpdateWireHandler(CommandHandler):
         logger.info("UpdateWire.execute()")
 
         # Update node
-        wire_node = self._repo.get_by_id(cmd.uuid).model_copy(deep=True)
+        wire_node = self._repo.get_by_id(cmd.uuid)
         wire_node.set_node_fields(**cmd.model_dump(exclude_none=True, exclude={"uuid"}))
         return wire_node
 
@@ -47,7 +46,7 @@ class WireUpdatedHandler(EventHandler):
 
 
 WIRE_COMMAND_HANDLERS = {
-    wire_domain.CreateWire: CreateWireNodeHandler,
+    wire_domain.CreateWire: CreateWireHandler,
     wire_domain.UpdateWire: UpdateWireHandler,
 }
 
