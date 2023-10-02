@@ -5,13 +5,13 @@ from . import domain as cell_domain
 
 
 class SheetCellCreatedHandler(EventHandler):
-    def handle(self, event: cell_domain.SheetCellCreated):
+    def handle(self, event: cell_domain.CellCreated):
         # logger.debug(f"SheetCellCreated.handle()")
         self._repo.add(event.entity)
 
 
 class SheetCellDeletedHandler(EventHandler):
-    def handle(self, event: cell_domain.SheetCellDeleted):
+    def handle(self, event: cell_domain.CellDeleted):
         subs: set[cell_domain.CellSubscriber] = self._repo.get_node_children(event.entity)
         logger.debug(f"SheetCellDeleted.handle() => notify: {subs}")
         for sub in subs:
@@ -30,7 +30,7 @@ class SheetCellUpdatedHandler(EventHandler):
 
 
 CELL_EVENT_HANDLERS = {
-    cell_domain.SheetCellCreated: SheetCellCreatedHandler,
-    cell_domain.SheetCellDeleted: SheetCellDeletedHandler,
+    cell_domain.CellCreated: SheetCellCreatedHandler,
+    cell_domain.CellDeleted: SheetCellDeletedHandler,
     cell_domain.CellUpdated: SheetCellUpdatedHandler,
 }

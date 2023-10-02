@@ -19,7 +19,6 @@ class Sheet(Pubsub):
     rows: list[Sindex] = Field(default_factory=list)
     cols: list[Sindex] = Field(default_factory=list)
     uuid: UUID = Field(default_factory=uuid4)
-    _reindexed: bool = False
 
     def __init__(self, **data):
         super().__init__(**data)
@@ -74,7 +73,7 @@ class Sheet(Pubsub):
             for j in range(0, self.size[1]):
                 self.table[i][j].row_index.position = i
                 self.table[i][j].col_index.position = j
-        self._reindexed = True
+        self._events.append(RowsReindexed(sheet=self), unique=True)
 
 
 class SheetSubscriber(ABC):

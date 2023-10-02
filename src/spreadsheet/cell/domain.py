@@ -59,7 +59,10 @@ class CellTableSubscriber(ABC):
 class SheetCell(Cell, Pubsub, CellSubscriber, CellTableSubscriber):
     def __init__(self, **data: Any):
         super().__init__(**data)
-        self._events.append(SheetCellCreated(entity=self))
+        self._events.append(CellCreated(entity=self))
+
+    def on_cell_deleted(self, pub: Cell):
+        raise NotImplemented
 
     def get_cell(self) -> Cell:
         return self
@@ -92,14 +95,17 @@ class SheetCell(Cell, Pubsub, CellSubscriber, CellTableSubscriber):
         self.value = new_table[self.index[0]][self.index[1]].value
         self._on_updated(CellUpdated(old_value=old_value, new_value=self))
 
+    def delete(self):
+        self._events.append(CellDeleted(entity=self), unique=True)
 
-class SheetCellCreated(Event):
+
+class CellCreated(Event):
     entity: SheetCell
     uuid: UUID = Field(default_factory=uuid4)
     priority: int = 10
 
 
-class SheetCellDeleted(Event):
+class CellDeleted(Event):
     entity: SheetCell
     uuid: UUID = Field(default_factory=uuid4)
     priority: int = 10

@@ -35,12 +35,12 @@ class EventHandler(BaseHandler):
 
 
 class NodeSubscribedHandler(EventHandler):
-    def handle(self, event: domain.NodeSubscribed):
+    def handle(self, event: domain.PubsubSubscribed):
         self._repo.append_node_parents(event.sub, event.pubs)
         for pub in event.pubs:
             self._repo.append_node_children(pub, {event.sub})
 
 
 COMMON_EVENT_HANDLERS = {
-    domain.NodeSubscribed: NodeSubscribedHandler,
+    domain.PubsubSubscribed: NodeSubscribedHandler,
 }

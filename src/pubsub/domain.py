@@ -72,13 +72,13 @@ class Pubsub(Model):
         return self.__class__.__name__
 
     def _on_subscribed(self, pubs: set['Pubsub']):
-        self._events.append(NodeSubscribed(sub=self, pubs=pubs))
+        self._events.append(PubsubSubscribed(sub=self, pubs=pubs))
 
     def _on_updated(self, event: 'PubsubUpdated'):
         self._events.append(event)
 
 
-class NodeSubscribed(Event):
+class PubsubSubscribed(Event):
     pubs: set[Pubsub]
     sub: Pubsub
     uuid: UUID = Field(default_factory=uuid4)
