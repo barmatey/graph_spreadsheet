@@ -27,8 +27,11 @@ class EventQueue:
     def __init__(self):
         self._events = SortedList(key=lambda x: x.priority)
         self._pubsub_updated_events = {}
+        self._uniques = {}
 
-    def append(self, event: Event):
+    def append(self, event: Event, unique=False):
+        if unique:
+            self._uniques[event.uuid] = event
         if isinstance(event, PubsubUpdated):
             key = type(event)
             if self._pubsub_updated_events.get(key) is None:
@@ -40,10 +43,13 @@ class EventQueue:
 
     def parse_events(self) -> SortedList[Event]:
         events = self._events
+        for event in self._uniques.values():
+            events.add(event)
         for event in self._pubsub_updated_events.values():
             events.add(event)
         self._events = SortedList(key=lambda x: x.priority)
         self._pubsub_updated_events = {}
+        self._uniques = {}
         return events
 
 

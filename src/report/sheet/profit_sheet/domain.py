@@ -73,20 +73,20 @@ class ProfitCell(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber
     def follow_mappers(self, pubs: set[Mapper]):
         for pub in pubs:
             self.mapper = pub
-        self._recalculated = True
+        self._events.append(ProfitCellRecalculateRequested(node=self), unique=True)
 
     def on_mapper_update(self, old_value: Mapper, new_value: Mapper):
         self.mapper = new_value
-        self._recalculated = True
+        self._events.append(ProfitCellRecalculateRequested(node=self), unique=True)
 
     def follow_periods(self, pubs: set[Period]):
         for pub in pubs:
             self.period = pub
-        self._recalculated = True
+        self._events.append(ProfitCellRecalculateRequested(node=self), unique=True)
 
     def on_period_updated(self, old_value: Period, new_value: Period):
         self.period = new_value
-        self._recalculated = True
+        self._events.append(ProfitCellRecalculateRequested(node=self), unique=True)
 
     def recalculate(self, wires: set[Wire]):
         old_value = self.model_copy(deep=True)

@@ -17,7 +17,6 @@ class Mapper(Pubsub):
 
     def __init__(self, **data):
         super().__init__(**data)
-        logger.error("MAPPER CREATED")
         self._events.append(MapperCreated(entity=self))
 
     def __str__(self):
