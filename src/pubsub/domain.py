@@ -47,7 +47,6 @@ class EventQueue:
         else:
             self._events.add(event)
 
-
     def parse_events(self) -> SortedList[Event]:
         events = self._events
         for event in self._uniques.values():

@@ -52,7 +52,7 @@ class CellTableSubscriber(ABC):
         raise NotImplemented
 
     @abstractmethod
-    def on_updated_cell_table(self, old_table: CellTable, new_table: CellTable):
+    def on_cell_table_updated(self, old_table: CellTable, new_table: CellTable):
         raise NotImplemented
 
 
@@ -90,7 +90,7 @@ class SheetCell(Cell, Pubsub, CellSubscriber, CellTableSubscriber):
         self.value = new_value.value
         self._on_updated(CellUpdated(old_value=old_value, new_value=self))
 
-    def on_updated_cell_table(self, _old_table: CellTable, new_table: CellTable):
+    def on_cell_table_updated(self, _old_table: CellTable, new_table: CellTable):
         old_value = self.model_copy(deep=True)
         self.value = new_table[self.index[0]][self.index[1]].value
         self._on_updated(CellUpdated(old_value=old_value, new_value=self))
