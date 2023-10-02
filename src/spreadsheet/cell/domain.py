@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Any
 from uuid import UUID, uuid4
 
-from pydantic import Field, PrivateAttr
+from pydantic import Field
 
 from src.core.cell import CellValue
 from src.core.pydantic_model import Model
