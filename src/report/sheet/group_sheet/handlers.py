@@ -20,7 +20,6 @@ class CreateGroupSheetHandler(CommandHandler):
         plan_items = group_sheet_domain.PlanItems(ccols=cmd.ccols)
         group_sheet = group_sheet_domain.GroupSheet(uuid=cmd.uuid, plan_items=plan_items)
         group_sheet.follow_source(source)
-        self.extend_events(group_sheet.parse_events())
 
         return group_sheet
 

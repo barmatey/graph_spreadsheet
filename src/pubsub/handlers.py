@@ -13,16 +13,8 @@ class BaseHandler:
         self._events: deque[domain.Event] = deque()
         self._commands: deque[domain.Command] = deque()
 
-    def extend_events(self, events: list[domain.Event]):
-        self._events.extend(events)
-
     def extend_commands(self, cmds: list[domain.Command]):
         self._commands.extend(cmds)
-
-    def parse_events(self) -> deque[domain.Event]:
-        events = self._events
-        self._events = deque()
-        return events
 
     def parse_commands(self) -> deque[domain.Command]:
         cmds = self._commands

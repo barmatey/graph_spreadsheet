@@ -20,7 +20,6 @@ class RowsAppendedHandler(EventHandler):
         logger.debug(f"RowsAppended.handle() => notify: {subs}")
         for sub in subs:
             sub.on_rows_appended(event.rows, event.cells)
-            self.extend_events(sub.parse_events())
 
 
 class RowsDeletedHandler(EventHandler):

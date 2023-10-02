@@ -17,8 +17,6 @@ class CreateWireNodeHandler(CommandHandler):
         source_node: source_domain.Source = self._repo.get_by_id(cmd.source_id)
         source_node.follow_wires({wire_node})
 
-        self.extend_events(source_node.parse_events())
-
         return wire_node
 
 
@@ -29,7 +27,6 @@ class UpdateWireHandler(CommandHandler):
         # Update node
         wire_node = self._repo.get_by_id(cmd.uuid).model_copy(deep=True)
         wire_node.set_node_fields(**cmd.model_dump(exclude_none=True, exclude={"uuid"}))
-        self.extend_events(wire_node.parse_events())
         return wire_node
 
 
@@ -43,7 +40,6 @@ class WireUpdatedHandler(EventHandler):
         logger.debug(f"{event.new_value.__class__.__name__}UpdatedHandler => notify: {subs}")
         for sub in subs:
             sub.on_wire_updated(event.old_value, event.new_value)
-            self.extend_events(sub.parse_events())
 
 
 WIRE_COMMAND_HANDLERS = {

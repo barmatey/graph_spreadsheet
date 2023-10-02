@@ -17,7 +17,6 @@ class SheetCellUpdatedHandler(EventHandler):
         logger.debug(f"CellUpdated.handle() => notify: {subs}")
         for sub in subs:
             sub.on_updated_cell(event.old_value, event.new_value)
-            self.extend_events(sub.pase_events())
 
 
 CELL_EVENT_HANDLERS = {
