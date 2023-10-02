@@ -111,4 +111,4 @@ class RowsDeleted(Event):
 class RowsReindexed(Event):
     sheet: Sheet
     uuid: UUID = Field(default_factory=uuid4)
-    priority: int = 10
+    priority: int = 30
