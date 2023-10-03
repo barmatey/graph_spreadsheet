@@ -37,6 +37,8 @@ class EventQueue:
 
     def append(self, event: Event, unique=False, unique_key: str = None):
         if unique:
+            if unique_key is None:
+                raise Exception("unique_key is None")
             self._uniques[unique_key] = event
         elif isinstance(event, PubsubUpdated):
             key = type(event)

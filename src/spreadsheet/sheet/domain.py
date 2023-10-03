@@ -75,7 +75,7 @@ class Sheet(Pubsub):
             for j in range(0, self.size[1]):
                 self.table[i][j].row_index.position = i
                 self.table[i][j].col_index.position = j
-        self._events.append(RowsReindexed(sheet=self), unique=True)
+        self._events.append(RowsReindexed(sheet=self), unique=True, unique_key=f"{self.uuid}")
 
 
 class SheetSubscriber(ABC):
