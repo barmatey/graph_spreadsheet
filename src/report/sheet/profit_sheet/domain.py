@@ -45,7 +45,6 @@ class ProfitCell(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber
     mapper: Mapper | None = None
     period: Period | None = None
     uuid: UUID = Field(default_factory=uuid4)
-    _recalculated: bool = False
 
     def follow_source(self, source: Source):
         old_value = self.model_copy(deep=True)
@@ -73,20 +72,20 @@ class ProfitCell(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber
     def follow_mappers(self, pubs: set[Mapper]):
         for pub in pubs:
             self.mapper = pub
-        self._events.append(ProfitCellRecalculateRequested(node=self), unique=True)
+        self._events.append(ProfitCellRecalculateRequested(node=self), unique=True, unique_key=f"{self.uuid}")
 
     def on_mapper_update(self, old_value: Mapper, new_value: Mapper):
         self.mapper = new_value
-        self._events.append(ProfitCellRecalculateRequested(node=self), unique=True)
+        self._events.append(ProfitCellRecalculateRequested(node=self), unique=True, unique_key=f"{self.uuid}")
 
     def follow_periods(self, pubs: set[Period]):
         for pub in pubs:
             self.period = pub
-        self._events.append(ProfitCellRecalculateRequested(node=self), unique=True)
+        self._events.append(ProfitCellRecalculateRequested(node=self), unique=True, unique_key=f"{self.uuid}")
 
     def on_period_updated(self, old_value: Period, new_value: Period):
         self.period = new_value
-        self._events.append(ProfitCellRecalculateRequested(node=self), unique=True)
+        self._events.append(ProfitCellRecalculateRequested(node=self), unique=True, unique_key=f"{self.uuid}")
 
     def recalculate(self, wires: set[Wire]):
         old_value = self.model_copy(deep=True)

@@ -96,7 +96,7 @@ class SheetCell(Cell, Pubsub, CellSubscriber, CellTableSubscriber):
         self._on_updated(CellUpdated(old_value=old_value, new_value=self))
 
     def delete(self):
-        self._events.append(CellDeleted(entity=self), unique=True)
+        self._events.append(CellDeleted(entity=self))
 
 
 class CellCreated(Event):

@@ -15,7 +15,7 @@ class Sindex(Pubsub):
         self._events.append(SindexCreated(entity=self))
 
     def delete(self):
-        self._events.append(SindexDeleted(entity=self), unique=True)
+        self._events.append(SindexDeleted(entity=self))
 
 
 class SindexSubscriber(Subscriber):
