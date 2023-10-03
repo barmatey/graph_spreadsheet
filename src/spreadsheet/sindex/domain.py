@@ -6,7 +6,17 @@ from pydantic import Field
 from src.pubsub.domain import Event, Pubsub, Subscriber
 
 
-class Sindex(Pubsub):
+class SindexSubscriber(Subscriber):
+    @abstractmethod
+    def follow_sindexes(self, pubs: set['Sindex']):
+        raise NotImplemented
+
+    @abstractmethod
+    def on_sindex_deleted(self, pub: 'Sindex'):
+        raise NotImplemented
+
+
+class Sindex(Pubsub, SindexSubscriber):
     position: int
     uuid: UUID = Field(default_factory=uuid4)
 
@@ -14,14 +24,14 @@ class Sindex(Pubsub):
         super().__init__(**data)
         self._events.append(SindexCreated(entity=self))
 
+    def follow_sindexes(self, pubs: set['Sindex']):
+        self._on_subscribed(pubs)
+
+    def on_sindex_deleted(self, pub: 'Sindex'):
+        self.delete()
+
     def delete(self):
         self._events.append(SindexDeleted(entity=self))
-
-
-class SindexSubscriber(Subscriber):
-    @abstractmethod
-    def on_sindex_deleted(self, pub: Sindex):
-        raise NotImplemented
 
 
 class SindexCreated(Event):

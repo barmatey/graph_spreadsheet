@@ -5,8 +5,8 @@ from pydantic import Field
 
 from src.core.cell import CellTable, CellValue
 from src.pubsub.domain import Pubsub, Event
-from src.spreadsheet.cell.domain import SheetCell
-from src.spreadsheet.sindex.domain import Sindex
+from src.spreadsheet.cell.domain import SheetCell, CellDeleted
+from src.spreadsheet.sindex.domain import Sindex, SindexDeleted
 
 
 def size_factory():
@@ -61,9 +61,9 @@ class Sheet(Pubsub):
                 new_table.append(self.table[i])
                 new_rows.append(self.rows[i])
             else:
-                self.rows[i].delete()
+                self._events.append(SindexDeleted(entity=self.rows[i]))
                 for cell in self.table[i]:
-                    cell.delete()
+                    self._events.append(CellDeleted(entity=cell))
 
         self.table = new_table
         self.rows = new_rows
