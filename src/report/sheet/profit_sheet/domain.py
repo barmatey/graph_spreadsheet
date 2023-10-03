@@ -35,7 +35,7 @@ class ProfitMapperCell(SheetCell, MapperSubscriber):
             self.value = pub.filter_by[pub.ccols[self.col_index.position]]
         self._on_updated(CellUpdated(old_value=old, new_value=self))
 
-    def on_mapper_update(self, old_value: Mapper, new_value: Mapper):
+    def on_mapper_updated(self, old_value: Mapper, new_value: Mapper):
         old = self.model_copy(deep=True)
         self.value = new_value.filter_by[new_value.ccols[self.col_index.position]]
         self._on_updated(CellUpdated(old_value=old, new_value=self))
@@ -74,7 +74,7 @@ class ProfitCell(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber
             self.mapper = pub
         self._events.append(ProfitCellRecalculateRequested(node=self), unique=True, unique_key=f"{self.uuid}")
 
-    def on_mapper_update(self, old_value: Mapper, new_value: Mapper):
+    def on_mapper_updated(self, old_value: Mapper, new_value: Mapper):
         self.mapper = new_value
         self._events.append(ProfitCellRecalculateRequested(node=self), unique=True, unique_key=f"{self.uuid}")
 

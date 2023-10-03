@@ -7,10 +7,10 @@ from pydantic import Field
 from src.pubsub.domain import Pubsub, Command, PubsubUpdated, Event
 from src.report.wire import domain as wire_domain
 from src.report.wire.domain import Ccol
-from src.spreadsheet.cell.domain import Cell
+from src.spreadsheet.cell.domain import Cell, CellSubscriber
 
 
-class Mapper(Pubsub):
+class Mapper(Pubsub, CellSubscriber):
     ccols: list[Ccol]
     filter_by: dict = Field(default_factory=dict)
     uuid: UUID = Field(default_factory=uuid4)
@@ -37,12 +37,15 @@ class Mapper(Pubsub):
         self._on_followed(pubs)
         self._on_updated(MapperUpdated(old_value=old_value, new_value=self))
 
-    def on_updated_cell(self, old_value: Cell, new_value: Cell):
+    def on_cell_updated(self, old_value: Cell, new_value: Cell):
         old_value = self.model_copy(deep=True)
         key = self.ccols[new_value.col_index.position]
         value = new_value.value
         self.filter_by[key] = value
         self._on_updated(MapperUpdated(old_value=old_value, new_value=self))
+
+    def on_cell_deleted(self, pub: Cell):
+        raise NotImplemented
 
 
 class MapperSubscriber(ABC):
@@ -51,7 +54,7 @@ class MapperSubscriber(ABC):
         raise NotImplemented
 
     @abstractmethod
-    def on_mapper_update(self, old_value: Mapper, new_value: Mapper):
+    def on_mapper_updated(self, old_value: Mapper, new_value: Mapper):
         raise NotImplemented
 
 
