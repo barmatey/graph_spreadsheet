@@ -33,6 +33,7 @@ class ProfitMapperCell(SheetCell, MapperSubscriber):
         old = self.model_copy(deep=True)
         for pub in pubs:
             self.value = pub.filter_by[pub.ccols[self.col_index.position]]
+        self._on_followed(pubs)
         self._on_updated(CellUpdated(old_value=old, new_value=self))
 
     def on_mapper_updated(self, old_value: Mapper, new_value: Mapper):
