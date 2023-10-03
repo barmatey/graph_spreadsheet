@@ -113,6 +113,9 @@ class ProfitSheet(Sheet, SheetSubscriber):
     def on_rows_appended(self, rows: list[Sindex], cells: list[list[SheetCell]]):
         self._events.append(GroupSheetRowsAppended(profit_sheet=self, rows=rows, cells=cells))
 
+    def on_rows_deleted(self, rows: list[Sindex]):
+        pass
+
 
 class CreateProfitSheet(Command):
     source_id: UUID

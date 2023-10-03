@@ -23,10 +23,11 @@ class RowsAppendedHandler(EventHandler):
 
 class RowsDeletedHandler(EventHandler):
     def handle(self, event: sheet_domain.RowsDeleted):
-        linked_rows: set[sindex_domain.Sindex] = set()
-        for deleted_row in event.deleted_rows:
-            linked_rows.union(self._repo.get_node_children(deleted_row))
-            # self._repo.remove(deleted_row)
+        self._repo.update(event.sheet)
+
+        subs: set[sheet_domain.SheetSubscriber] = self._repo.get_node_children(event.sheet)
+        for sub in subs:
+            sub.on_rows_deleted(event.deleted_rows)
 
 
 class RowsReindexedHandler(EventHandler):
@@ -37,6 +38,6 @@ class RowsReindexedHandler(EventHandler):
 SHEET_EVENT_HANDLERS = {
     sheet_domain.SheetCreated: SheetCreatedHandler,
     sheet_domain.RowsAppended: RowsAppendedHandler,
-    sheet_domain.RowsDeleted:  RowsDeletedHandler,
+    sheet_domain.RowsDeleted: RowsDeletedHandler,
     sheet_domain.SheetReindexed: RowsReindexedHandler,
 }

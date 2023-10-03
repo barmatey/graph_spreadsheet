@@ -72,6 +72,7 @@ class Sheet(Pubsub):
                 for cell in self.table[i]:
                     deleted_cells.append(cell)
 
+        self._events.append(RowsDeleted(sheet=self, deleted_rows=deleted_rows))
         self.table = new_table
         self.rows = new_rows
         self.size = (len(new_table), self.size[1] if len(new_table) else 0)
@@ -92,6 +93,10 @@ class SheetSubscriber(ABC):
 
     @abstractmethod
     def on_rows_appended(self, rows: list[Sindex], cells: list[list[SheetCell]]):
+        raise NotImplemented
+
+    @abstractmethod
+    def on_rows_deleted(self, rows: list[Sindex]):
         raise NotImplemented
 
 
