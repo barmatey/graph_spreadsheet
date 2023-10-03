@@ -31,34 +31,43 @@ class Subscriber(ABC):
 @singleton
 class EventQueue:
     def __init__(self):
-        self._events = SortedList(key=lambda x: x.priority)
-        self._pubsub_updated_events = {}
-        self._uniques = {}
+        self._events = {}
+        self._order = SortedList(key=lambda x: x[1])
 
     def append(self, event: Event, unique=False, unique_key: str = None):
+        logger.debug(f"APPEND: {event}:{event.priority}")
         if unique:
             if unique_key is None:
-                raise Exception("unique_key is None")
-            self._uniques[unique_key] = event
+                raise Exception("unique key is None")
+            if self._events.get(unique_key) is None:
+                self._order.add((unique_key, event.priority))
+            else:
+                self._order.remove((unique_key, event.priority))
+                self._order.add((unique_key, event.priority))
+            self._events[unique_key] = event
+
         elif isinstance(event, PubsubUpdated):
             key = type(event)
-            if self._pubsub_updated_events.get(key) is None:
-                self._pubsub_updated_events[key] = event
+            if self._events.get(key) is None:
+                self._events[key] = event
+                self._order.add((key, event.priority))
             else:
-                self._pubsub_updated_events[key].old_value = event.new_value
+                self._events[key].old_value = event.new_value
+                self._order.remove((key, event.priority))
+                self._order.add((key, event.priority))
         else:
-            self._events.add(event)
+            self._events[event.uuid] = event
+            self._order.add((event.uuid, event.priority,))
 
-    def parse_events(self) -> SortedList[Event]:
-        events = self._events
-        for event in self._uniques.values():
-            events.add(event)
-        for event in self._pubsub_updated_events.values():
-            events.add(event)
-        self._events = SortedList(key=lambda x: x.priority)
-        self._pubsub_updated_events = {}
-        self._uniques = {}
-        return events
+    @property
+    def empty(self) -> bool:
+        return len(self._order) == 0
+
+    def pop_start(self):
+        key = self._order.pop(0)[0]
+        event = self._events.pop(key)
+        logger.debug(f"EXTRACT: {event}:{event.priority}")
+        return event
 
 
 class Pubsub(Model):
