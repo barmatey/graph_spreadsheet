@@ -44,8 +44,12 @@ class Sheet(Pubsub):
         if len(rows) != len(cells):
             raise Exception(f'len rows != len cells, {len(rows)} != {len(cells)}')
 
+        if self.size[1] == 0:
+            self.cols = [x.col_index for x in cells[0]]
+            self.size = (self.size[0], len(self.cols))
+
         for sindex, values in zip(rows, cells):
-            if self.size[1] != 0 and self.size[1] != len(values):
+            if self.size[1] != len(values):
                 raise Exception(f"self.size[1] != len(values), {self.size[1]} != {len(values)}")
             self.table.append(values)
             self.rows.append(sindex)

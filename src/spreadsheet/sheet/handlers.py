@@ -26,6 +26,7 @@ class RowsDeletedHandler(EventHandler):
         linked_rows: set[sindex_domain.Sindex] = set()
         for deleted_row in event.deleted_rows:
             linked_rows.union(self._repo.get_node_children(deleted_row))
+            # self._repo.remove(deleted_row)
 
 
 class RowsReindexedHandler(EventHandler):
