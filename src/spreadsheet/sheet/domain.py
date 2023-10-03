@@ -75,10 +75,10 @@ class Sheet(Pubsub):
 
     def reindex(self):
         for i in range(0, self.size[0]):
-            for j in range(0, self.size[1]):
-                self.table[i][j].row_index.position = i
-                self.table[i][j].col_index.position = j
-        self._events.append(RowsReindexed(sheet=self), unique=True, unique_key=f"{self.uuid}")
+            self.rows[i].position = i
+        for j in range(0, self.size[1]):
+            self.cols[j].position = j
+        self._events.append(SheetReindexed(sheet=self), unique=True, unique_key=f"{self.uuid}")
 
 
 class SheetSubscriber(ABC):
@@ -112,7 +112,7 @@ class RowsDeleted(Event):
     priority: int = 10
 
 
-class RowsReindexed(Event):
+class SheetReindexed(Event):
     sheet: Sheet
     uuid: UUID = Field(default_factory=uuid4)
     priority: int = 30

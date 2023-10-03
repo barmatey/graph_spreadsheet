@@ -1,7 +1,7 @@
 import pytest
 
 from src.spreadsheet.cell.domain import SheetCell
-from src.spreadsheet.sheet.domain import Sheet, RowsAppended, RowsDeleted, RowsReindexed
+from src.spreadsheet.sheet.domain import Sheet, RowsAppended, RowsDeleted, SheetReindexed
 
 
 @pytest.fixture(scope="function")
@@ -52,5 +52,5 @@ def test_sheet_events_have_properly_order(sheet: Sheet):
     assert len(events) == 3
     assert type(events[0]) == RowsDeleted
     assert type(events[1]) == RowsAppended
-    assert type(events[2]) == RowsReindexed
+    assert type(events[2]) == SheetReindexed
 

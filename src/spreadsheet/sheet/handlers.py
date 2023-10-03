@@ -29,7 +29,7 @@ class RowsDeletedHandler(EventHandler):
 
 
 class RowsReindexedHandler(EventHandler):
-    def handle(self, event: sheet_domain.RowsReindexed):
+    def handle(self, event: sheet_domain.SheetReindexed):
         pass
 
 
@@ -37,5 +37,5 @@ SHEET_EVENT_HANDLERS = {
     sheet_domain.SheetCreated: SheetCreatedHandler,
     sheet_domain.RowsAppended: RowsAppendedHandler,
     sheet_domain.RowsDeleted:  RowsDeletedHandler,
-    sheet_domain.RowsReindexed: RowsReindexedHandler,
+    sheet_domain.SheetReindexed: RowsReindexedHandler,
 }
