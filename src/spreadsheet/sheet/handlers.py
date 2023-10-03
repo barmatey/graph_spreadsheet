@@ -2,6 +2,7 @@ from loguru import logger
 
 from src.pubsub.handlers import EventHandler
 from src.spreadsheet.sheet import domain as sheet_domain
+from src.spreadsheet.sindex import domain as sindex_domain
 
 
 class SheetCreatedHandler(EventHandler):
@@ -23,8 +24,6 @@ class RowsAppendedHandler(EventHandler):
 class RowsReindexedHandler(EventHandler):
     def handle(self, event: sheet_domain.RowsReindexed):
         pass
-
-
 
 
 SHEET_EVENT_HANDLERS = {
