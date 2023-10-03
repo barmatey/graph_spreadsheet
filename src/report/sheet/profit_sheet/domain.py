@@ -114,7 +114,7 @@ class ProfitSheet(Sheet, SheetSubscriber):
         self._events.append(GroupSheetRowsAppended(profit_sheet=self, rows=rows, cells=cells))
 
     def on_rows_deleted(self, rows: list[Sindex]):
-        pass
+        raise NotImplemented
 
 
 class CreateProfitSheet(Command):
@@ -131,6 +131,13 @@ class GroupSheetRowsAppended(Event):
     profit_sheet: ProfitSheet
     rows: list[Sindex]
     cells: list[list[SheetCell]]
+    uuid: UUID = Field(default_factory=uuid4)
+    priority: int = 10
+
+
+class ParentSheetRowsDeleted(Event):
+    target_sheet: ProfitSheet
+    parent_sheet_rows: list[Sindex]
     uuid: UUID = Field(default_factory=uuid4)
     priority: int = 10
 

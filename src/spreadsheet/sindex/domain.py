@@ -11,6 +11,10 @@ class SindexSubscriber(Subscriber):
     def follow_sindexes(self, pubs: set['Sindex']):
         raise NotImplemented
 
+    @abstractmethod
+    def on_sindex_deleted(self, pub: 'Sindex'):
+        raise NotImplemented
+
 
 class Sindex(Pubsub, SindexSubscriber):
     position: int
@@ -23,6 +27,9 @@ class Sindex(Pubsub, SindexSubscriber):
     def follow_sindexes(self, pubs: set['Sindex']):
         self._on_followed(pubs)
 
+    def on_sindex_deleted(self, pub: 'Sindex'):
+        raise NotImplemented
+
 
 class SindexCreated(Event):
     entity: Sindex
@@ -33,4 +40,4 @@ class SindexCreated(Event):
 class SindexDeleted(Event):
     entity: Sindex
     uuid: UUID = Field(default_factory=uuid4)
-    priority: int = 10
+    priority: int = 40

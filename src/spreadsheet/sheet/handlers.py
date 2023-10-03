@@ -23,11 +23,20 @@ class RowsAppendedHandler(EventHandler):
 
 class RowsDeletedHandler(EventHandler):
     def handle(self, event: sheet_domain.RowsDeleted):
+        # Update sheet size
         self._repo.update(event.sheet)
 
-        subs: set[sheet_domain.SheetSubscriber] = self._repo.get_node_children(event.sheet)
-        for sub in subs:
-            sub.on_rows_deleted(event.deleted_rows)
+        sheet_subs: set[sheet_domain.SheetSubscriber] = self._repo.get_node_children(event.sheet)
+
+
+
+        for deleted_row in event.deleted_rows:
+            subs: set[sindex_domain.SindexSubscriber] = self._repo.get_node_children(deleted_row)
+
+
+        # subs: set[sheet_domain.SheetSubscriber] = self._repo.get_node_children(event.sheet)
+        # for sub in subs:
+        #     sub.on_rows_deleted(event.deleted_rows)
 
 
 class RowsReindexedHandler(EventHandler):

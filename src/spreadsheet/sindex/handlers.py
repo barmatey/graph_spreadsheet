@@ -11,6 +11,11 @@ class SindexCreatedHandler(EventHandler):
 
 class SindexDeletedHandler(EventHandler):
     def handle(self, event: sindex_domain.SindexDeleted):
+
+        subs: set[sindex_domain.SindexSubscriber] = self._repo.get_node_children(event.entity)
+        for sub in subs:
+            sub.on_sindex_deleted(pub=event.entity)
+
         self._repo.remove(event.entity)
 
 

@@ -2,6 +2,7 @@ from loguru import logger
 
 from src.pubsub.handlers import CommandHandler, EventHandler
 from src.report.source import domain as source_domain
+from src.spreadsheet.sindex import domain as sindex_domain
 from . import domain as pf_domain
 from . import usecases as pf_usecases
 
@@ -22,6 +23,13 @@ class GroupSheetRowsAppendedHandler(EventHandler):
         pf_usecases.AppendRowsUsecase(profit_sheet, event.rows, event.cells, source).execute()
 
 
+class ParentSheetRowsDeletedHandler(EventHandler):
+    def handle(self, event: pf_domain.ParentSheetRowsDeleted):
+        linked_rows: set[sindex_domain.Sindex] = set()
+        for parent_row in event.parent_sheet_rows:
+            linked_rows.union(self._repo.get_node_children(parent_row))
+
+
 class ProfitCellRecalculateRequestedHandler(EventHandler):
     def handle(self, event: pf_domain.ProfitCellRecalculateRequested):
         profit_cell = event.node
@@ -37,6 +45,7 @@ PROFIT_SHEET_COMMAND_HANDLERS = {
 }
 
 PROFIT_SHEET_EVENT_HANDLERS = {
+    pf_domain.ParentSheetRowsDeleted: ParentSheetRowsDeletedHandler,
     pf_domain.GroupSheetRowsAppended: GroupSheetRowsAppendedHandler,
 }
 

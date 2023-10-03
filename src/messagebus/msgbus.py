@@ -25,7 +25,7 @@ class Msgbus:
 
     def _extend_events(self):
         for event in self._event_queue.parse_events():
-            logger.debug(f"ADDED: {event}")
+            logger.debug(f"ADDED: {event}:{event.priority}")
             self._events.append(event)
 
     def run(self):
@@ -38,7 +38,7 @@ class Msgbus:
 
             while self._events:
                 event = self._events.popleft()
-                logger.debug(f"EXTRACTED: {event}")
+                logger.debug(f"EXTRACTED: {event}:{event.priority}")
                 handler = get_event_handler(event)
                 try:
                     handler.handle(event)

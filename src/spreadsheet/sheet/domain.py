@@ -68,11 +68,10 @@ class Sheet(Pubsub):
                 new_rows.append(self.rows[i])
             else:
                 deleted_rows.append(self.rows[i])
-                self._events.append(SindexDeleted(entity=self.rows[i]))
                 for cell in self.table[i]:
+                    self._events.append(CellDeleted(entity=cell))
                     deleted_cells.append(cell)
 
-        self._events.append(RowsDeleted(sheet=self, deleted_rows=deleted_rows))
         self.table = new_table
         self.rows = new_rows
         self.size = (len(new_table), self.size[1] if len(new_table) else 0)
