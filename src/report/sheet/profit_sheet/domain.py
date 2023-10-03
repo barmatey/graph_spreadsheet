@@ -41,9 +41,10 @@ class ProfitMapperCell(SheetCell, MapperSubscriber):
         self._on_updated(CellUpdated(old_value=old, new_value=self))
 
     def on_mapper_deleted(self, pub: Mapper):
-        old = self.model_copy(deep=True)
-        self.value = "DELETED"
-        self._on_updated(CellUpdated(old_value=old, new_value=self))
+        pass
+        # old = self.model_copy(deep=True)
+        # self.value = "DELETED"
+        # self._on_updated(CellUpdated(old_value=old, new_value=self))
 
 
 class ProfitCell(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber):
@@ -84,9 +85,10 @@ class ProfitCell(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber
         self._events.append(ProfitCellRecalculateRequested(node=self), unique=True, unique_key=f"{self.uuid}")
 
     def on_mapper_deleted(self, pub: Mapper):
-        old = self.model_copy(deep=True)
-        self.value = "DELETED"
-        self._on_updated(CellUpdated(old_value=old, new_value=self))
+        pass
+        # old = self.model_copy(deep=True)
+        # self.value = "DELETED"
+        # self._on_updated(CellUpdated(old_value=old, new_value=self))
 
     def follow_periods(self, pubs: set[Period]):
         for pub in pubs:
