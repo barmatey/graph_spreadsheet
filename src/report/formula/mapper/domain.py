@@ -45,7 +45,7 @@ class Mapper(Pubsub, CellSubscriber):
         self._on_updated(MapperUpdated(old_value=old_value, new_value=self))
 
     def on_cell_deleted(self, pub: Cell):
-        raise NotImplemented
+        self._events.append(ParentCellDeleted(entity=self), unique=True, unique_key='123')
 
 
 class MapperSubscriber(ABC):
@@ -57,8 +57,18 @@ class MapperSubscriber(ABC):
     def on_mapper_updated(self, old_value: Mapper, new_value: Mapper):
         raise NotImplemented
 
+    @abstractmethod
+    def on_mapper_deleted(self, pub: Mapper):
+        raise NotImplemented
+
 
 class MapperCreated(Event):
+    entity: Mapper
+    uuid: UUID = Field(default_factory=uuid4)
+    priority: int = 10
+
+
+class ParentCellDeleted(Event):
     entity: Mapper
     uuid: UUID = Field(default_factory=uuid4)
     priority: int = 10
