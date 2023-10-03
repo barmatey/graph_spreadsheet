@@ -25,13 +25,10 @@ class Sindex(Pubsub, SindexSubscriber):
         self._events.append(SindexCreated(entity=self))
 
     def follow_sindexes(self, pubs: set['Sindex']):
-        self._on_subscribed(pubs)
+        self._on_followed(pubs)
 
     def on_sindex_deleted(self, pub: 'Sindex'):
-        self.delete()
-
-    def delete(self):
-        self._events.append(SindexDeleted(entity=self))
+        raise NotImplemented
 
 
 class SindexCreated(Event):

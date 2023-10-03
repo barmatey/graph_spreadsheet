@@ -77,6 +77,7 @@ class CreateProfitSheetUsecase:
 
         for i, mapper in enumerate(self._mappers, start=1):
             row_sindex = Sindex(position=i)
+            row_sindex.follow_sindexes({self._group_sheet.rows[i-1]})
             row_sindexes.append(row_sindex)
 
             cells = []

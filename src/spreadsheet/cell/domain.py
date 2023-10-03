@@ -73,7 +73,7 @@ class SheetCell(Cell, Pubsub, CellSubscriber, CellTableSubscriber):
             raise Exception
         for pub in pubs:
             self.value = pub.get_cell().value
-        self._on_subscribed(pubs)
+        self._on_followed(pubs)
         self._on_updated(CellUpdated(old_value=old_value, new_value=self))
 
     def follow_cell_table_publishers(self, pubs: set[CellTable]):
@@ -82,7 +82,7 @@ class SheetCell(Cell, Pubsub, CellSubscriber, CellTableSubscriber):
             raise Exception
         for pub in pubs:
             self.value = pub[self.index[0]][self.index[1]].value
-        self._on_subscribed(pubs)
+        self._on_followed(pubs)
         self._on_updated(CellUpdated(old_value=old_value, new_value=self))
 
     def on_cell_updated(self, _old_value: Cell, new_value: Cell):

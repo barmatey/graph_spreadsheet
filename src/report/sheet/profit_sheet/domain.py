@@ -51,7 +51,7 @@ class ProfitCell(SheetCell, MapperSubscriber, PeriodSubscriber, SourceSubscriber
         for w in source.wires:
             if self.mapper.is_filtred(w) and self.period.is_filtred(w):
                 self.value += w.amount
-        self._on_subscribed({source})
+        self._on_followed({source})
         self._on_updated(CellUpdated(old_value=old_value, new_value=self))
 
     def on_wires_appended(self, wires: list[Wire]):
@@ -108,7 +108,7 @@ class ProfitSheet(Sheet, SheetSubscriber):
     uuid: UUID = Field(default_factory=uuid4)
 
     def follow_sheet(self, sheet: Sheet):
-        self._on_subscribed({sheet})
+        self._on_followed({sheet})
 
     def on_rows_appended(self, rows: list[Sindex], cells: list[list[SheetCell]]):
         self._events.append(GroupSheetRowsAppended(profit_sheet=self, rows=rows, cells=cells))

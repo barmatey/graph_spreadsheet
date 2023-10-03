@@ -75,7 +75,7 @@ class Pubsub(Model):
     def __str__(self):
         return self.__class__.__name__
 
-    def _on_subscribed(self, pubs: set['Pubsub']):
+    def _on_followed(self, pubs: set['Pubsub']):
         self._events.append(PubsubSubscribed(sub=self, pubs=pubs))
 
     def _on_updated(self, event: 'PubsubUpdated'):

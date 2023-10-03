@@ -34,7 +34,7 @@ class Mapper(Pubsub):
             key = self.ccols[pub.col_index.position]
             value = pub.get_cell().value
             self.filter_by[key] = value
-        self._on_subscribed(pubs)
+        self._on_followed(pubs)
         self._on_updated(MapperUpdated(old_value=old_value, new_value=self))
 
     def on_updated_cell(self, old_value: Cell, new_value: Cell):

@@ -23,7 +23,7 @@ class GroupSheet(sheet_domain.Sheet, SourceSubscriber):
 
     def follow_source(self, source: Source):
         self.on_wires_appended(source.wires)
-        self._on_subscribed({source})
+        self._on_followed({source})
 
     def on_wires_appended(self, wires: list[Wire]):
         table = []
