@@ -11,8 +11,6 @@ class CellCreatedHandler(EventHandler):
 
 class CellDeletedHandler(EventHandler):
     def handle(self, event: cell_domain.CellDeleted):
-        _ = self._repo.get_by_id(event.entity.uuid)
-        logger.success(f"DELETING CELL EXIST YET")
         subs: set[cell_domain.CellSubscriber] = self._repo.get_node_children(event.entity)
         for sub in subs:
             sub.on_cell_deleted(event.entity)

@@ -45,7 +45,7 @@ class Mapper(Pubsub, CellSubscriber):
         self._on_updated(MapperUpdated(old_value=old_value, new_value=self))
 
     def on_cell_deleted(self, pub: Cell):
-        self._events.append(ParentCellDeleted(entity=self), unique=True, unique_key='123')
+        self._events.append(ParentCellDeleted(entity=self), unique=True, unique_key=self.uuid)
 
 
 class MapperSubscriber(ABC):

@@ -1,4 +1,5 @@
 from loguru import logger
+logger.stop()
 
 from src.pubsub.handlers import EventHandler
 from . import domain as mapper_domain
@@ -17,6 +18,7 @@ class MapperUpdatedHandler(EventHandler):
 class ParentCellDeletedHandler(EventHandler):
     def handle(self, event: mapper_domain.ParentCellDeleted):
         subs: set[mapper_domain.MapperSubscriber] = self._repo.get_node_children(event.entity)
+
         for sub in subs:
             sub.on_mapper_deleted(event.entity)
 

@@ -106,7 +106,8 @@ def test_profit_sheet_squeeze_after_group_sheet(repo):
     actual = sheet.get_as_simple_table()
     expected = [
         [None, None, datetime(2021, 12, 31), datetime(2022, 12, 31)],
+        ["DELETED", "DELETED", "DELETED", "DELETED"],
         [2.0, 'Expenses', 33.0, 44.0],
         [3.0, "New", 100.0, 0]
     ]
-    # assert str(actual) == str(expected)
+    assert str(actual) == str(expected)
