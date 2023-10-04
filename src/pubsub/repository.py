@@ -8,7 +8,7 @@ from .domain import Pubsub
 
 class Base:
     def __init__(self):
-        self._node_data = {}
+        self._node_data: dict[UUID, Pubsub] = {}
         self._children_data = {}
         self._parent_data = {}
 
