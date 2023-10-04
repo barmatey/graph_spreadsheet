@@ -33,6 +33,7 @@ class NodeRepoFake(Base):
         return self._node_data[uuid]
 
 
+
 class ChildrenRepoFake(Base):
     def get_node_children(self, uuid: UUID) -> set[UUID]:
         return self._children_data[uuid]
@@ -76,10 +77,10 @@ class GraphRepoFake(GraphRepo):
 
     def remove(self, pub: Pubsub):
         super().remove(pub)
-        # for child in super().get_node_children(pub.uuid):
-        #     self._parent_data[child].remove(pub.uuid)
-        # for parent in super().get_node_parents(pub.uuid):
-        #     self._children_data[parent].remove(pub.uuid)
+        for child in super().get_node_children(pub.uuid):
+            self._parent_data[child].remove(pub.uuid)
+        for parent in super().get_node_parents(pub.uuid):
+            self._children_data[parent].remove(pub.uuid)
         self.remove_node_children(pub.uuid)
         self.remove_node_parents(pub.uuid)
 
