@@ -1,34 +1,17 @@
-from abc import abstractmethod
 from uuid import UUID, uuid4
 
 from pydantic import Field
 
-from src.pubsub.domain import Event, Pubsub, Subscriber
+from src.pubsub.domain import Event, Pubsub
 
 
-class SindexSubscriber(Subscriber):
-    @abstractmethod
-    def follow_sindexes(self, pubs: set['Sindex']):
-        raise NotImplemented
-
-    @abstractmethod
-    def on_sindex_deleted(self, pub: 'Sindex'):
-        raise NotImplemented
-
-
-class Sindex(Pubsub, SindexSubscriber):
+class Sindex(Pubsub):
     position: int
     uuid: UUID = Field(default_factory=uuid4)
 
     def __init__(self, **data):
         super().__init__(**data)
         self._events.append(SindexCreated(entity=self))
-
-    def follow_sindexes(self, pubs: set['Sindex']):
-        self._on_followed(pubs)
-
-    def on_sindex_deleted(self, pub: 'Sindex'):
-        raise NotImplemented
 
 
 class SindexCreated(Event):
